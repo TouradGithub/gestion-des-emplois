@@ -1,0 +1,36 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Classe extends Model
+{
+    protected $fillable = [
+        'nom',
+        'niveau_pedagogique_id',
+        'specialite_id',
+        'annee_id',
+        'is_active'
+    ];
+
+    public function niveau()
+    {
+        return $this->belongsTo(NiveauPedagogique::class, 'niveau_pedagogique_id');
+    }
+
+    public function specialite()
+    {
+        return $this->belongsTo(Speciality::class , 'specialite_id');
+    }
+
+    public function annee()
+    {
+        return $this->belongsTo(Anneescolaire::class , 'annee_id');
+    }
+    public function emplois()
+    {
+        return $this->hasMany(EmploiTemps::class, 'class_id');
+    }
+
+}
