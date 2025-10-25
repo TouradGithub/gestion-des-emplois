@@ -20,7 +20,7 @@
                         <div class="row mb-3">
                             <div class="col text-end">
                                 <a href="{{ route('web.salle-de-classes.create') }}" class="btn btn-primary">
-                                    <i class="fa fa-plus"></i> {{ __('Ajouter une salle') }}
+                                    <i class="mdi mdi-plus"></i> {{ __('Ajouter une salle') }}
                                 </a>
                             </div>
                         </div>

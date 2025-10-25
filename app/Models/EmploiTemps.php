@@ -43,6 +43,13 @@ class EmploiTemps  extends Model
     }
     public function salle()       { return $this->belongsTo(SalleDeClasse::class, 'salle_de_classe_id'); }
 
+    /**
+     * Relation avec les pointages
+     */
+    public function pointages()
+    {
+        return $this->hasMany(Pointage::class, 'emploi_temps_id');
+    }
 
     public function getHoraires(): array
     {

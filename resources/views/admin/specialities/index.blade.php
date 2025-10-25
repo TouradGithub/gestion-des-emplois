@@ -18,7 +18,7 @@
                         <div class="row mb-3">
                             <div class="col text-end">
                                 <a href="{{ route('web.specialities.create') }}" class="btn btn-primary">
-                                    <i class="fa fa-plus"></i> Ajouter une spécialité
+                                    <i class="mdi mdi-plus"></i> Ajouter une spécialité
                                 </a>
                             </div>
                         </div>

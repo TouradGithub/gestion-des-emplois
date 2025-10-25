@@ -18,7 +18,7 @@
                         <div class="row mb-3">
                             <div class="col text-end">
                                 <a href="{{ route('web.emplois.create') }}" class="btn btn-primary">
-                                    <i class="fa fa-plus"></i> {{ __('Ajouter un emploi') }}
+                                    <i class="mdi mdi-plus"></i> {{ __('Ajouter un emploi') }}
                                 </a>
                             </div>
                         </div>

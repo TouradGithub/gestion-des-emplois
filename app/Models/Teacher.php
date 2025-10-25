@@ -13,6 +13,7 @@ class Teacher extends Model
         'gender',
         'image',
         'dob',
+        'sys_user_id',
     ];
     public function subjectTeacher()
     {
@@ -29,5 +30,35 @@ class Teacher extends Model
     public function teachers()
     {
         return $this->hasMany(SubjectTeacher::class, 'teacher_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'sys_user_id');
+    }
+
+    public function departments()
+    {
+        return $this->belongsToMany(Departement::class, 'subject_teacher', 'teacher_id', 'subject_id')
+                    ->join('subjects', 'subject_teacher.subject_id', '=', 'subjects.id')
+                    ->join('specialities', 'subjects.specialite_id', '=', 'specialities.id')
+                    ->join('departements', 'specialities.departement_id', '=', 'departements.id')
+                    ->distinct();
+    }
+
+    /**
+     * Relation avec les pointages
+     */
+    public function pointages()
+    {
+        return $this->hasMany(Pointage::class, 'teacher_id');
+    }
+
+    /**
+     * Relation avec les emplois du temps
+     */
+    public function emploisTemps()
+    {
+        return $this->hasMany(EmploiTemps::class, 'teacher_id');
     }
 }

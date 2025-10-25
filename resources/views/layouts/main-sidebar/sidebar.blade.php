@@ -108,6 +108,22 @@
             </a>
         </li>
 
+        {{-- Gestion des Pointages - Liste principale --}}
+        <li class="nav-item">
+            <a href="{{ route('web.pointages.index') }}" class="nav-link">
+                <span class="menu-title">{{ __('pointages.gestion_pointages') }}</span>
+                <i class="mdi mdi-clock-check menu-icon"></i>
+            </a>
+        </li>
+
+        {{-- Pointage Rapide --}}
+        <li class="nav-item">
+            <a href="{{ route('web.pointages.rapide') }}" class="nav-link">
+                <span class="menu-title">{{ __('pointages.pointage_rapide') }}</span>
+                <i class="mdi mdi-clock-fast menu-icon"></i>
+            </a>
+        </li>
+
         {{-- الأقسام --}}
 {{--        <li class="nav-item">--}}
 {{--            <a href="" class="nav-link">--}}

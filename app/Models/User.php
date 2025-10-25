@@ -22,6 +22,8 @@ class User extends Authenticatable
         'email',
         'password',
         'sys_types_user_id',
+        'phone',
+        'etat'
     ];
 
     /**
@@ -45,5 +47,27 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // العلاقات
+    public function sysTypesUser()
+    {
+        return $this->belongsTo(SysTypesUser::class, 'sys_types_user_id');
+    }
+
+    public function teacher()
+    {
+        return $this->hasOne(Teacher::class, 'sys_user_id');
+    }
+
+    // Helper methods
+    public function isAdmin()
+    {
+        return $this->sys_types_user_id == 1; // admin type
+    }
+
+    public function isTeacher()
+    {
+        return $this->sys_types_user_id == 2; // teacher type
     }
 }

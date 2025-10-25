@@ -9,16 +9,24 @@ use App\Http\Controllers\NiveauPedagogiqueController;
 use App\Http\Controllers\TrimesterController;
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\EmploiTempsController;
-Route::get('/', function () {
-    return view('welcome');
-});
+use App\Http\Controllers\PointageController;
+
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+// راوتس المعلمين
+Route::prefix('teacher')->name('teacher.')->middleware(['auth', 'user.type:teacher'])->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\TeacherDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/departments', [App\Http\Controllers\TeacherDashboardController::class, 'departments'])->name('departments');
+    Route::get('/schedule/{subjectTeacher}', [App\Http\Controllers\TeacherDashboardController::class, 'showSchedule'])->name('schedule');
+    Route::get('/pointages', [App\Http\Controllers\TeacherDashboardController::class, 'showPointages'])->name('pointages');
+    Route::get('/profile', [App\Http\Controllers\TeacherDashboardController::class, 'profile'])->name('profile');
+});
 
-Route::prefix('admin')->name('web.')->middleware(['auth'])->group(function () {
+
+Route::prefix('admin')->name('web.')->middleware(['auth', 'user.type:admin'])->group(function () {
     Route::resource('teachers', TeacherController::class);
     Route::get('teachers-list', [TeacherController::class, 'show'])->name('teachers.list');
     Route::resource('niveauformations', \App\Http\Controllers\NiveauformationController::class);
@@ -34,14 +42,18 @@ Route::prefix('admin')->name('web.')->middleware(['auth'])->group(function () {
     Route::get( 'departements', [DepartementController::class, 'index'])->name('departements.index');
     Route::get('departements/list', [DepartementController::class, 'list'])->name('departements.list');
     Route::get('departements/create', [DepartementController::class, 'create'])->name('departements.create');
-    Route::delete('departements/destroy/{id}', [DepartementController::class, 'destroy'])->name('departements.destroy');
     Route::post('departements/create', [DepartementController::class, 'store'])->name('departements.store');
+    Route::get('departements/{id}/edit', [DepartementController::class, 'edit'])->name('departements.edit');
+    Route::put('departements/{id}', [DepartementController::class, 'update'])->name('departements.update');
+    Route::delete('departements/destroy/{id}', [DepartementController::class, 'destroy'])->name('departements.destroy');
 
 
     Route::get('specialities', [SpecialityController::class, 'index'])->name('specialities.index');
     Route::get('specialities/list', [SpecialityController::class, 'list'])->name('specialities.list'); // JSON for bootstrap-table
     Route::get('specialities/create', [SpecialityController::class, 'create'])->name('specialities.create');
     Route::post('specialities/store', [SpecialityController::class, 'store'])->name('specialities.store');
+    Route::get('specialities/{id}/edit', [SpecialityController::class, 'edit'])->name('specialities.edit');
+    Route::put('specialities/{id}', [SpecialityController::class, 'update'])->name('specialities.update');
     Route::delete('specialities/{speciality}', [SpecialityController::class, 'destroy'])->name('specialities.destroy');
 
 
@@ -85,5 +97,24 @@ Route::prefix('admin')->name('web.')->middleware(['auth'])->group(function () {
     Route::resource('subjects', \App\Http\Controllers\SubjectController::class);
     Route::get('subjects_teachers/list', [\App\Http\Controllers\SubjectTeacherController::class,'listSubjectTeacher'])->name('subjects_teachers.list');
     Route::resource('subjects_teachers', \App\Http\Controllers\SubjectTeacherController::class);
+
+    // راوتات إدارة الحضور - Pointages Routes
+    Route::prefix('pointages')->name('pointages.')->group(function () {
+        Route::get('/', [PointageController::class, 'index'])->name('index');
+        Route::get('/create', [PointageController::class, 'create'])->name('create');
+        Route::post('/', [PointageController::class, 'store'])->name('store');
+        Route::get('/{pointage}', [PointageController::class, 'show'])->name('show');
+        Route::get('/{pointage}/edit', [PointageController::class, 'edit'])->name('edit');
+        Route::put('/{pointage}', [PointageController::class, 'update'])->name('update');
+        Route::delete('/{pointage}', [PointageController::class, 'destroy'])->name('destroy');
+
+        // صفحة الحضور السريع
+        Route::get('/rapide/aujourd-hui', [PointageController::class, 'rapide'])->name('rapide');
+        Route::post('/rapide/store', [PointageController::class, 'storeRapide'])->name('store-rapide');
+
+        // AJAX endpoints
+        Route::get('/ajax/emplois', [PointageController::class, 'getEmploisForTeacher'])->name('get-emplois');
+        Route::get('/ajax/statistiques', [PointageController::class, 'getStatistiques'])->name('get-statistiques');
+    });
 
 });

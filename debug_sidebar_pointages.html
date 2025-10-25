@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>تشخيص مشكلة القائمة الجانبية</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .success { color: green; }
+        .error { color: red; }
+        .warning { color: orange; }
+        .code { background: #f4f4f4; padding: 10px; border-left: 4px solid #ccc; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🔧 تشخيص مشكلة القائمة الجانبية - إدارة الحضور</h1>
+
+    <h2>المشكلة المبلغ عنها:</h2>
+    <p class="error">عند الضغط على "pointages.gestion_pointages" في sidebar لا يحدث أي شيء</p>
+
+    <h2>الحلول المطبقة:</h2>
+
+    <h3 class="success">✅ 1. تصحيح Bootstrap Syntax</h3>
+    <p>تم تغيير <code>data-bs-toggle</code> إلى <code>data-toggle</code> لتتوافق مع Bootstrap 4</p>
+    <div class="code">
+        قبل: data-bs-toggle="collapse"<br>
+        بعد: data-toggle="collapse"
+    </div>
+
+    <h3 class="success">✅ 2. تصحيح CSS Classes</h3>
+    <p>تم تغيير <code>me-2</code> إلى <code>mr-2</code> لتتوافق مع Bootstrap 4</p>
+
+    <h3 class="success">✅ 3. إضافة الترجمات المطلوبة</h3>
+    <p>تم إضافة <code>gestion_pointages</code> و <code>pointage_rapide</code> في ملفات الترجمة</p>
+
+    <h3 class="success">✅ 4. الحل النهائي - تبسيط القائمة</h3>
+    <p>تم تحويل القائمة المنسدلة إلى روابط مباشرة لتجنب مشاكل JavaScript</p>
+
+    <h2>الروابط الحالية:</h2>
+    <ul>
+        <li class="success">✅ إدارة الحضور → /admin/pointages</li>
+        <li class="success">✅ الحضور السريع → /admin/pointages/rapide/aujourd-hui</li>
+    </ul>
+
+    <h2>خطوات الاختبار:</h2>
+    <ol>
+        <li>قم بتسجيل الدخول كـ Administrator</li>
+        <li>ابحث في القائمة الجانبية عن "إدارة الحضور" (gestion_pointages)</li>
+        <li>اضغط على الرابط - يجب أن ينقلك إلى صفحة قائمة الحضور</li>
+        <li>جرب أيضاً رابط "تسجيل سريع" (pointage_rapide)</li>
+    </ol>
+
+    <h2>في حالة استمرار المشكلة:</h2>
+    <ul>
+        <li class="warning">⚠️ تأكد من تحديث الصفحة (Ctrl+F5)</li>
+        <li class="warning">⚠️ امسح cache المتصفح</li>
+        <li class="warning">⚠️ تحقق من Console في Developer Tools للأخطاء</li>
+        <li class="warning">⚠️ تأكد من أنك مسجل دخول كـ Admin وليس Teacher</li>
+    </ul>
+
+    <h2>كود القائمة الحالي:</h2>
+    <div class="code">
+        &lt;li class="nav-item"&gt;<br>
+        &nbsp;&nbsp;&lt;a href="{{ route('web.pointages.index') }}" class="nav-link"&gt;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&lt;span class="menu-title"&gt;{{ __('pointages.gestion_pointages') }}&lt;/span&gt;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&lt;i class="mdi mdi-clock-check menu-icon"&gt;&lt;/i&gt;<br>
+        &nbsp;&nbsp;&lt;/a&gt;<br>
+        &lt;/li&gt;
+    </div>
+
+    <p class="success">✅ التغييرات مطبقة وجاهزة للاختبار!</p>
+</body>
+</html>

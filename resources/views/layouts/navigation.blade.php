@@ -12,9 +12,25 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
+                    @if(Auth::user()->isAdmin())
+                        <x-nav-link :href="route('home')" :active="request()->routeIs('home')">
+                            {{ __('لوحة التحكم') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('web.teachers.index')" :active="request()->routeIs('web.teachers.*')">
+                            {{ __('الأساتذة') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('web.classes.index')" :active="request()->routeIs('web.classes.*')">
+                            {{ __('الأقسام') }}
+                        </x-nav-link>
+                    @elseif(Auth::user()->isTeacher())
+                        <x-nav-link :href="route('teacher.dashboard')" :active="request()->routeIs('teacher.*')">
+                            {{ __('لوحة التحكم') }}
+                        </x-nav-link>
+                    @else
+                        <x-nav-link :href="route('home')" :active="request()->routeIs('home')">
+                            {{ __('الرئيسية') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -23,7 +39,13 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
+                            <div>{{ Auth::user()->name }}
+                                @if(Auth::user()->isAdmin())
+                                    <span class="ml-2 px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">مدير</span>
+                                @elseif(Auth::user()->isTeacher())
+                                    <span class="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">أستاذ</span>
+                                @endif
+                            </div>
 
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">

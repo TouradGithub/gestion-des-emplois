@@ -35,6 +35,7 @@
 <script src="{{ asset('/assets/js/custom/function.js') }}"></script>
 <script src="{{ asset('/assets/js/custom/custom.js') }}"></script>
 <script src="{{ asset('/assets/js/custom/custom-bootstrap-table.js') }}"></script>
+<script src="{{ asset('/assets/js/custom/sidebar-pointages.js') }}"></script>
 
 <script src="{{ asset('/assets/ckeditor-4/ckeditor.js') }}"></script>
 <script src="{{ asset('/assets/ckeditor-4/adapters/jquery.js') }}" async></script>

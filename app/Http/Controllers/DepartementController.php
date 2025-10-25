@@ -98,17 +98,28 @@ class DepartementController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Departement $departement)
+    public function edit($id)
     {
-        //
+        $departement = Departement::findOrFail($id);
+        return view('admin.departements.edit', compact('departement'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Departement $departement)
+    public function update(Request $request, $id)
     {
-        //
+        $departement = Departement::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'code' => 'required|string|max:50|unique:departements,code,' . $departement->id,
+        ]);
+
+        $departement->update($validated);
+
+        return redirect()->route('web.departements.index')
+            ->with('success', 'Département modifié avec succès.');
     }
 
     /**

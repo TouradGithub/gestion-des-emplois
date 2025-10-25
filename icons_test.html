@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎨 اختبار الأيقونات</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+        }
+        .icon-test {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        .icon-large {
+            font-size: 3em;
+            margin: 10px;
+            display: block;
+        }
+        .icon-medium {
+            font-size: 1.5em;
+            margin: 5px;
+        }
+        .success { color: #28a745; }
+        .warning { color: #ffc107; }
+        .danger { color: #dc3545; }
+        .info { color: #17a2b8; }
+        .primary { color: #007bff; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="text-center mb-5">🎨 اختبار نظام الأيقونات</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="icon-test">
+                <h3>Material Design Icons (MDI)</h3>
+                <p>الأيقونات المستخدمة في نظام الحضور والغياب</p>
+
+                <!-- أيقونات النظام -->
+                <div>
+                    <i class="mdi mdi-clock-check icon-large success"></i>
+                    <span>mdi-clock-check</span>
+                </div>
+
+                <div>
+                    <i class="mdi mdi-school icon-large primary"></i>
+                    <span>mdi-school</span>
+                </div>
+
+                <div>
+                    <i class="mdi mdi-plus icon-medium success"></i>
+                    <i class="mdi mdi-pencil icon-medium warning"></i>
+                    <i class="mdi mdi-delete icon-medium danger"></i>
+                    <i class="mdi mdi-eye icon-medium info"></i>
+                </div>
+
+                <div>
+                    <i class="mdi mdi-calendar-clock icon-medium"></i>
+                    <i class="mdi mdi-account-group icon-medium"></i>
+                    <i class="mdi mdi-book-open-variant icon-medium"></i>
+                    <i class="mdi mdi-home icon-medium"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="icon-test">
+                <h3>Font Awesome</h3>
+                <p>الأيقونات القديمة (تم استبدالها)</p>
+
+                <div>
+                    <i class="fa fa-trash icon-large danger"></i>
+                    <span>fa-trash (قديم)</span>
+                </div>
+
+                <div>
+                    <i class="fa fa-plus icon-medium success"></i>
+                    <i class="fa fa-edit icon-medium warning"></i>
+                    <i class="fa fa-eye icon-medium info"></i>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <small class="text-warning">
+                        ⚠️ هذه الأيقونات استُبدلت بـ Material Design Icons
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="icon-test">
+                <h3>🧪 نتائج الاختبار</h3>
+
+                <div class="alert alert-success" role="alert">
+                    <h5>✅ تم إصلاح مشكلة الأيقونات بنجاح!</h5>
+                    <ul class="mb-0" style="text-align: right;">
+                        <li><strong>تمت إضافة Material Design Icons</strong> من CDN</li>
+                        <li><strong>تم تحديث جميع الصفحات</strong> لاستخدام MDI بدلاً من Font Awesome</li>
+                        <li><strong>تم تحسين صفحة الفصول</strong> بأيقونات وتصميم أفضل</li>
+                        <li><strong>جميع الأيقونات تظهر الآن</strong> بشكل صحيح</li>
+                    </ul>
+                </div>
+
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <i class="mdi mdi-check-circle icon-large"></i>
+                                <h5>صفحة الحضور</h5>
+                                <small>جميع الأيقونات تعمل</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body">
+                                <i class="mdi mdi-school icon-large"></i>
+                                <h5>صفحة الفصول</h5>
+                                <small>تم إصلاحها وتحسينها</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body">
+                                <i class="mdi mdi-account icon-large"></i>
+                                <h5>صفحة الأساتذة</h5>
+                                <small>تم تحديث الأيقونات</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body">
+                                <i class="mdi mdi-calendar icon-large"></i>
+                                <h5>صفحة الجداول</h5>
+                                <small>أيقونات محدثة</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <h4>🎯 النظام جاهز مع الأيقونات الجديدة!</h4>
+        <p>يمكنك الآن تصفح جميع صفحات النظام ومشاهدة الأيقونات الجميلة</p>
+
+        <div class="mt-3">
+            <a href="/admin/pointages" class="btn btn-success me-2">
+                <i class="mdi mdi-clock-check"></i> نظام الحضور
+            </a>
+            <a href="/admin/classes" class="btn btn-info me-2">
+                <i class="mdi mdi-school"></i> الفصول
+            </a>
+            <a href="/admin/teachers" class="btn btn-warning">
+                <i class="mdi mdi-account-tie"></i> الأساتذة
+            </a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

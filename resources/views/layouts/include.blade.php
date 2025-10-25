@@ -2,6 +2,8 @@
 <link rel="stylesheet" href="{{ asset('/assets/css/vendor.bundle.base.css') }}" async>
 
 <link rel="stylesheet" href="{{ asset('/assets/fonts/font-awesome.min.css') }}" async/>
+<!-- Material Design Icons CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
 <link rel="stylesheet" href="{{ asset('/assets/select2/select2.min.css') }}" async>
 <link rel="stylesheet" href="{{ asset('/assets/jquery-toast-plugin/jquery.toast.min.css') }}">
 <link rel="stylesheet" href="{{ asset('/assets/color-picker/color.min.css') }}" async>

@@ -17,7 +17,7 @@
                         <div class="row mb-3">
                             <div class="col text-end">
                                 <a href="{{ route('web.departements.create') }}" class="btn btn-primary">
-                                    <i class="fa fa-plus"></i> {{ __('Ajouter un département') }}
+                                    <i class="mdi mdi-plus"></i> {{ __('Ajouter un département') }}
                                 </a>
                             </div>
                         </div>

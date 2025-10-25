@@ -67,7 +67,12 @@ class SubjectTeacherController extends Controller
 
     public function edit($id)
     {
-        // Logic to show form for editing an existing subject-teacher assignment
+        $subjectTeacher = SubjectTeacher::findOrFail($id);
+        $subjects = Subject::all();
+        $teachers = Teacher::all();
+        $trimesters = Trimester::all();
+        $classes = Classe::all();
+        return view('admin.subjects_teachers.edit', compact('subjectTeacher', 'subjects', 'teachers', 'trimesters', 'classes'));
     }
 
     public function show(Request $request , $id)
@@ -124,7 +129,38 @@ class SubjectTeacherController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Logic to update an existing subject-teacher assignment
+        $subjectTeacher = SubjectTeacher::findOrFail($id);
+        $annee_id = Anneescolaire::where('is_active', 1)->first()->id;
+
+        $request->validate([
+            'subject_id' => [
+                'required',
+                'exists:subjects,id',
+                Rule::unique('subject_teacher')->where(function ($query) use ($request, $annee_id, $id) {
+                    return $query->where('subject_id', $request->subject_id)
+                        ->where('teacher_id', $request->teacher_id)
+                        ->where('trimester_id', $request->trimester_id)
+                        ->where('class_id', $request->class_id)
+                        ->where('annee_id', $annee_id)
+                        ->where('id', '!=', $id);
+                }),
+            ],
+            'teacher_id' => 'required|exists:teachers,id',
+            'trimester_id' => 'required|exists:trimesters,id',
+            'class_id' => 'required|exists:classes,id',
+        ], [
+            'subject_id.unique' => 'Cette combinaison matière/enseignant/trimestre/classe existe déjà.',
+            'class_id.required' => 'Le champ classe est obligatoire.',
+        ]);
+
+        $subjectTeacher->update([
+            'subject_id' => $request->subject_id,
+            'teacher_id' => $request->teacher_id,
+            'trimester_id' => $request->trimester_id,
+            'class_id' => $request->class_id,
+        ]);
+
+        return redirect()->route('web.subjects_teachers.index')->with('success', 'Subject-Teacher assignment updated successfully.');
     }
 
     public function destroy($id)
@@ -140,7 +176,7 @@ class SubjectTeacherController extends Controller
     }
     public function listSubjectTeacher(Request $request)
     {
-        
+
         $offset = $request->offset ?? 0;
         $limit = $request->limit ?? 10;
         $sort = $request->sort ?? 'id';

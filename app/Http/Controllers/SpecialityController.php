@@ -43,17 +43,32 @@ class SpecialityController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Speciality $speciality)
+    public function edit($id)
     {
-        //
+        $speciality = Speciality::findOrFail($id);
+        $departements = Departement::all();
+        $niveaux = Niveauformation::all();
+        return view('admin.specialities.edit', compact('speciality', 'departements', 'niveaux'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Speciality $speciality)
+    public function update(Request $request, $id)
     {
-        //
+        $speciality = Speciality::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'code' => 'required|string|max:50|unique:specialities,code,' . $speciality->id,
+            'niveau_formation_id' => 'required|exists:niveauformations,id',
+            'departement_id' => 'required|exists:departements,id',
+        ]);
+
+        $speciality->update($validated);
+
+        return redirect()->route('web.specialities.index')
+            ->with('success', 'Spécialité modifiée avec succès.');
     }
     /**
      * Remove the specified resource from storage.

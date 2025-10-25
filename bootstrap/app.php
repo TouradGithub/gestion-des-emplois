@@ -11,7 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->alias([
+            'user.type' => \App\Http\Middleware\CheckUserType::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

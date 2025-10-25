@@ -17,7 +17,7 @@
                         <div class="row mb-3">
                             <div class="col text-end">
                                 <a href="{{ route('web.teachers.create') }}" class="btn btn-primary">
-                                    <i class="fa fa-plus"></i> {{ __('Ajouter un enseignant') }}
+                                    <i class="mdi mdi-plus"></i> {{ __('Ajouter un enseignant') }}
                                 </a>
                             </div>
                         </div>
