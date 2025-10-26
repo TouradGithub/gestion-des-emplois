@@ -2,7 +2,7 @@
 
 @section('content')
     <h2>{{ isset($subject) ? 'Edit' : 'Create' }} Subject</h2>
-    <form action="{{ isset($subject) ? route('subjects.update', $subject) : route('subjects.store') }}" method="POST">
+    <form action="{{ isset($subject) ? route('web.subjects.update', $subject) : route('web.subjects.store') }}" method="POST">
         @csrf
         @if (isset($subject)) @method('PUT') @endif
 

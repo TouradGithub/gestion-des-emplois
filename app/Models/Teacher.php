@@ -27,7 +27,7 @@ class Teacher extends Model
                     ->withTimestamps();
     }
 
-    public function teachers()
+    public function subjectTeachers()
     {
         return $this->hasMany(SubjectTeacher::class, 'teacher_id');
     }

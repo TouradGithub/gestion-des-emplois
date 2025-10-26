@@ -5,7 +5,7 @@ echo "Testing Subject Teacher System...\n";
 // اختبار الملفات المطلوبة
 $files = [
     'resources/views/teacher/departments.blade.php',
-    'resources/views/teacher/dashboard.blade.php', 
+    'resources/views/teacher/dashboard.blade.php',
     'resources/views/teacher/schedule.blade.php',
     'app/Http/Controllers/TeacherDashboardController.php',
     'lang/ar/teacher.php',

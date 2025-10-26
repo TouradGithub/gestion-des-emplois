@@ -48,7 +48,7 @@ class NiveauformationController extends Controller
         }
 
         $total = $query->count();
-        $teachers = $query->orderBy($sort, $order)
+        $niveauformations = $query->orderBy($sort, $order)
             ->skip($offset)
             ->take($limit)
             ->get();
@@ -56,20 +56,20 @@ class NiveauformationController extends Controller
         $rows = [];
         $no = $offset + 1;
 
-        foreach ($teachers as $teacher) {
+        foreach ($niveauformations as $niveauformation) {
             $operate = '';
 //            if (auth()->user()->can('teachers-edit')) {
-            $operate .= '<a class="btn btn-xs btn-gradient-primary editdata" data-id="' . $teacher->id . '"><i class="fa fa-edit"></i></a> ';
+            $operate .= '<a class="btn btn-xs btn-gradient-primary editdata" data-id="' . $niveauformation->id . '"><i class="fa fa-edit"></i></a> ';
 //            }
 //            if (auth()->user()->can('teachers-delete')) {
-            $operate .= '<a class="btn btn-xs btn-gradient-danger deletedata" data-id="' . $teacher->id . '" data-url="' . route('web.teachers.destroy', $teacher->id) . '"><i class="fa fa-trash"></i></a>';
+            $operate .= '<a class="btn btn-xs btn-gradient-danger deletedata" data-id="' . $niveauformation->id . '" data-url="' . route('web.niveauformations.destroy', $niveauformation->id) . '"><i class="fa fa-trash"></i></a>';
 //            }
 
             $rows[] = [
-                'id' => $teacher->id,
+                'id' => $niveauformation->id,
                 'no' => $no++,
-                'nom' => $teacher->nom,
-                'ordre' => $teacher->ordre,
+                'nom' => $niveauformation->nom,
+                'ordre' => $niveauformation->ordre,
                 'operate' => $operate,
             ];
         }
@@ -98,8 +98,19 @@ class NiveauformationController extends Controller
 
     public function destroy(Niveauformation $niveauformation)
     {
-        $niveauformation->delete();
+        try {
+            $niveauformation->delete();
 
-        return redirect()->route('web.niveauformations.index')->with('success', 'Supprimé avec succès.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Supprimé avec succès.'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la suppression: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

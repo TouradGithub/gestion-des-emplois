@@ -67,10 +67,27 @@
 
     window.actionEvents = {
         'click .editdata': function (e, value, row, index) {
-            // Open modal & populate with row data
+            window.location.href = '/admin/subjects_teachers/' + row.id + '/edit';
         },
         'click .deletedata': function (e, value, row, index) {
-            // Handle deletion
+            if (confirm('Voulez-vous vraiment supprimer cette affectation ?')) {
+                fetch('/admin/subjects_teachers/' + row.id, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        $('#table_list').bootstrapTable('refresh');
+                        alert('Affectation supprimée avec succès');
+                    } else {
+                        alert('Erreur lors de la suppression');
+                    }
+                }).catch(error => {
+                    alert('Erreur lors de la suppression');
+                });
+            }
         }
     };
 </script>

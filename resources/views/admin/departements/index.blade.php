@@ -4,6 +4,11 @@
     {{ trans('departement.departements') }}
 @endsection
 
+@section('css')
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@endsection
+
 @section('content')
     <div class="content-wrapper">
         <div class="page-header">
@@ -64,10 +69,36 @@
 
         window.actionEvents = {
             'click .editdata': function (e, value, row, index) {
-                // Open modal or redirect for editing
+                window.location.href = '/admin/departements/' + row.id + '/edit';
             },
             'click .deletedata': function (e, value, row, index) {
-                // Handle deletion with confirmation
+                Swal.fire({
+                    title: 'Êtes-vous sûr?',
+                    text: 'Voulez-vous vraiment supprimer ce département?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Oui, supprimer!',
+                    cancelButtonText: 'Annuler'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: $(e.target).closest('a').data('url'),
+                            type: 'DELETE',
+                            data: {
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                $('#table_list').bootstrapTable('refresh');
+                                Swal.fire('Supprimé!', 'Le département a été supprimé.', 'success');
+                            },
+                            error: function(xhr) {
+                                Swal.fire('Erreur!', 'Une erreur est survenue lors de la suppression.', 'error');
+                            }
+                        });
+                    }
+                });
             }
         };
     </script>

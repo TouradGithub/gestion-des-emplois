@@ -71,21 +71,19 @@ class ClasseController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(Classe $class)
     {
-        $classe = Classe::findOrFail($id);
         $niveaux = NiveauPedagogique::all();
         $specialites = Speciality::all();
         $annees = Anneescolaire::all();
-        return view('admin.classes.edit', compact('classe', 'niveaux', 'specialites', 'annees'));
+        return view('admin.classes.edit', compact('class', 'niveaux', 'specialites', 'annees'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Classe $class)
     {
-        $classe = Classe::findOrFail($id);
 
         $niveau = NiveauPedagogique::findOrFail($request->niveau_pedagogique_id);
         $speciality = Speciality::findOrFail($request->specialite_id);
@@ -95,14 +93,14 @@ class ClasseController extends Controller
             'niveau_pedagogique_id' => 'required|exists:niveau_pedagogiques,id',
             'specialite_id' => 'required|exists:specialities,id',
             'annee_id' => 'required|exists:anneescolaires,id',
-            'nom' => 'unique:classes,nom,' . $classe->id,
+            'nom' => 'unique:classes,nom,' . $class->id,
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $classe->update([
+        $class->update([
             'nom' => $nom,
             'niveau_pedagogique_id' => $request->niveau_pedagogique_id,
             'specialite_id' => $request->specialite_id,
@@ -115,16 +113,32 @@ class ClasseController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy( $id)
+    public function destroy($id)
     {
+        try {
+            $classe = Classe::findOrFail($id);
 
-        $classe = Classe::findOrFail($id);
-        if($classe->emplois()->count() > 0) {
-            return redirect()->back()->with('error', 'Impossible de supprimer cette classe car elle est liée à des emplois du temps.');
+            // التحقق من وجود emplois مرتبطة
+            if($classe->emplois()->count() > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'لا يمكن حذف هذا الفصل لأنه مرتبط بجداول زمنية'
+                ], 400);
+            }
+
+            $classe->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'تم حذف الفصل بنجاح'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء الحذف: ' . $e->getMessage()
+            ], 500);
         }
-        $classe->delete();
-
-        return redirect()->route('web.classes.index')->with('success', 'Classe supprimée avec succès.');
     }
 
     public function list(Request $request)

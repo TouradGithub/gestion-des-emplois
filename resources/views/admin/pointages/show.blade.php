@@ -96,7 +96,7 @@
                                 <div class="info-value">
                                     <strong>{{ \Carbon\Carbon::parse($pointage->date_pointage)->locale(app()->getLocale())->isoFormat('dddd, LL') }}</strong>
                                     <br><small class="text-muted">
-                                        {{ \Carbon\Carbon::parse($pointage->date_pointage)->diffForHumans() }}
+                                        {{ $pointage->date_pointage ? \Carbon\Carbon::parse($pointage->date_pointage)->diffForHumans() : __('messages.unknown') }}
                                     </small>
                                 </div>
                             </div>
@@ -193,14 +193,14 @@
                             <br>
                             <strong>{{ $pointage->created_at->locale(app()->getLocale())->isoFormat('dddd, LL [à] LT') }}</strong>
                             <br>
-                            <span class="text-muted">{{ $pointage->created_at->diffForHumans() }}</span>
+                            <span class="text-muted">{{ $pointage->created_at ? $pointage->created_at->diffForHumans() : __('messages.unknown') }}</span>
                         </div>
                         <div class="col-md-6">
                             <small class="text-muted">{{ __('pointages.derniere_modification') }}</small>
                             <br>
                             <strong>{{ $pointage->updated_at->locale(app()->getLocale())->isoFormat('dddd, LL [à] LT') }}</strong>
                             <br>
-                            <span class="text-muted">{{ $pointage->updated_at->diffForHumans() }}</span>
+                            <span class="text-muted">{{ $pointage->updated_at ? $pointage->updated_at->diffForHumans() : __('messages.unknown') }}</span>
                         </div>
                     </div>
 

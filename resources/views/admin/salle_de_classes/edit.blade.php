@@ -8,7 +8,7 @@
                 <div class="card-header">تعديل قاعة الدروس</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('web.salle-de-classes.update', $salle->id) }}">
+                    <form method="POST" action="{{ route('web.salle-de-classes.update', $salle_de_class->id) }}">
                         @csrf
                         @method('PUT')
 
@@ -16,7 +16,7 @@
                             <label for="name" class="col-md-4 col-form-label text-md-end">الاسم</label>
 
                             <div class="col-md-6">
-                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', $salle->name) }}" required autocomplete="name" autofocus>
+                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', $salle_de_class->name) }}" required autocomplete="name" autofocus>
 
                                 @error('name')
                                     <span class="invalid-feedback" role="alert">
@@ -30,7 +30,7 @@
                             <label for="code" class="col-md-4 col-form-label text-md-end">الكود</label>
 
                             <div class="col-md-6">
-                                <input id="code" type="text" class="form-control @error('code') is-invalid @enderror" name="code" value="{{ old('code', $salle->code) }}" required>
+                                <input id="code" type="text" class="form-control @error('code') is-invalid @enderror" name="code" value="{{ old('code', $salle_de_class->code) }}" required>
 
                                 @error('code')
                                     <span class="invalid-feedback" role="alert">
@@ -44,7 +44,7 @@
                             <label for="capacity" class="col-md-4 col-form-label text-md-end">السعة</label>
 
                             <div class="col-md-6">
-                                <input id="capacity" type="number" class="form-control @error('capacity') is-invalid @enderror" name="capacity" value="{{ old('capacity', $salle->capacity) }}" required min="0">
+                                <input id="capacity" type="number" class="form-control @error('capacity') is-invalid @enderror" name="capacity" value="{{ old('capacity', $salle_de_class->capacity) }}" required min="0">
 
                                 @error('capacity')
                                     <span class="invalid-feedback" role="alert">
@@ -61,7 +61,7 @@
                                 <select id="formation_id" class="form-control @error('formation_id') is-invalid @enderror" name="formation_id">
                                     <option value="">اختر مستوى التكوين</option>
                                     @foreach($formations as $formation)
-                                        <option value="{{ $formation->id }}" {{ old('formation_id', $salle->formation_id) == $formation->id ? 'selected' : '' }}>
+                                        <option value="{{ $formation->id }}" {{ old('formation_id', $salle_de_class->formation_id) == $formation->id ? 'selected' : '' }}>
                                             {{ $formation->nom }}
                                         </option>
                                     @endforeach

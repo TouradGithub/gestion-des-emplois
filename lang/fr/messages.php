@@ -46,4 +46,177 @@ return [
     'need_help' => 'Besoin d\'aide ?',
     'contact_admin_info' => 'Pour obtenir de l\'aide ou modifier vos informations, veuillez contacter l\'administration.',
     'and_more' => 'et :count de plus',
+
+    // Dashboard specific
+    'admin_dashboard_welcome' => 'Bienvenue dans le tableau de bord principal de gestion du système',
+    'this_month' => 'Ce mois',
+    'departments' => 'Départements',
+    'specialities' => 'Spécialités',
+    'recent_teachers' => 'Nouveaux professeurs',
+    'no_recent_teachers' => 'Aucun nouveau professeur',
+    'no_departments' => 'Aucun département',
+    'departments_overview' => 'Aperçu des départements',
+    'active_teachers_stats' => 'Statistiques des professeurs actifs',
+    'active_teachers_30_days' => 'Professeurs actifs (30 derniers jours)',
+    'total_schedules' => 'Total des emplois du temps',
+    'total_users' => 'Total des utilisateurs',
+    'unknown' => 'Inconnu',
+
+    // Actions
+    'add_teacher' => 'Ajouter un professeur',
+    'add_class' => 'Ajouter une classe',
+    'add_subject' => 'Ajouter une matière',
+    'add_schedule' => 'Ajouter un emploi du temps',
+    'edit_teacher' => 'Modifier le professeur',
+    
+    // Form labels for emplois edit
+    'edit_schedule' => 'Modifier l\'emploi du temps',
+    'class' => 'Classe',
+    'select_class' => 'Sélectionner une classe',
+    'subject' => 'Matière',
+    'select_subject' => 'Sélectionner une matière',
+    'teacher' => 'Professeur',
+    'select_teacher' => 'Sélectionner un professeur',
+    'trimester' => 'Trimestre',
+    'select_trimester' => 'Sélectionner un trimestre',
+    'school_year' => 'Année scolaire',
+    'select_year' => 'Sélectionner une année',
+    'day' => 'Jour',
+    'select_day' => 'Sélectionner un jour',
+    'schedule_times' => 'Horaires',
+    'select_times' => 'Sélectionnez les horaires',
+    'ctrl_select_help' => 'Maintenez Ctrl pour sélectionner plusieurs horaires',
+    'update' => 'Modifier',
+    'modify' => 'Modifier',
+    
+    // Common form elements
+        // Common form elements
+    'required_field' => 'Ce champ est obligatoire',
+    'select_option' => 'Sélectionner une option',
+    
+    // Common page titles
+    'list_teachers' => 'Liste des enseignants',
+    'list_classes' => 'Liste des classes',
+    'list_subjects' => 'Liste des matières',
+    'list_schedule' => 'Liste des emplois du temps',
+    'list_trimesters' => 'Liste des trimestres',
+    'list_specialities' => 'Liste des spécialités',
+    'list_departments' => 'Liste des départements',
+    'list_school_years' => 'Liste des années scolaires',
+    'list_classrooms' => 'Liste des salles de classe',
+    'list_formations' => 'Liste des niveaux de formation',
+    'list_pedagogiques' => 'Liste des niveaux pédagogiques',
+    
+    // Common actions
+    'add_trimester' => 'Ajouter un trimestre',
+    'add_speciality' => 'Ajouter une spécialité',
+    'add_department' => 'Ajouter un département',
+    'add_year' => 'Ajouter une année scolaire',
+    'add_classroom' => 'Ajouter une salle',
+    'add_formation' => 'Ajouter un niveau',
+    'add_pedagogique' => 'Ajouter',
+    
+    // Edit actions
+    'edit_class' => 'Modifier la classe',
+    'edit_subject' => 'Modifier la matière',
+    'edit_trimester' => 'Modifier le trimestre',
+    'edit_formation' => 'Modifier le niveau de formation',
+    'edit_year' => 'Modifier l\'année scolaire',
+    
+    // Common buttons
+    'edit' => 'Modifier',
+    'delete' => 'Supprimer',
+    'add' => 'Ajouter',
+    
+    // Column headers
+    'name' => 'Nom',
+    'code' => 'Code',
+    'actions' => 'Actions',
+    'year' => 'Année',
+    'semester' => 'Semestre',
+    'department' => 'Département',
+    'formation_level' => 'Niveau de formation',
+    'professor' => 'Professeur',
+    'material' => 'Matière',
+    
+    // Confirmation messages
+    'confirm_delete_teacher' => 'Voulez-vous vraiment supprimer cet enseignant?',
+    'confirm_delete_class' => 'Voulez-vous vraiment supprimer la classe',
+    'confirm_delete_subject' => 'Voulez-vous vraiment supprimer la matière',
+    'confirm_delete_trimester' => 'Voulez-vous vraiment supprimer le trimestre',
+    'confirm_delete_speciality' => 'Voulez-vous vraiment supprimer cette spécialité?',
+    'confirm_delete_department' => 'Voulez-vous vraiment supprimer ce département?',
+    'confirm_delete_year' => 'Voulez-vous vraiment supprimer cette année scolaire?',
+    'confirm_delete_classroom' => 'Voulez-vous vraiment supprimer cette salle de classe?',
+    'confirm_delete_formation' => 'Voulez-vous vraiment supprimer ce niveau de formation?',
+    'confirm_delete_pedagogique' => 'Voulez-vous vraiment supprimer le niveau',
+    'confirm_delete_schedule' => 'Voulez-vous vraiment supprimer cet emploi du temps ?',
+    'confirm_delete_assignment' => 'Voulez-vous vraiment supprimer cette affectation ?',
+    
+    // Button texts
+    'yes_delete' => 'Oui, supprimer',
+    'yes_delete_exclamation' => 'Oui, supprimer!',
+    
+    // Common page titles
+    'list_teachers' => 'Liste des enseignants',
+    'list_classes' => 'Liste des classes',
+    'list_subjects' => 'Liste des matières',
+    'list_schedule' => 'Liste des emplois du temps',
+    'list_trimesters' => 'Liste des trimestres',
+    'list_specialities' => 'Liste des spécialités',
+    'list_departments' => 'Liste des départements',
+    'list_school_years' => 'Liste des années scolaires',
+    'list_classrooms' => 'Liste des salles de classe',
+    'list_formations' => 'Liste des niveaux de formation',
+    'list_pedagogiques' => 'Liste des niveaux pédagogiques',
+    
+    // Common actions
+    'add_trimester' => 'Ajouter un trimestre',
+    'add_speciality' => 'Ajouter une spécialité',
+    'add_department' => 'Ajouter un département',
+    'add_year' => 'Ajouter une année scolaire',
+    'add_classroom' => 'Ajouter une salle',
+    'add_formation' => 'Ajouter un niveau',
+    'add_pedagogique' => 'Ajouter',
+    
+    // Edit actions
+    'edit_class' => 'Modifier la classe',
+    'edit_subject' => 'Modifier la matière',
+    'edit_trimester' => 'Modifier le trimestre',
+    'edit_formation' => 'Modifier le niveau de formation',
+    'edit_year' => 'Modifier l\'année scolaire',
+    
+    // Common buttons
+    'edit' => 'Modifier',
+    'delete' => 'Supprimer',
+    'add' => 'Ajouter',
+    
+    // Column headers  
+    'name' => 'Nom',
+    'code' => 'Code',
+    'actions' => 'Actions',
+    'year' => 'Année',
+    'semester' => 'Semestre',
+    'department' => 'Département',
+    'formation_level' => 'Niveau de formation',
+    'professor' => 'Professeur',
+    'material' => 'Matière',
+    
+    // Confirmation messages
+    'confirm_delete_teacher' => 'Voulez-vous vraiment supprimer cet enseignant?',
+    'confirm_delete_class' => 'Voulez-vous vraiment supprimer la classe',
+    'confirm_delete_subject' => 'Voulez-vous vraiment supprimer la matière',
+    'confirm_delete_trimester' => 'Voulez-vous vraiment supprimer le trimestre',
+    'confirm_delete_speciality' => 'Voulez-vous vraiment supprimer cette spécialité?',
+    'confirm_delete_department' => 'Voulez-vous vraiment supprimer ce département?',
+    'confirm_delete_year' => 'Voulez-vous vraiment supprimer cette année scolaire?',
+    'confirm_delete_classroom' => 'Voulez-vous vraiment supprimer cette salle de classe?',
+    'confirm_delete_formation' => 'Voulez-vous vraiment supprimer ce niveau de formation?',
+    'confirm_delete_pedagogique' => 'Voulez-vous vraiment supprimer le niveau',
+    'confirm_delete_schedule' => 'Voulez-vous vraiment supprimer cet emploi du temps ?',
+    'confirm_delete_assignment' => 'Voulez-vous vraiment supprimer cette affectation ?',
+    
+    // Button texts
+    'yes_delete' => 'Oui, supprimer',
+    'yes_delete_exclamation' => 'Oui, supprimer!',
 ];

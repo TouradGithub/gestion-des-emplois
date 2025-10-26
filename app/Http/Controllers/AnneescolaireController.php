@@ -73,31 +73,32 @@ class AnneescolaireController extends Controller
         return redirect()->route('web.anneescolaires.index')->with('success', 'Année scolaire ajoutée avec succès');
     }
 
-    public function edit($id)
+    public function edit(Anneescolaire $anneescolaire)
     {
-        $annee = Anneescolaire::findOrFail($id);
-        return view('anneescolaires.edit', compact('annee'));
+        return view('admin.anneescolaires.edit', compact('anneescolaire'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Anneescolaire $anneescolaire)
     {
-        $annee = Anneescolaire::findOrFail($id);
 
         $request->validate([
-            'annee' => 'required|string|unique:anneescolaires,annee,' . $annee->id,
+            'annee' => 'required|string|unique:anneescolaires,annee,' . $anneescolaire->id,
             'date_debut' => 'required|date',
             'date_fin' => 'required|date|after_or_equal:date_debut',
         ]);
 
-        $annee->update($request->only('annee', 'date_debut', 'date_fin', 'is_active'));
+        $anneescolaire->update($request->only('annee', 'date_debut', 'date_fin', 'is_active'));
 
         return redirect()->route('web.anneescolaires.index')->with('success', 'Année scolaire mise à jour avec succès');
     }
 
-    public function destroy($id)
+    public function destroy(Anneescolaire $anneescolaire)
     {
-        Anneescolaire::destroy($id);
-        return response()->json(['success' => true]);
+        $anneescolaire->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'Année scolaire supprimée avec succès'
+        ]);
     }
 
 
@@ -118,7 +119,7 @@ class AnneescolaireController extends Controller
         }
 
         $total = $query->count();
-        $teachers = $query->orderBy($sort, $order)
+        $anneescolaires = $query->orderBy($sort, $order)
             ->skip($offset)
             ->take($limit)
             ->get();
@@ -126,21 +127,21 @@ class AnneescolaireController extends Controller
         $rows = [];
         $no = $offset + 1;
 
-        foreach ($teachers as $teacher) {
+        foreach ($anneescolaires as $anneescolaire) {
             $operate = '';
 //            if (auth()->user()->can('teachers-edit')) {
-            $operate .= '<a class="btn btn-xs btn-gradient-primary editdata" data-id="' . $teacher->id . '"><i class="fa fa-edit"></i></a> ';
+            $operate .= '<a class="btn btn-xs btn-gradient-primary editdata" data-id="' . $anneescolaire->id . '"><i class="fa fa-edit"></i></a> ';
 //            }
 //            if (auth()->user()->can('teachers-delete')) {
-            $operate .= '<a class="btn btn-xs btn-gradient-danger deletedata" data-id="' . $teacher->id . '" data-url="' . route('web.teachers.destroy', $teacher->id) . '"><i class="fa fa-trash"></i></a>';
+            $operate .= '<a class="btn btn-xs btn-gradient-danger deletedata" data-id="' . $anneescolaire->id . '" data-url="' . route('web.anneescolaires.destroy', $anneescolaire->id) . '"><i class="fa fa-trash"></i></a>';
 //            }
-            $isActive = $teacher->is_active ? '<div class="btn btn-xs btn-primary">Oui</div>' : '<div class="btn btn-xs btn-danger">Non</div>';
+            $isActive = $anneescolaire->is_active ? '<div class="btn btn-xs btn-primary">Oui</div>' : '<div class="btn btn-xs btn-danger">Non</div>';
             $rows[] = [
-                'id' => $teacher->id,
+                'id' => $anneescolaire->id,
                 'no' => $no++,
-                'annee' => $teacher->annee,
-                'date_debut' => $teacher->date_debut,
-                'date_fin' => $teacher->date_fin,
+                'annee' => $anneescolaire->annee,
+                'date_debut' => $anneescolaire->date_debut,
+                'date_fin' => $anneescolaire->date_fin,
                 'is_active' =>$isActive,
                 'operate' => $operate,
             ];

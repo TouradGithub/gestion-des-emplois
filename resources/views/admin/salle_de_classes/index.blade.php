@@ -74,23 +74,35 @@
                 window.location.href = '/admin/salle-de-classes/' + row.id + '/edit';
             },
             'click .deletedata': function (e, value, row, index) {
-                if (confirm('Êtes-vous sûr de vouloir supprimer cette salle ?')) {
-                    fetch('/admin/salle-de-classes/' + row.id, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json',
-                        },
-                    })
+                Swal.fire({
+                    title: 'Êtes-vous sûr?',
+                    text: 'Voulez-vous vraiment supprimer cette salle de classe?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Oui, supprimer',
+                    cancelButtonText: 'Annuler'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch('{{ url("/admin/salle-de-classes") }}/' + row.id, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                            },
+                        })
                         .then(response => response.json())
                         .then(data => {
                             $('#table_list').bootstrapTable('refresh');
-                            alert(data.message);
+                            Swal.fire('Supprimé!', data.message || 'Salle supprimée avec succès', 'success');
                         })
                         .catch(error => {
-                            alert('Erreur lors de la suppression');
+                            console.error(error);
+                            Swal.fire('Erreur!', 'Erreur lors de la suppression', 'error');
                         });
-                }
+                    }
+                });
             }
         };
     </script>

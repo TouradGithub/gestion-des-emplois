@@ -29,7 +29,7 @@ class TeacherDashboardController extends Controller
         // الحصول على المواد التي يدرسها المعلم
         $subjectTeachers = $this->getTeacherSubjects($teacher->id);
         $departments = $this->getTeacherDepartments($teacher->id);
-        
+
         // إحصائيات الأستاذ
         $stats = $this->getTeacherStats($teacher);
         $stats['total_subjects'] = count($subjectTeachers);
@@ -98,9 +98,9 @@ class TeacherDashboardController extends Controller
 
         // التحقق من أن المعلم لديه هذه المادة
         $subjectTeacher = SubjectTeacher::with([
-                'subject.specialite.departement', 
-                'classe', 
-                'trimester', 
+                'subject.specialite.departement',
+                'classe',
+                'trimester',
                 'annee'
             ])
             ->where('id', $subjectTeacherId)

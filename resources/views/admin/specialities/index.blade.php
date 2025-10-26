@@ -4,10 +4,15 @@
     {{ __('sidebar.specialities') }}
 @endsection
 
+@section('css')
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@endsection
+
 @section('content')
     <div class="content-wrapper">
         <div class="page-header">
-            <h3 class="page-title">Liste des spécialités</h3>
+            <h3 class="page-title">{{ __('messages.list_specialities') }}</h3>
         </div>
 
         <div class="row">
@@ -18,7 +23,7 @@
                         <div class="row mb-3">
                             <div class="col text-end">
                                 <a href="{{ route('web.specialities.create') }}" class="btn btn-primary">
-                                    <i class="mdi mdi-plus"></i> Ajouter une spécialité
+                                    <i class="mdi mdi-plus"></i> {{ __('messages.add_speciality') }}
                                 </a>
                             </div>
                         </div>
@@ -64,10 +69,36 @@
 
         window.actionEvents = {
             'click .editdata': function (e, value, row, index) {
-                // Open edit modal or redirect
+                window.location.href = '/admin/specialities/' + row.id + '/edit';
             },
             'click .deletedata': function (e, value, row, index) {
-                // Handle deletion confirmation
+                Swal.fire({
+                    title: 'Êtes-vous sûr?',
+                    text: 'Voulez-vous vraiment supprimer cette spécialité?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Oui, supprimer!',
+                    cancelButtonText: 'Annuler'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: $(e.target).closest('a').data('url'),
+                            type: 'DELETE',
+                            data: {
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                Swal.fire('Supprimé!', 'La spécialité a été supprimée.', 'success');
+                                $('#table_list').bootstrapTable('refresh');
+                            },
+                            error: function(xhr) {
+                                Swal.fire('Erreur!', 'Une erreur est survenue lors de la suppression.', 'error');
+                            }
+                        });
+                    }
+                });
             }
         };
     </script>

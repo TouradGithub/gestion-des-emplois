@@ -70,14 +70,13 @@ class SalleDeClasseController extends Controller
         return redirect()->route('web.salle-de-classes.index')->with('success', 'Salle créée avec succès.');
     }
 
-    public function edit($id)
+    public function edit(SalleDeClasse $salle_de_class)
     {
-        $salle = SalleDeClasse::findOrFail($id);
         $formations = Niveauformation::all();
-        return view('admin.salle_de_classes.edit', compact('salle', 'formations'));
+        return view('admin.salle_de_classes.edit', compact('salle_de_class', 'formations'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, SalleDeClasse $salle_de_class)
     {
         $request->validate([
             'name' => 'required|string|max:255',
@@ -86,16 +85,14 @@ class SalleDeClasseController extends Controller
             'code' => 'required|string|max:255',
         ]);
 
-        $salle = SalleDeClasse::findOrFail($id);
-        $salle->update($request->all());
+        $salle_de_class->update($request->all());
 
-        return redirect()->route('salle-de-classes.index')->with('success', 'Salle mise à jour avec succès.');
+        return redirect()->route('web.salle-de-classes.index')->with('success', 'Salle mise à jour avec succès.');
     }
 
-    public function destroy($id)
+    public function destroy(SalleDeClasse $salle_de_class)
     {
-        $salle = SalleDeClasse::findOrFail($id);
-        $salle->delete();
+        $salle_de_class->delete();
 
         return response()->json(['message' => 'Salle supprimée avec succès.']);
     }

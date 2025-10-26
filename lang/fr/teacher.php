@@ -119,7 +119,7 @@ return [
     'department' => 'Département',
     'no_schedule_message' => 'Aucun emploi du temps défini pour vous dans ce département',
     'schedule_contact_message' => 'Pour ajouter votre emploi du temps',
-    
+
     // New subject-related translations
     'my_subjects' => 'Mes Matières',
     'subjects_description' => 'Les matières et classes que vous enseignez',

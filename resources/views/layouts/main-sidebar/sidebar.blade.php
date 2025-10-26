@@ -2,26 +2,12 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <ul class="nav">
         {{-- dashboard --}}
-{{--        <li class="nav-item">--}}
-{{--            <a class="nav-link" href="">--}}
-{{--                <span class="menu-title">{{ __('sidebar.dashboard') }}</span>--}}
-{{--                <i class="fa fa-home menu-icon"></i>--}}
-{{--            </a>--}}
-{{--        </li>--}}
-
-{{--        <li class="nav-item">--}}
-{{--            <a href="" class="nav-link">--}}
-{{--                <span class="menu-title">{{ __('sidebar.session_years') }}</span>--}}
-{{--                <i class="fa fa-calendar-o menu-icon"></i>--}}
-{{--            </a>--}}
-{{--        </li>--}}
-
-{{--        <li class="nav-item">--}}
-{{--            <a href="" class="nav-link">--}}
-{{--                <span class="menu-title">{{ __('sidebar.grades') }}</span>--}}
-{{--                <i class="fa fa-graduation-cap menu-icon"></i>--}}
-{{--            </a>--}}
-{{--        </li>--}}
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('web.dashboard') }}">
+                <span class="menu-title">{{ __('messages.dashboard') }}</span>
+                <i class="mdi mdi-view-dashboard menu-icon"></i>
+            </a>
+        </li>
 
         {{-- الأساتذة --}}
         <li class="nav-item">

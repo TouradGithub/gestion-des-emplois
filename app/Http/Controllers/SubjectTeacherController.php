@@ -72,7 +72,8 @@ class SubjectTeacherController extends Controller
         $teachers = Teacher::all();
         $trimesters = Trimester::all();
         $classes = Classe::all();
-        return view('admin.subjects_teachers.edit', compact('subjectTeacher', 'subjects', 'teachers', 'trimesters', 'classes'));
+        $annees = Anneescolaire::all();
+        return view('admin.subjects_teachers.edit', compact('subjectTeacher', 'subjects', 'teachers', 'trimesters', 'classes', 'annees'));
     }
 
     public function show(Request $request , $id)

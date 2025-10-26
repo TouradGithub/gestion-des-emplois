@@ -67,10 +67,38 @@
 
         window.actionEvents = {
             'click .editdata': function (e, value, row, index) {
-                // Open edit form
+                window.location.href = '{{ route("web.anneescolaires.edit", ":id") }}'.replace(':id', row.id);
             },
             'click .deletedata': function (e, value, row, index) {
-                // Handle delete
+                Swal.fire({
+                    title: 'Êtes-vous sûr?',
+                    text: 'Voulez-vous vraiment supprimer cette année scolaire?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Oui, supprimer',
+                    cancelButtonText: 'Annuler'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch('{{ route("web.anneescolaires.destroy", ":id") }}'.replace(':id', row.id), {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(res => res.json())
+                        .then(response => {
+                            $('#table_list').bootstrapTable('refresh');
+                            Swal.fire('Supprimé!', 'L\'année scolaire a été supprimée', 'success');
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            Swal.fire('Erreur!', 'Une erreur est survenue', 'error');
+                        });
+                    }
+                });
             }
         };
     </script>

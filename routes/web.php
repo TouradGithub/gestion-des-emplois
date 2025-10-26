@@ -27,6 +27,9 @@ Route::prefix('teacher')->name('teacher.')->middleware(['auth', 'user.type:teach
 
 
 Route::prefix('admin')->name('web.')->middleware(['auth', 'user.type:admin'])->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/stats', [App\Http\Controllers\AdminDashboardController::class, 'getStats'])->name('dashboard.stats');
+
     Route::resource('teachers', TeacherController::class);
     Route::get('teachers-list', [TeacherController::class, 'show'])->name('teachers.list');
     Route::resource('niveauformations', \App\Http\Controllers\NiveauformationController::class);
@@ -48,14 +51,9 @@ Route::prefix('admin')->name('web.')->middleware(['auth', 'user.type:admin'])->g
     Route::delete('departements/destroy/{id}', [DepartementController::class, 'destroy'])->name('departements.destroy');
 
 
-    Route::get('specialities', [SpecialityController::class, 'index'])->name('specialities.index');
-    Route::get('specialities/list', [SpecialityController::class, 'list'])->name('specialities.list'); // JSON for bootstrap-table
-    Route::get('specialities/create', [SpecialityController::class, 'create'])->name('specialities.create');
-    Route::post('specialities/store', [SpecialityController::class, 'store'])->name('specialities.store');
-    Route::get('specialities/{id}/edit', [SpecialityController::class, 'edit'])->name('specialities.edit');
-    Route::put('specialities/{id}', [SpecialityController::class, 'update'])->name('specialities.update');
-    Route::delete('specialities/{speciality}', [SpecialityController::class, 'destroy'])->name('specialities.destroy');
+    Route::get('specialities/list', [SpecialityController::class, 'list'])->name('specialities.list');
 
+    Route::resource('specialities', SpecialityController::class);
 
 
 

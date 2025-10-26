@@ -68,24 +68,85 @@ class TeacherController extends Controller
 
     public function edit(Teacher $teacher)
     {
-        return view('teachers.edit', compact('teacher'));
+        return view('admin.teachers.edit', compact('teacher'));
     }
 
     public function update(Request $request, Teacher $teacher)
     {
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:teachers,email,' . $teacher->id,
+            'name' => 'required|string|max:255',
+            'nni' => 'required|string|unique:teachers,nni,' . $teacher->id,
+            'phone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255|unique:teachers,email,' . $teacher->id,
+            'dob' => 'nullable|date',
+            'gender' => 'required|in:0,1',
+            'image' => 'nullable|image|max:2048',
         ]);
 
-        $teacher->update($request->all());
-        return redirect()->route('web.teachers.index')->with('success', 'تم تحديث معلومات الأستاذ');
+        DB::beginTransaction();
+
+        try {
+            $teacherData = $request->only(['name', 'nni', 'phone', 'email', 'dob', 'gender']);
+
+            // التعامل مع الصورة
+            if ($request->hasFile('image')) {
+                // حذف الصورة القديمة إذا كانت موجودة
+                if ($teacher->image && file_exists(storage_path('app/public/' . $teacher->image))) {
+                    unlink(storage_path('app/public/' . $teacher->image));
+                }
+
+                $path = $request->file('image')->store('teachers_images', 'public');
+                $teacherData['image'] = $path;
+            }
+
+            $teacher->update($teacherData);
+
+            // تحديث بيانات المستخدم المرتبط
+            if ($teacher->sys_user_id) {
+                $user = \App\Models\User::find($teacher->sys_user_id);
+                if ($user) {
+                    $user->update([
+                        'name' => $request->name,
+                        'email' => $request->email,
+                        'phone' => $request->phone,
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            return redirect()->route('web.teachers.index')->with('success', 'تم تحديث معلومات الأستاذ بنجاح');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors('حدث خطأ أثناء التحديث: ' . $e->getMessage())->withInput();
+        }
     }
 
     public function destroy(Teacher $teacher)
     {
-        $teacher->delete();
-        return redirect()->route('web.teachers.index')->with('success', 'تم حذف الأستاذ');
+        try {
+            // حذف المستخدم المرتبط بالأستاذ
+            if ($teacher->sys_user_id) {
+                $user = \App\Models\User::find($teacher->sys_user_id);
+                if ($user) {
+                    $user->delete();
+                }
+            }
+
+            $teacher->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'تم حذف الأستاذ بنجاح'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء الحذف: ' . $e->getMessage()
+            ], 500);
+        }
     }
     public function show(Request $request)
     {
@@ -120,7 +181,7 @@ class TeacherController extends Controller
                 $operate .= '<a class="btn btn-xs btn-gradient-primary editdata" data-id="' . $teacher->id . '"><i class="fa fa-edit"></i></a> ';
 //            }
 //            if (auth()->user()->can('teachers-delete')) {
-                $operate .= '<a class="btn btn-xs btn-gradient-danger deletedata" data-id="' . $teacher->id . '" data-url="' . route('web.teachers.destroy', $teacher->id) . '"><i class="fa fa-trash"></i></a>';
+                $operate .= '<a class="btn btn-xs btn-gradient-danger delete-teacher" data-id="' . $teacher->id . '" data-url="' . route('web.teachers.destroy', $teacher->id) . '"><i class="fa fa-trash"></i></a>';
 //            }
 
             $rows[] = [

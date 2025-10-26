@@ -43,9 +43,8 @@ class SpecialityController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(Speciality $speciality)
     {
-        $speciality = Speciality::findOrFail($id);
         $departements = Departement::all();
         $niveaux = Niveauformation::all();
         return view('admin.specialities.edit', compact('speciality', 'departements', 'niveaux'));
@@ -54,9 +53,8 @@ class SpecialityController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Speciality $speciality)
     {
-        $speciality = Speciality::findOrFail($id);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -102,7 +100,7 @@ class SpecialityController extends Controller
 
         $total = $query->count();
 
-        $departements = $query->orderBy($sort, $order)
+        $specialities = $query->orderBy($sort, $order)
             ->skip($offset)
             ->take($limit)
             ->get();
@@ -110,7 +108,7 @@ class SpecialityController extends Controller
         $rows = [];
         $no = $offset + 1;
 
-        foreach ($departements as $speciality) {
+        foreach ($specialities as $speciality) {
             $operate = '';
             $operate .= '<a class="btn btn-xs btn-gradient-primary editdata" data-id="' . $speciality->id . '"><i class="fa fa-edit"></i></a> ';
             $operate .= '<a class="btn btn-xs btn-gradient-danger deletedata" data-id="' . $speciality->id . '" data-url="' . route('web.specialities.destroy', $speciality->id) . '"><i class="fa fa-trash"></i></a>';

@@ -79,11 +79,11 @@
 
         window.actionEvents = {
             'click .editdata': function (e, value, row, index) {
-                window.location.href = `admin/emplois/${row.id}/edit`;
+                window.location.href = `/admin/emplois/${row.id}/edit`;
             },
             'click .deletedata': function (e, value, row, index) {
                 if (confirm('Voulez-vous vraiment supprimer cet emploi du temps ?')) {
-                    fetch(`admin/emplois/${row.id}`, {
+                    fetch(`/admin/emplois/${row.id}`, {
                         method: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',

@@ -252,7 +252,7 @@
                                 <div class="timeline-content">
                                     <h6 class="mb-1">{{ __('pointages.creation_initiale') }}</h6>
                                     <p class="text-muted mb-0">
-                                        {{ $pointage->created_at->locale(app()->getLocale())->diffForHumans() }}
+                                        {{ $pointage->created_at ? $pointage->created_at->locale(app()->getLocale())->diffForHumans() : __('messages.unknown') }}
                                         ({{ $pointage->created_at->format('d/m/Y H:i') }})
                                     </p>
                                 </div>
@@ -262,7 +262,7 @@
                                 <div class="timeline-content">
                                     <h6 class="mb-1">{{ __('pointages.derniere_modification') }}</h6>
                                     <p class="text-muted mb-0">
-                                        {{ $pointage->updated_at->locale(app()->getLocale())->diffForHumans() }}
+                                        {{ $pointage->updated_at ? $pointage->updated_at->locale(app()->getLocale())->diffForHumans() : __('messages.unknown') }}
                                         ({{ $pointage->updated_at->format('d/m/Y H:i') }})
                                     </p>
                                 </div>

@@ -27,7 +27,7 @@ class HomeController extends Controller
 
         // توجيه المستخدم حسب نوعه
         if ($user->isAdmin()) {
-            return view('home'); // الصفحة الرئيسية للمدير
+            return redirect()->route('web.dashboard'); // توجيه للدشبورد الجديد للأدمن
         } elseif ($user->isTeacher()) {
             return redirect()->route('teacher.dashboard');
         }

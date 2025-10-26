@@ -118,7 +118,7 @@ return [
     'department' => 'القسم',
     'no_schedule_message' => 'لا يوجد جدول زمني محدد لك في هذا القسم',
     'schedule_contact_message' => 'لإضافة الجدول الزمني الخاص بك',
-    
+
     // New subject-related translations
     'my_subjects' => 'مواد التدريس',
     'subjects_description' => 'المواد والأقسام الدراسية التي تدرسها',

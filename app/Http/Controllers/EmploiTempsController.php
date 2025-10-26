@@ -302,7 +302,19 @@ class EmploiTempsController extends Controller
 
     public function edit(EmploiTemps $emploi)
     {
-//        return view('admin.emplois.edit', compact('emploi'));
+        $classes = \App\Models\Classe::all();
+        $subjects = \App\Models\Subject::all();
+        $teachers = \App\Models\Teacher::all();
+        $trimesters = \App\Models\Trimester::all();
+        $anneescolaires = \App\Models\Anneescolaire::all();
+        $jours = \App\Models\Jour::all();
+        $horaires = \App\Models\Horaire::all();
+
+        // Load the related horaires for this emploi
+        $emploi->load('ref_horaires');
+        $selectedHoraires = $emploi->ref_horaires->pluck('id')->toArray();
+
+        return view('admin.emplois.edit', compact('emploi', 'classes', 'subjects', 'teachers', 'trimesters', 'anneescolaires', 'jours', 'horaires', 'selectedHoraires'));
     }
 
     public function update(Request $request, EmploiTemps $emploi)
@@ -314,12 +326,17 @@ class EmploiTempsController extends Controller
             'trimester_id' => 'required',
             'annee_id' => 'required',
             'jour_id' => 'required',
-            'horaire_id' => 'required',
+            'horaires' => 'required|array',
+            'horaires.*' => 'exists:sct_ref_horaires,id',
         ]);
 
-        $emploi->update($request->all());
+        // Update the basic fields
+        $emploi->update($request->except('horaires'));
 
-        return redirect()->route('web.emplois.index')->with('success', 'Emploi du temps modifié.');
+        // Sync the horaires relationship (this will remove old ones and add new ones)
+        $emploi->ref_horaires()->sync($request->horaires);
+
+        return redirect()->route('web.emplois.index')->with('success', 'Emploi du temps modifié avec succès.');
     }
 
     public function destroy(EmploiTemps $emploi)

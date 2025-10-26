@@ -1,6 +1,10 @@
 @extends('layouts.masters.master')
 
-@section('title', 'Liste des Classes')
+@section('title', __('messages.list_classes'))
+
+@section('css')
+<meta name="csrf-token" content="{{ csrf_token() }}">
+@endsection
 
 @section('content')
     <div class="content-wrapper">
@@ -21,7 +25,7 @@
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <a href="{{ route('web.classes.create') }}" class="btn btn-gradient-primary">
-                <i class="mdi mdi-plus"></i> Ajouter Classe
+                <i class="mdi mdi-plus"></i> {{ __('messages.add_class') }}
             </a>
         </div>
 
@@ -65,17 +69,23 @@
                         <i class="mdi mdi-calendar me-1"></i>{{ $classe->annee->annee }}
                     </td>
                     <td>
-                        @if($classe->emplois)
-                            <a href="{{ route('web.emplois.showEmploi', $classe->id) }}" class="btn btn-info btn-sm">
-                                <i class="mdi mdi-calendar-clock"></i> Voir Emploi
-                            </a>
-                        @else
-                            <span class="text-muted">-</span>
-                        @endif
-                        <a href="{{route('web.classes.delete' , $classe->id )}}" class="btn btn-danger btn-sm ms-1">
-                            <i class="mdi mdi-delete"></i>
-                        </a>
+                        <div class="btn-group" role="group">
+                            @if($classe->emplois)
+                                <a href="{{ route('web.emplois.showEmploi', $classe->id) }}" class="btn btn-info btn-sm">
+                                    <i class="mdi mdi-calendar-clock"></i> Emploi
+                                </a>
+                            @endif
 
+                            <a href="{{ route('web.classes.edit', $classe->id) }}" class="btn btn-primary btn-sm">
+                                <i class="mdi mdi-pencil"></i> {{ __('messages.edit') }}
+                            </a>
+
+                            <button type="button" class="btn btn-danger btn-sm delete-class"
+                                    data-id="{{ $classe->id }}"
+                                    data-name="{{ $classe->nom }}">
+                                <i class="mdi mdi-delete"></i> {{ __('messages.delete') }}
+                            </button>
+                        </div>
                     </td>
                 </tr>
             @endforeach
@@ -85,4 +95,59 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('script')
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+$(document).ready(function() {
+    $('.delete-class').click(function() {
+        const classId = $(this).data('id');
+        const className = $(this).data('name');
+        const row = $(this).closest('tr');
+
+        Swal.fire({
+            title: 'Êtes-vous sûr?',
+            text: `{{ __('messages.confirm_delete_class') }} "${className}"?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: '{{ __('messages.yes_delete_exclamation') }}',
+            cancelButtonText: 'Annuler'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/admin/classes/${classId}`,
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        // Remove the row with animation
+                        row.fadeOut(300, function() {
+                            $(this).remove();
+                        });
+                        
+                        Swal.fire(
+                            'Supprimé!',
+                            'La classe a été supprimée avec succès.',
+                            'success'
+                        );
+                    },
+                    error: function(xhr) {
+                        Swal.fire(
+                            'Erreur!',
+                            'Une erreur est survenue lors de la suppression.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    });
+});
+</script>
 @endsection

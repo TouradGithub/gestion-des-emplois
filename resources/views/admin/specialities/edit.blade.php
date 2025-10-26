@@ -1,8 +1,18 @@
-@extends('layouts.app')
+@extends('layouts.masters.master')
+
+@section('title', 'تعديل التخصص')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
+    <div class="content-wrapper">
+        <div class="page-header">
+            <h3 class="page-title">تعديل التخصص</h3>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">{{ __('تعديل التخصص') }}</div>
