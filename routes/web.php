@@ -96,6 +96,9 @@ Route::prefix('admin')->name('web.')->middleware(['auth', 'user.type:admin'])->g
     Route::get('subjects_teachers/list', [\App\Http\Controllers\SubjectTeacherController::class,'listSubjectTeacher'])->name('subjects_teachers.list');
     Route::resource('subjects_teachers', \App\Http\Controllers\SubjectTeacherController::class);
 
+    // Students Management Routes
+    Route::resource('students', \App\Http\Controllers\Admin\StudentController::class);
+
     // راوتات إدارة الحضور - Pointages Routes
     Route::prefix('pointages')->name('pointages.')->group(function () {
         Route::get('/', [PointageController::class, 'index'])->name('index');

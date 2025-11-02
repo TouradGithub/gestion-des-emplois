@@ -104,10 +104,10 @@
                                         {{ __('teacher.department') }}: {{ $subjectTeacher->subject->specialite->departement->name ?? 'N/A' }}
                                     </p>
                                     <p class="card-text text-muted small">
-                                        {{ __('teacher.class') }}: {{ $subjectTeacher->classe->name ?? 'N/A' }}
+                                        {{ __('teacher.class') }}: {{ $subjectTeacher->classe->nom ?? 'N/A' }}
                                     </p>
                                     <div class="d-flex gap-2">
-                                        <a href="{{ route('teacher.schedule', $subjectTeacher->id) }}"
+                                        <a href="{{ route('teacher.schedule', $subjectTeacher->classe->id) }}"
                                            class="btn btn-primary btn-sm">
                                             <i class="mdi mdi-calendar-clock"></i>
                                             {{ __('teacher.view_schedule') }}

@@ -37,7 +37,7 @@ class EmploiTemps  extends Model
     public function subject()     { return $this->belongsTo(Subject::class); }
     public function teacher()     { return $this->belongsTo(Teacher::class); }
     public function trimester()   { return $this->belongsTo(Trimester::class); }
-    public function annee()       { return $this->belongsTo(AnneeScolaire::class, 'annee_id'); }
+    public function annee()       { return $this->belongsTo(Anneescolaire::class, 'annee_id'); }
     public function jour()        {
         return $this->belongsTo(Jour::class ,'jour_id');
     }

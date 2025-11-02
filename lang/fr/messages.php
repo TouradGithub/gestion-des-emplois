@@ -68,7 +68,7 @@ return [
     'add_subject' => 'Ajouter une matière',
     'add_schedule' => 'Ajouter un emploi du temps',
     'edit_teacher' => 'Modifier le professeur',
-    
+
     // Form labels for emplois edit
     'edit_schedule' => 'Modifier l\'emploi du temps',
     'class' => 'Classe',
@@ -88,12 +88,12 @@ return [
     'ctrl_select_help' => 'Maintenez Ctrl pour sélectionner plusieurs horaires',
     'update' => 'Modifier',
     'modify' => 'Modifier',
-    
+
     // Common form elements
         // Common form elements
     'required_field' => 'Ce champ est obligatoire',
     'select_option' => 'Sélectionner une option',
-    
+
     // Common page titles
     'list_teachers' => 'Liste des enseignants',
     'list_classes' => 'Liste des classes',
@@ -106,7 +106,7 @@ return [
     'list_classrooms' => 'Liste des salles de classe',
     'list_formations' => 'Liste des niveaux de formation',
     'list_pedagogiques' => 'Liste des niveaux pédagogiques',
-    
+
     // Common actions
     'add_trimester' => 'Ajouter un trimestre',
     'add_speciality' => 'Ajouter une spécialité',
@@ -115,19 +115,19 @@ return [
     'add_classroom' => 'Ajouter une salle',
     'add_formation' => 'Ajouter un niveau',
     'add_pedagogique' => 'Ajouter',
-    
+
     // Edit actions
     'edit_class' => 'Modifier la classe',
     'edit_subject' => 'Modifier la matière',
     'edit_trimester' => 'Modifier le trimestre',
     'edit_formation' => 'Modifier le niveau de formation',
     'edit_year' => 'Modifier l\'année scolaire',
-    
+
     // Common buttons
     'edit' => 'Modifier',
     'delete' => 'Supprimer',
     'add' => 'Ajouter',
-    
+
     // Column headers
     'name' => 'Nom',
     'code' => 'Code',
@@ -138,7 +138,7 @@ return [
     'formation_level' => 'Niveau de formation',
     'professor' => 'Professeur',
     'material' => 'Matière',
-    
+
     // Confirmation messages
     'confirm_delete_teacher' => 'Voulez-vous vraiment supprimer cet enseignant?',
     'confirm_delete_class' => 'Voulez-vous vraiment supprimer la classe',
@@ -152,11 +152,11 @@ return [
     'confirm_delete_pedagogique' => 'Voulez-vous vraiment supprimer le niveau',
     'confirm_delete_schedule' => 'Voulez-vous vraiment supprimer cet emploi du temps ?',
     'confirm_delete_assignment' => 'Voulez-vous vraiment supprimer cette affectation ?',
-    
+
     // Button texts
     'yes_delete' => 'Oui, supprimer',
     'yes_delete_exclamation' => 'Oui, supprimer!',
-    
+
     // Common page titles
     'list_teachers' => 'Liste des enseignants',
     'list_classes' => 'Liste des classes',
@@ -169,7 +169,7 @@ return [
     'list_classrooms' => 'Liste des salles de classe',
     'list_formations' => 'Liste des niveaux de formation',
     'list_pedagogiques' => 'Liste des niveaux pédagogiques',
-    
+
     // Common actions
     'add_trimester' => 'Ajouter un trimestre',
     'add_speciality' => 'Ajouter une spécialité',
@@ -178,20 +178,20 @@ return [
     'add_classroom' => 'Ajouter une salle',
     'add_formation' => 'Ajouter un niveau',
     'add_pedagogique' => 'Ajouter',
-    
+
     // Edit actions
     'edit_class' => 'Modifier la classe',
     'edit_subject' => 'Modifier la matière',
     'edit_trimester' => 'Modifier le trimestre',
     'edit_formation' => 'Modifier le niveau de formation',
     'edit_year' => 'Modifier l\'année scolaire',
-    
+
     // Common buttons
     'edit' => 'Modifier',
     'delete' => 'Supprimer',
     'add' => 'Ajouter',
-    
-    // Column headers  
+
+    // Column headers
     'name' => 'Nom',
     'code' => 'Code',
     'actions' => 'Actions',
@@ -201,7 +201,7 @@ return [
     'formation_level' => 'Niveau de formation',
     'professor' => 'Professeur',
     'material' => 'Matière',
-    
+
     // Confirmation messages
     'confirm_delete_teacher' => 'Voulez-vous vraiment supprimer cet enseignant?',
     'confirm_delete_class' => 'Voulez-vous vraiment supprimer la classe',
@@ -215,8 +215,53 @@ return [
     'confirm_delete_pedagogique' => 'Voulez-vous vraiment supprimer le niveau',
     'confirm_delete_schedule' => 'Voulez-vous vraiment supprimer cet emploi du temps ?',
     'confirm_delete_assignment' => 'Voulez-vous vraiment supprimer cette affectation ?',
-    
+
     // Button texts
     'yes_delete' => 'Oui, supprimer',
     'yes_delete_exclamation' => 'Oui, supprimer!',
+
+    // Student management
+    'list_students' => 'Liste des étudiants',
+    'add_student' => 'Ajouter un étudiant',
+    'add_new_student' => 'Ajouter un nouvel étudiant',
+    'add_first_student' => 'Ajouter le premier étudiant',
+    'save_student' => 'Enregistrer l\'étudiant',
+    'edit_student' => 'Modifier l\'étudiant',
+    'show_student' => 'Afficher l\'étudiant',
+    'student_details' => 'Détails de l\'étudiant',
+    'no_students_found' => 'Aucun étudiant trouvé',
+    'confirm_delete_student' => 'Voulez-vous vraiment supprimer l\'étudiant',
+    'fill_student_information' => 'Remplissez les informations de l\'étudiant',
+
+    // Student fields
+    'nni' => 'NNI',
+    'fullname' => 'Nom complet',
+    'parent_name' => 'Nom du parent',
+    'student_image' => 'Photo de l\'étudiant',
+    'enter_nni' => 'Saisir le NNI',
+    'enter_fullname' => 'Saisir le nom complet',
+    'enter_parent_name' => 'Saisir le nom du parent',
+    'enter_phone' => 'Saisir le téléphone',
+    'image_help' => 'Formats acceptés: JPG, PNG, GIF (Max: 2MB)',
+
+    // Account creation
+    'account_creation_notice' => 'Création automatique de compte',
+    'account_creation_details' => 'Un compte utilisateur sera automatiquement créé pour cet étudiant avec le NNI comme nom d\'utilisateur et mot de passe.',
+
+    // Common messages
+    'image' => 'Photo',
+    'show' => 'Afficher',
+    'are_you_sure' => 'Êtes-vous sûr?',
+    'deleted' => 'Supprimé',
+    'delete_error' => 'Erreur lors de la suppression',
+    'error' => 'Erreur',
+    'update_student_information' => 'Mettre à jour les informations de l\'étudiant',
+    'current_image' => 'Photo actuelle',
+    'update_image' => 'Mettre à jour la photo',
+    'new_image_preview' => 'Aperçu de la nouvelle photo',
+    'no_image_uploaded' => 'Aucune photo téléchargée',
+    'account_info' => 'Informations du compte',
+    'user_email' => 'Email du compte',
+    'last_login' => 'Dernière connexion',
+    'update_student' => 'Mettre à jour l\'étudiant',
 ];

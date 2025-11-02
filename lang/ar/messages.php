@@ -184,4 +184,49 @@ return [
     // Button texts
     'yes_delete' => 'نعم، احذف',
     'yes_delete_exclamation' => 'نعم، احذف!',
+    
+    // Student management
+    'list_students' => 'قائمة الطلاب',
+    'add_student' => 'إضافة طالب',
+    'add_new_student' => 'إضافة طالب جديد',
+    'add_first_student' => 'إضافة أول طالب',
+    'save_student' => 'حفظ الطالب',
+    'edit_student' => 'تعديل الطالب',
+    'show_student' => 'عرض الطالب',
+    'student_details' => 'تفاصيل الطالب',
+    'no_students_found' => 'لم يتم العثور على طلاب',
+    'confirm_delete_student' => 'هل تريد حقا حذف الطالب',
+    'fill_student_information' => 'املأ معلومات الطالب',
+    
+    // Student fields
+    'nni' => 'رقم التعريف الوطني',
+    'fullname' => 'الاسم الكامل',
+    'parent_name' => 'اسم ولي الأمر',
+    'student_image' => 'صورة الطالب',
+    'enter_nni' => 'أدخل رقم التعريف الوطني',
+    'enter_fullname' => 'أدخل الاسم الكامل',
+    'enter_parent_name' => 'أدخل اسم ولي الأمر',
+    'enter_phone' => 'أدخل رقم الهاتف',
+    'image_help' => 'الصيغ المقبولة: JPG، PNG، GIF (الحد الأقصى: 2 ميجابايت)',
+    
+    // Account creation
+    'account_creation_notice' => 'إنشاء حساب تلقائي',
+    'account_creation_details' => 'سيتم إنشاء حساب مستخدم تلقائياً لهذا الطالب برقم التعريف الوطني كاسم مستخدم وكلمة مرور.',
+    
+    // Common messages
+    'image' => 'الصورة',
+    'show' => 'عرض',
+    'are_you_sure' => 'هل أنت متأكد؟',
+    'deleted' => 'تم الحذف',
+    'delete_error' => 'خطأ في الحذف',
+    'error' => 'خطأ',
+    'update_student_information' => 'تحديث معلومات الطالب',
+    'current_image' => 'الصورة الحالية',
+    'update_image' => 'تحديث الصورة',
+    'new_image_preview' => 'معاينة الصورة الجديدة',
+    'no_image_uploaded' => 'لم يتم رفع صورة',
+    'account_info' => 'معلومات الحساب',
+    'user_email' => 'بريد الحساب الإلكتروني',
+    'last_login' => 'آخر دخول',
+    'update_student' => 'تحديث الطالب',
 ];

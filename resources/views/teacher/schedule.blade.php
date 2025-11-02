@@ -42,7 +42,7 @@
                                 </p>
                                 <p class="text-muted mb-0">
                                     <i class="mdi mdi-google-classroom me-1"></i>
-                                    <strong>{{ __('teacher.class') }}:</strong> {{ $subjectTeacher->classe->name ?? 'N/A' }}
+                                    <strong>{{ __('teacher.class') }}:</strong> {{ $subjectTeacher->classe->nom ?? 'N/A' }}
                                 </p>
                             </div>
                         </div>

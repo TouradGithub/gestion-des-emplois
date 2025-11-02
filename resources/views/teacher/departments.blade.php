@@ -28,8 +28,8 @@
                                     <div class="card-body">
                                         <h6>{{ $subjectTeacher->subject->name ?? 'N/A' }}</h6>
                                         <p><strong>{{ __('teacher.department') }}:</strong> {{ $subjectTeacher->subject->specialite->departement->name ?? 'N/A' }}</p>
-                                        <p><strong>{{ __('teacher.class') }}:</strong> {{ $subjectTeacher->classe->name ?? 'N/A' }}</p>
-                                        <a href="{{ route('teacher.schedule', $subjectTeacher->id) }}" class="btn btn-primary btn-sm">
+                                        <p><strong>{{ __('teacher.class') }}:</strong> {{ $subjectTeacher->classe->nom ?? 'N/A' }}</p>
+                                        <a href="{{ route('teacher.schedule',  $subjectTeacher->classe->id) }}" class="btn btn-primary btn-sm">
                                             {{ __('teacher.view_schedule') }}
                                         </a>
                                     </div>

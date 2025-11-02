@@ -33,4 +33,11 @@ class Classe extends Model
         return $this->hasMany(EmploiTemps::class, 'class_id');
     }
 
+    /**
+     * Get the students that belong to this class.
+     */
+    public function students()
+    {
+        return $this->hasMany(Student::class, 'class_id');
+    }
 }

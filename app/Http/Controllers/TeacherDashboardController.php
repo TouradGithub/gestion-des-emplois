@@ -28,6 +28,7 @@ class TeacherDashboardController extends Controller
 
         // الحصول على المواد التي يدرسها المعلم
         $subjectTeachers = $this->getTeacherSubjects($teacher->id);
+        // dd( $subjectTeachers);
         $departments = $this->getTeacherDepartments($teacher->id);
 
         // إحصائيات الأستاذ
@@ -88,7 +89,7 @@ class TeacherDashboardController extends Controller
         return array_values($departments);
     }
 
-    public function showSchedule($subjectTeacherId)
+    public function showSchedule($subjectTeacherId )
     {
         $teacher = auth()->user()->teacher;
 
@@ -97,28 +98,39 @@ class TeacherDashboardController extends Controller
         }
 
         // التحقق من أن المعلم لديه هذه المادة
-        $subjectTeacher = SubjectTeacher::with([
+        // $subjectTeacher = SubjectTeacher::with([
+        //         'subject.specialite.departement',
+        //         'classe',
+        //         'trimester',
+        //         'annee'
+        //     ])
+        //     ->where('id', $subjectTeacherId)
+        //     ->where('teacher_id', $teacher->id)
+        //     ->first();
+
+        // if (!$subjectTeacher) {
+        //     return redirect()->route('teacher.departments')->with('error', __('teacher.access_denied'));
+        // }
+
+        // جلب الجدول الزمني لهذه المادة والفصل
+        $schedules = EmploiTemps::with(['classe', 'subject', 'teacher', 'horaire', 'jour', 'salle'])
+                    ->where('teacher_id', $teacher->id)
+                    // ->where('subject_id', $subjectTeacher->subject_id)
+                    ->where('class_id', $subjectTeacherId)
+                    ->orderBy('jour_id')
+                    ->get();
+
+                       $subjectTeacher = SubjectTeacher::with([
                 'subject.specialite.departement',
                 'classe',
                 'trimester',
                 'annee'
             ])
-            ->where('id', $subjectTeacherId)
+            ->where('class_id', $subjectTeacherId)
             ->where('teacher_id', $teacher->id)
             ->first();
 
-        if (!$subjectTeacher) {
-            return redirect()->route('teacher.departments')->with('error', __('teacher.access_denied'));
-        }
 
-        // جلب الجدول الزمني لهذه المادة والفصل
-        $schedules = EmploiTemps::with(['classe', 'subject', 'teacher', 'horaire', 'jour', 'salle'])
-                    ->where('teacher_id', $teacher->id)
-                    ->where('subject_id', $subjectTeacher->subject_id)
-                    ->where('classe_id', $subjectTeacher->class_id)
-                    ->orderBy('jour_id')
-                    ->orderBy('horaire_id')
-                    ->get();
 
         return view('teacher.schedule', compact('schedules', 'subjectTeacher', 'teacher'));
     }

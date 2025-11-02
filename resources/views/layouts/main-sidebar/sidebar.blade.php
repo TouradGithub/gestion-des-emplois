@@ -73,6 +73,13 @@
         </li>
 
         <li class="nav-item">
+            <a href="{{ route('web.students.index') }}" class="nav-link">
+                <span class="menu-title">{{ __('messages.list_students') }}</span>
+                <i class="mdi mdi-account-multiple menu-icon"></i>
+            </a>
+        </li>
+
+        <li class="nav-item">
             <a href="{{ route('web.emplois.index') }}" class="nav-link">
                 <span class="menu-title">Emploi du Temps</span>
                 <i class="fa fa-chalkboard-teacher menu-icon"></i>
