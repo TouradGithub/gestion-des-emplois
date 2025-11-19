@@ -112,7 +112,7 @@
                                     </label>
                                     <div class="form-check-container d-flex gap-3">
                                         <div class="form-check">
-                                            <input class="form-check-input"
+                                            <input class="form-check-input "
                                                    type="radio"
                                                    name="statut"
                                                    id="statut_present"
@@ -242,7 +242,7 @@
 </div>
 @endsection
 
-@push('scripts')
+@section('js')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const teacherSelect = document.getElementById('teacher_id');
@@ -251,8 +251,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const coursInfo = document.getElementById('cours-info');
 
     function loadEmploisForTeacher() {
+
         const teacherId = teacherSelect.value;
         const date = dateInput.value;
+     
 
         if (!teacherId || !date) {
             emploiSelect.disabled = true;
@@ -343,7 +345,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-@endpush
+@endSection
 
 @push('styles')
 <style>
