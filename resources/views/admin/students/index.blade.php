@@ -146,7 +146,7 @@ $(document).ready(function() {
                 });
 
                 $.ajax({
-                    url: `/web/students/${studentId}`,
+                    url: `/admin/students/${studentId}`,
                     type: 'DELETE',
                     success: function(response) {
                         if (response.success) {
