@@ -85,7 +85,7 @@
                                     Modifier
                                 </button>
                                 <a href="{{ route('web.salle-de-classes.index') }}" class="btn btn-secondary">
-                                    إلغاء
+                                Annuler
                                 </a>
                             </div>
                         </div>

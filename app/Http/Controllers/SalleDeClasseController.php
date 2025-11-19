@@ -78,12 +78,14 @@ class SalleDeClasseController extends Controller
 
     public function update(Request $request, SalleDeClasse $salle_de_class)
     {
+        
         $request->validate([
             'name' => 'required|string|max:255',
-            'caoacity' => 'required|integer|min:0',
+            'capacity' => 'required|integer|min:0',
             'formation_id' => 'nullable',
             'code' => 'required|string|max:255',
         ]);
+
 
         $salle_de_class->update($request->all());
 
