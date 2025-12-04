@@ -7,6 +7,8 @@ use App\Models\Departement;
 use App\Models\EmploiTemps;
 use App\Models\SubjectTeacher;
 use App\Models\Pointage;
+use App\Models\Anneescolaire;
+use App\Models\Trimester;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -28,14 +30,16 @@ class TeacherDashboardController extends Controller
 
         // الحصول على المواد التي يدرسها المعلم
         $subjectTeachers = $this->getTeacherSubjects($teacher->id);
-        // dd( $subjectTeachers);
         $departments = $this->getTeacherDepartments($teacher->id);
 
         // إحصائيات الأستاذ
         $stats = $this->getTeacherStats($teacher);
         $stats['total_subjects'] = count($subjectTeachers);
 
-        return view('teacher.dashboard', compact('teacher', 'subjectTeachers', 'departments', 'stats'));
+        // الحصول على ملخص الساعات لكل فصل
+        $hoursSummary = $this->getTeacherHoursSummary($teacher->id);
+
+        return view('teacher.dashboard', compact('teacher', 'subjectTeachers', 'departments', 'stats', 'hoursSummary'));
     }
 
     public function departments()
@@ -214,17 +218,68 @@ class TeacherDashboardController extends Controller
             ->whereYear('date_pointage', Carbon::now()->year)
             ->count();
 
-        // حساب إجمالي الساعات
-        $totalHours = EmploiTemps::where('teacher_id', $teacher->id)->count() * 2; // افتراض ساعتين لكل حصة
+        // حساب إجمالي الساعات من emploi_temps
+        $anneeId = Anneescolaire::where('is_active', 1)->value('id');
+        $totalHoursAssigned = SubjectTeacher::where('teacher_id', $teacher->id)
+            ->where('annee_id', $anneeId)
+            ->sum('heures_semaine') ?? 0;
+
+        // حساب الساعات الفعلية من emploi_temps
+        $totalHoursActual = 0;
+        $assignments = SubjectTeacher::where('teacher_id', $teacher->id)
+            ->where('annee_id', $anneeId)
+            ->get();
+
+        foreach ($assignments as $assignment) {
+            $totalHoursActual += $assignment->heures_reelles;
+        }
 
         // حساب معدل الحضور
-        $totalWorkDays = Carbon::now()->format('j'); // أيام العمل في الشهر الحالي
+        $totalWorkDays = Carbon::now()->format('j');
         $attendanceRate = $totalWorkDays > 0 ? round(($thisMonthPointages / $totalWorkDays) * 100, 1) : 0;
 
+        // حساب taux الإجمالي
+        $tauxGlobal = $totalHoursAssigned > 0 ? round(($totalHoursActual / $totalHoursAssigned) * 100, 1) : 0;
+
         return [
-            'total_hours' => $totalHours,
+            'total_hours_assigned' => $totalHoursAssigned,
+            'total_hours_actual' => $totalHoursActual,
+            'total_hours' => $totalHoursActual, // للتوافق مع الإصدار القديم
             'this_month_pointages' => $thisMonthPointages,
-            'attendance_rate' => $attendanceRate
+            'attendance_rate' => $attendanceRate,
+            'taux_global' => $tauxGlobal,
         ];
+    }
+
+    /**
+     * Get hours summary per class for teacher
+     */
+    private function getTeacherHoursSummary($teacherId)
+    {
+        $anneeId = Anneescolaire::where('is_active', 1)->value('id');
+
+        $assignments = SubjectTeacher::where('teacher_id', $teacherId)
+            ->where('annee_id', $anneeId)
+            ->with(['classe', 'subject', 'trimester'])
+            ->get();
+
+        $summary = [];
+
+        foreach ($assignments as $assignment) {
+            $summary[] = [
+                'id' => $assignment->id,
+                'classe' => $assignment->classe->nom ?? '-',
+                'subject' => $assignment->subject->name ?? '-',
+                'trimester' => $assignment->trimester->name ?? '-',
+                'heures_semaine' => $assignment->heures_semaine ?? 0,
+                'heures_reelles' => $assignment->heures_reelles,
+                'heures_restantes' => $assignment->heures_restantes,
+                'taux' => $assignment->taux,
+                'statut' => $assignment->statut_heures,
+                'is_depasse' => $assignment->is_depasse,
+            ];
+        }
+
+        return $summary;
     }
 }

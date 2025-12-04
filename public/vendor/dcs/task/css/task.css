@@ -1,0 +1,33 @@
+
+/*task*/
+.todo-item {
+    cursor: pointer;
+    animation: fadeIn 0.5s linear;
+    animation-fill-mode: both;
+    position: relative;
+    padding: .8rem 1rem .4rem .5rem !important;
+    border-top: 1px solid #E4E5EC !important;
+    background-color: white;
+}
+
+.todo-item:hover {
+    box-shadow: 0 0 10px 0 rgba(58, 70, 93, 0.25);
+    border-color: transparent;
+    opacity: 1;
+    transition: all .35s ease 0s !important;
+}
+
+.todo-item .todo-title-wrapper .todo-title-area .todo-title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #1E1E1E;
+}
+
+.todo-fixed-search input {
+    border: 0;
+    font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+
+
+

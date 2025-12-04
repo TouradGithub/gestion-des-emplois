@@ -79,16 +79,27 @@ Route::prefix('admin')->name('web.')->middleware(['auth', 'user.type:admin'])->g
 
     Route::resource('classes', ClasseController::class);
     Route::get('classes/delete/{id}', [ClasseController::class,'destroy'])->name('classes.delete');
-    // الراوتات المخصصة أولاً قبل resource routes
+    // Routes personnalisées avant resource routes
     Route::get('/emplois/get-teachers', [EmploiTempsController::class, 'getTeachers'])->name('emplois.getTeachers');
     Route::get('/emplois/get-subjects', [EmploiTempsController::class, 'getSubjects'])->name('emplois.getSubjects');
     Route::get('/emplois/get-teachers-by-department', [EmploiTempsController::class, 'getTeachersByDepartment'])->name('emplois.getTeachersByDepartment');
     Route::post('/emplois/get-trimesters', [EmploiTempsController::class, 'getTrimesters'])->name('emplois.getTrimesters');
     Route::get('emplois/list', [EmploiTempsController::class, 'show'])->name('emplois.list');
+    Route::get('emplois/stats', [EmploiTempsController::class, 'getStats'])->name('emplois.stats');
+    Route::get('emplois/filters', [EmploiTempsController::class, 'getFilters'])->name('emplois.filters');
     Route::get('emplois/showEmploi/{classId}', [EmploiTempsController::class, 'showEmploi'])->name('emplois.showEmploi');
 
-    // resource route أخيراً
+    // Routes du calendrier
+    Route::get('emplois/calendar/reference-data', [EmploiTempsController::class, 'getReferenceData'])->name('emplois.calendar.referenceData');
+    Route::get('emplois/calendar/events', [EmploiTempsController::class, 'getCalendarEvents'])->name('emplois.calendar.events');
+    Route::get('emplois/calendar/event/{id}', [EmploiTempsController::class, 'getCalendarEvent'])->name('emplois.calendar.event');
+    Route::post('emplois/calendar/event', [EmploiTempsController::class, 'storeCalendarEvent'])->name('emplois.calendar.store');
+    Route::put('emplois/calendar/event/{id}', [EmploiTempsController::class, 'updateCalendarEvent'])->name('emplois.calendar.update');
+    Route::delete('emplois/calendar/event/{id}', [EmploiTempsController::class, 'deleteCalendarEvent'])->name('emplois.calendar.delete');
+
+    // Resource route
     Route::resource('emplois', EmploiTempsController::class);
+    Route::get('show-calendrier', [EmploiTempsController::class, 'showCalender'])->name('emplois.showCalender');
 
     Route::get('classes/list', [ClasseController::class, 'list'])->name('classes.list');
 
@@ -99,8 +110,22 @@ Route::prefix('admin')->name('web.')->middleware(['auth', 'user.type:admin'])->g
     // Students Management Routes
     Route::resource('students', \App\Http\Controllers\Admin\StudentController::class);
 
-    // راوتات إدارة الحضور - Pointages Routes
+    // Routes de gestion des pointages
     Route::prefix('pointages')->name('pointages.')->group(function () {
+        // Routes du calendrier (avant les routes avec paramètres)
+        Route::get('/calendar', [PointageController::class, 'calendar'])->name('calendar');
+        Route::get('/calendar/events', [PointageController::class, 'getCalendarEvents'])->name('calendar.events');
+        Route::post('/calendar/store', [PointageController::class, 'storeCalendarPointage'])->name('calendar.store');
+
+        // Page du pointage rapide
+        Route::get('/rapide/aujourd-hui', [PointageController::class, 'rapide'])->name('rapide');
+        Route::post('/rapide/store', [PointageController::class, 'storeRapide'])->name('store-rapide');
+
+        // AJAX endpoints
+        Route::get('/ajax/emplois', [PointageController::class, 'getEmploisForTeacher'])->name('get-emplois');
+        Route::get('/ajax/statistiques', [PointageController::class, 'getStatistiques'])->name('get-statistiques');
+
+        // Routes CRUD standard
         Route::get('/', [PointageController::class, 'index'])->name('index');
         Route::get('/create', [PointageController::class, 'create'])->name('create');
         Route::post('/', [PointageController::class, 'store'])->name('store');
@@ -108,14 +133,6 @@ Route::prefix('admin')->name('web.')->middleware(['auth', 'user.type:admin'])->g
         Route::get('/{pointage}/edit', [PointageController::class, 'edit'])->name('edit');
         Route::put('/{pointage}', [PointageController::class, 'update'])->name('update');
         Route::delete('/{pointage}', [PointageController::class, 'destroy'])->name('destroy');
-
-        // صفحة الحضور السريع
-        Route::get('/rapide/aujourd-hui', [PointageController::class, 'rapide'])->name('rapide');
-        Route::post('/rapide/store', [PointageController::class, 'storeRapide'])->name('store-rapide');
-
-        // AJAX endpoints
-        Route::get('/ajax/emplois', [PointageController::class, 'getEmploisForTeacher'])->name('get-emplois');
-        Route::get('/ajax/statistiques', [PointageController::class, 'getStatistiques'])->name('get-statistiques');
     });
 
 });

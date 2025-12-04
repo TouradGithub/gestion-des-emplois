@@ -16,7 +16,9 @@ class Student extends Model
         'phone',
         'image',
         'class_id',
-        'user_id'
+        'user_id',
+        'expo_push_token',
+        'notifications_enabled'
     ];
 
     /**

@@ -1,0 +1,19 @@
+
+.table {
+    border-collapse: collapse;
+}
+.table tr {
+    border: 1px solid #dddddd;
+    padding-right: 5px;
+    padding-left :10px;
+    padding-top:10px;
+    padding-bottom:20px;
+
+}
+table.table td {
+    padding: 5px;
+}
+table.table th {
+    padding: 10px;
+}
+

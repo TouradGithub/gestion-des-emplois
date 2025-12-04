@@ -1,0 +1,1119 @@
+ {
+  "type": "FeatureCollection",
+  "name": "PME40_2",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "1",
+        "Id": "1",
+        "x": -15.93471,
+        "y": 18.08814,
+        "Nom et Pre": "Moulaye El Hacen Ahmedou Mandhoum",
+        "NNI": 1876182925,
+        "Genre": "Homme",
+        "Telephone": "26038984",
+        "Wilaya": "NKC Nord",
+        "Moughataa": "Dar Naim",
+        "Dénominat": "ETS EL VIRDOWSE",
+        "Secteur d�": "Agriculture",
+        "Nature PME": "Création",
+        "Montant MP": "301000",
+        "Photo": "DCIM/JPEG_20240906014511596.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -15.934711,
+          18.088137
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "2",
+        "Id": "2",
+        "x": -15.91832,
+        "y": 18.10588,
+        "Nom et Pre": "Aichetou  Med Lemine Lemrabott",
+        "NNI": 4525050583,
+        "Genre": "Femme",
+        "Telephone": "42119394",
+        "Wilaya": "NKC Nord",
+        "Moughataa": "Dar Naim",
+        "Dénominat": "Projet hamam",
+        "Secteur d�": "Service",
+        "Nature PME": "Création",
+        "Montant MP": "250000",
+        "Photo": "DCIM/JPEG_20240906014543497.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -15.918315,
+          18.105881
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "3",
+        "Id": "3",
+        "x": -15.90621,
+        "y": 18.06824,
+        "Nom et Pre": "Polel wague seydi wague",
+        "NNI": 1036505626,
+        "Genre": "Femme",
+        "Telephone": "48782711",
+        "Wilaya": "NKC Nord",
+        "Moughataa": "Toujounine",
+        "Dénominat": "Bathily délices",
+        "Secteur d�": "valorisation des produits locaux",
+        "Nature PME": "Extension",
+        "Montant MP": "200000",
+        "Photo": "DCIM/JPEG_20240906014416503.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -15.906207,
+          18.068237
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "4",
+        "Id": "4",
+        "x": -15.97811,
+        "y": 18.08715,
+        "Nom et Pre": "Fatimetou Saleck Baye",
+        "NNI": 5853699450,
+        "Genre": "Femme",
+        "Telephone": "36455454",
+        "Wilaya": "NKC Nord",
+        "Moughataa": "Teyarett",
+        "Dénominat": "ETS SALEK",
+        "Secteur d�": "Service",
+        "Nature PME": "Extension",
+        "Montant MP": "300000",
+        "Photo": "DCIM/JPEG_20240906014302147.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -15.978113,
+          18.087149
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "5",
+        "Id": "5",
+        "x": -15.94432,
+        "y": 18.04711,
+        "Nom et Pre": "MaimounaElla  Mahmoud",
+        "NNI": 8721992554,
+        "Genre": "Femme",
+        "Telephone": "48076517",
+        "Wilaya": "NKC Nord",
+        "Moughataa": "Toujounine",
+        "Dénominat": "Sallon Mimi",
+        "Secteur d�": "Service",
+        "Nature PME": "Extension",
+        "Montant MP": "300000",
+        "Photo": "DCIM/JPEG_20240906014351161.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -15.944317,
+          18.047113
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "6",
+        "Id": "6",
+        "x": -15.94062,
+        "y": 18.12181,
+        "Nom et Pre": "BeitatYahya Echriv Ahmed",
+        "NNI": 5364496052,
+        "Genre": "Femme",
+        "Telephone": "34303043",
+        "Wilaya": "NKC Nord",
+        "Moughataa": "Teyarett",
+        "Dénominat": "Sallon Mimi",
+        "Secteur d�": "Service",
+        "Nature PME": "Extension",
+        "Montant MP": "300000",
+        "Photo": "DCIM/JPEG_20240906014118459.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -15.940621,
+          18.121811
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "7",
+        "Id": "7",
+        "x": -15.94404,
+        "y": 18.08017,
+        "Nom et Pre": "Maalame Aminetou Mohamed Abdallahi",
+        "NNI": 2416426074,
+        "Genre": "Femme",
+        "Telephone": "34410351",
+        "Wilaya": "NKC Nord",
+        "Moughataa": "Dar Naim",
+        "Dénominat": "Boucherie El Vadel",
+        "Secteur d�": "Elevage",
+        "Nature PME": "Création",
+        "Montant MP": "350000",
+        "Photo": "DCIM/JPEG_20240906014435357.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -15.94404,
+          18.080167
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "8",
+        "Id": "8",
+        "x": -15.94321,
+        "y": 18.13242,
+        "Nom et Pre": "Khalle Messleck Khalle",
+        "NNI": 7822124912,
+        "Genre": "Femme",
+        "Telephone": "34310706",
+        "Wilaya": "NKC Nord",
+        "Moughataa": "Teyarett",
+        "Dénominat": "ETS Messeck",
+        "Secteur d�": "Elevage",
+        "Nature PME": "Extension",
+        "Montant MP": "300000",
+        "Photo": "DCIM/JPEG_20240906014042428.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -15.943214,
+          18.132418
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "9",
+        "Id": "9",
+        "x": -15.94428,
+        "y": 18.1262,
+        "Nom et Pre": "Fatimatou Aliyine  Eyde",
+        "NNI": 9633436661,
+        "Genre": "Femme",
+        "Telephone": "49570857",
+        "Wilaya": "NKC Nord",
+        "Moughataa": "Teyarett",
+        "Dénominat": "Services Treteur",
+        "Secteur d�": "Services",
+        "Nature PME": "Extension",
+        "Montant MP": "300000",
+        "Photo": "DCIM/JPEG_20240906014150676.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -15.944281,
+          18.126198
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "10",
+        "Id": "10",
+        "x": -15.94275,
+        "y": 18.09306,
+        "Nom et Pre": "Amadou Houraye Ba",
+        "NNI": 2510987009,
+        "Genre": "Femme",
+        "Telephone": "38139761",
+        "Wilaya": "NKC Nord",
+        "Moughataa": "Dar Naim",
+        "Dénominat": "ETS Houraye",
+        "Secteur d�": "Elevage",
+        "Nature PME": "Extension",
+        "Montant MP": "250000",
+        "Photo": "DCIM/JPEG_20240906014527835.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -15.942748,
+          18.093059
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "11",
+        "Id": "11",
+        "x": -9.60932,
+        "y": 16.66042,
+        "Nom et Pre": "Sidati Siham Abdi",
+        "NNI": 496351038,
+        "Genre": "Femme",
+        "Telephone": "36650209",
+        "Wilaya": "H Gharbi",
+        "Moughataa": "Aïoun",
+        "Dénominat": "Lavage Ibtissam",
+        "Secteur d�": "Services",
+        "Nature PME": "Extension",
+        "Montant MP": "198500",
+        "Photo": "DCIM/JPEG_20240906015637270.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -9.60932,
+          16.660418
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "12",
+        "Id": "12",
+        "x": -9.65546,
+        "y": 16.60561,
+        "Nom et Pre": "Amar El Ezza Ely Ould Abdalla",
+        "NNI": 9247270349,
+        "Genre": "Femme",
+        "Telephone": "47505262",
+        "Wilaya": "H Gharbi",
+        "Moughataa": "Aïoun",
+        "Dénominat": "Achade Elevage",
+        "Secteur d�": "Elevage",
+        "Nature PME": "Création",
+        "Montant MP": "195500",
+        "Photo": "DCIM/JPEG_20240906020128639.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -9.655462,
+          16.60561
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "13",
+        "Id": "13",
+        "x": -9.55783,
+        "y": 16.65671,
+        "Nom et Pre": "Sidi Abde Dayem Adda",
+        "NNI": 4174068790,
+        "Genre": "Homme",
+        "Telephone": "34734747",
+        "Wilaya": "H Gharbi",
+        "Moughataa": "Aïoun",
+        "Dénominat": "Khayrat l'aayoun",
+        "Secteur d�": "Agriculture",
+        "Nature PME": "Extension",
+        "Montant MP": "290950",
+        "Photo": "DCIM/JPEG_20240906015617861.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -9.557829,
+          16.656713
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "14",
+        "Id": "14",
+        "x": -15.97139,
+        "y": 20.51944,
+        "Nom et Pre": "Mamoudou adama diallo",
+        "NNI": 7365266746,
+        "Genre": "Homme",
+        "Telephone": "46577596",
+        "Wilaya": "Adrar",
+        "Moughataa": "Atar",
+        "Dénominat": "MAMADOU ADAMA ELEVAGE",
+        "Secteur d�": "Elevage",
+        "Nature PME": "Création",
+        "Montant MP": "197500",
+        "Photo": "DCIM/JPEG_20240906020725206.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -15.971389,
+          20.519444
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "15",
+        "Id": "15",
+        "x": -12.19547,
+        "y": 15.13647,
+        "Nom et Pre": "Babe Khire Mohamed Maaloum",
+        "NNI": 7303084023,
+        "Genre": "Femme",
+        "Telephone": "26105697",
+        "Wilaya": "Guidimagha",
+        "Moughataa": "Selibabi",
+        "Dénominat": "Legumes Choghy",
+        "Secteur d�": "Agriculture",
+        "Nature PME": "Extension",
+        "Montant MP": "240000",
+        "Photo": "DCIM/JPEG_20240906015010000.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -12.195472,
+          15.136467
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "16",
+        "Id": "16",
+        "x": -12.19877,
+        "y": 15.1777,
+        "Nom et Pre": "Youssouf Hademou Marico",
+        "NNI": 6195650349,
+        "Genre": "Femme",
+        "Telephone": "44860415",
+        "Wilaya": "Guidimakha",
+        "Moughataa": "Sélibaby",
+        "Dénominat": "EleRim",
+        "Secteur d�": "Elevage",
+        "Nature PME": "Extension",
+        "Montant MP": "210000",
+        "Photo": "DCIM/JPEG_20240906015240828.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -12.198767,
+          15.177696
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "17",
+        "Id": "17",
+        "x": -16.00026,
+        "y": 18.1251,
+        "Nom et Pre": "Mariem med beitat",
+        "NNI": 6949185925,
+        "Genre": "Femme",
+        "Telephone": "36371119",
+        "Wilaya": "Nouakchott Ouest",
+        "Moughataa": "Tevragh zeina",
+        "Dénominat": "Mon deco",
+        "Secteur d�": "Industries",
+        "Nature PME": "Extension",
+        "Montant MP": "300000",
+        "Photo": "DCIM/JPEG_20240906014227884.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -16.000259,
+          18.125101
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "18",
+        "Id": "18",
+        "x": -15.97698,
+        "y": 18.08498,
+        "Nom et Pre": "Mouhameden Habiba Bellane",
+        "NNI": 3242410077,
+        "Genre": "Femme",
+        "Telephone": "46862618",
+        "Wilaya": "Nouakchott Ouest",
+        "Moughataa": "Ksar",
+        "Dénominat": "Habiba elevage",
+        "Secteur d�": "Elevage",
+        "Nature PME": "Création",
+        "Montant MP": "220000",
+        "Photo": "DCIM/JPEG_20240906014327305.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -15.976975,
+          18.084978
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "19",
+        "Id": "19",
+        "x": -11.46818,
+        "y": 16.65181,
+        "Nom et Pre": "Madi Cheikhna Sanogho",
+        "NNI": 8297859084,
+        "Genre": "Femme",
+        "Telephone": "46442418",
+        "Wilaya": "ASSABA",
+        "Moughataa": "KIFFA",
+        "Dénominat": "DOUCARA POULET DE KIFFA",
+        "Secteur d�": "Elevage",
+        "Nature PME": "Création",
+        "Montant MP": "175000",
+        "Photo": "DCIM/JPEG_20240906015541934.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -11.468182,
+          16.651808
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "20",
+        "Id": "20",
+        "x": -11.39531,
+        "y": 16.6222,
+        "Nom et Pre": "Oum Kelthoum sidi Mohamed Belkheir",
+        "NNI": 5676061507,
+        "Genre": "Femme",
+        "Telephone": "31510776",
+        "Wilaya": "ASSABA",
+        "Moughataa": "KIFFA",
+        "Dénominat": "Monde de cadeaux",
+        "Secteur d�": "Service",
+        "Nature PME": "Extension",
+        "Montant MP": "150000",
+        "Photo": "DCIM/JPEG_20240906015418422.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -11.395311,
+          16.622198
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "21",
+        "Id": "21",
+        "x": -11.37725,
+        "y": 16.60834,
+        "Nom et Pre": "Khatri Bilal Yark",
+        "NNI": 5762492581,
+        "Genre": "Homme",
+        "Telephone": "22453312",
+        "Wilaya": "ASSABA",
+        "Moughataa": "KIFFA",
+        "Dénominat": "Projet Elessala Pour l'agriculture",
+        "Secteur d�": "Agriculture",
+        "Nature PME": "Création",
+        "Montant MP": "200000",
+        "Photo": "DCIM/JPEG_20240906015401662.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -11.377249,
+          16.608336
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "22",
+        "Id": "22",
+        "x": -11.3932,
+        "y": 16.6314,
+        "Nom et Pre": "Soumeya Ahmed Abd Eleyat",
+        "NNI": 8705242303,
+        "Genre": "Femme",
+        "Telephone": "43521558",
+        "Wilaya": "ASSABA",
+        "Moughataa": "KIFFA",
+        "Dénominat": "Elbaraka Elevage",
+        "Secteur d�": "Elevage",
+        "Nature PME": "Création",
+        "Montant MP": "180000",
+        "Photo": "DCIM/JPEG_20240906015444354.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -11.393203,
+          16.631401
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "23",
+        "Id": "23",
+        "x": -11.33996,
+        "y": 16.57009,
+        "Nom et Pre": "Mohamed Sid’ahmed welata",
+        "NNI": 1862758804,
+        "Genre": "Homme",
+        "Telephone": "36022798",
+        "Wilaya": "ASSABA",
+        "Moughataa": "KIFFA",
+        "Dénominat": "Ets Intaji Légumes",
+        "Secteur d�": "Agriculture",
+        "Nature PME": "Création",
+        "Montant MP": "250000",
+        "Photo": "DCIM/JPEG_20240906015338849.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -11.339962,
+          16.570085
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "24",
+        "Id": "24",
+        "x": -11.42034,
+        "y": 16.61285,
+        "Nom et Pre": "Ahmed Sid Ahmed er Moctar",
+        "NNI": 7071563356,
+        "Genre": "Homme",
+        "Telephone": "48764149",
+        "Wilaya": "ASSABA",
+        "Moughataa": "KIFFA",
+        "Dénominat": "Poulailler Moderne",
+        "Secteur d�": "Elevage",
+        "Nature PME": "Création",
+        "Montant MP": "170000",
+        "Photo": "DCIM/JPEG_20240906015504511.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -11.420336,
+          16.612854
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "25",
+        "Id": "25",
+        "x": -15.75932,
+        "y": 16.58301,
+        "Nom et Pre": "Ahmed khairatt ndaw",
+        "NNI": 4676926102,
+        "Genre": "Homme",
+        "Telephone": "46058856",
+        "Wilaya": "Trarza",
+        "Moughataa": "Rosso",
+        "Dénominat": "Ndaw Barkél",
+        "Secteur d�": "Agriculeture",
+        "Nature PME": "Extention",
+        "Montant MP": "372500",
+        "Photo": "DCIM/JPEG_20240906014933462.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -15.75932,
+          16.583006
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "26",
+        "Id": "26",
+        "x": -15.80645,
+        "y": 16.51411,
+        "Nom et Pre": "Namath Ely Meidy",
+        "NNI": 7394121433,
+        "Genre": "Femme",
+        "Telephone": "28651818",
+        "Wilaya": "Trarza",
+        "Moughataa": "Rosso",
+        "Dénominat": "Tita chopping",
+        "Secteur d�": "Service",
+        "Nature PME": "Extention",
+        "Montant MP": "162000",
+        "Photo": "DCIM/JPEG_20240906014851528.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -15.806446,
+          16.514109
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "27",
+        "Id": "27",
+        "x": -15.76287,
+        "y": 16.5445,
+        "Nom et Pre": "Mohamed Abdallahi Mohamed El jili",
+        "NNI": 6546479270,
+        "Genre": "Homme",
+        "Telephone": "26492173",
+        "Wilaya": "Trarza",
+        "Moughataa": "Rosso",
+        "Dénominat": "ETS EL JILI",
+        "Secteur d�": "Agriculeture",
+        "Nature PME": "Extention",
+        "Montant MP": "299500",
+        "Photo": "DCIM/JPEG_20240906014912207.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -15.762867,
+          16.544502
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "28",
+        "Id": "28",
+        "x": -15.80898,
+        "y": 16.50996,
+        "Nom et Pre": "Ezza El Moustapha El Bah",
+        "NNI": 2483842141,
+        "Genre": "Femme",
+        "Telephone": "22040439",
+        "Wilaya": "Trarza",
+        "Moughataa": "Rosso",
+        "Dénominat": "El baraka 2",
+        "Secteur d�": "Service",
+        "Nature PME": "Création",
+        "Montant MP": "150000",
+        "Photo": "DCIM/JPEG_20240906014825356.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -15.80898,
+          16.509962
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "29",
+        "Id": "29",
+        "x": -15.92231,
+        "y": 16.61438,
+        "Nom et Pre": "Aminetou Ahmed Bezeid sidi Brahim",
+        "NNI": 1026883323,
+        "Genre": "Femme",
+        "Telephone": "41256319",
+        "Wilaya": "Trarza",
+        "Moughataa": "Rosso",
+        "Dénominat": "ETS  Legume RIM",
+        "Secteur d�": "Agriculeture",
+        "Nature PME": "Extention",
+        "Montant MP": "278000",
+        "Photo": "DCIM/JPEG_20240906014631032.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -15.922313,
+          16.614382
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "30",
+        "Id": "30",
+        "x": -12.47519,
+        "y": 22.72919,
+        "Nom et Pre": "Fatimata Mohamedou Diakité",
+        "NNI": 189725211,
+        "Genre": "Femme",
+        "Telephone": "41948911",
+        "Wilaya": "Tirs Zemour",
+        "Moughataa": "Zouerate",
+        "Dénominat": "DIAKITÉ TENTURE",
+        "Secteur d�": "valorisation des produits locaux",
+        "Nature PME": "Extention",
+        "Montant MP": "145000",
+        "Photo": "DCIM/JPEG_20240906020916027.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -12.475189,
+          22.729191
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "31",
+        "Id": "31",
+        "x": -12.47398,
+        "y": 22.73056,
+        "Nom et Pre": "Ali Bouboutt",
+        "NNI": 5450716733,
+        "Genre": "Homme",
+        "Telephone": "20146650",
+        "Wilaya": "Tirs Zemour",
+        "Moughataa": "Zouerate",
+        "Dénominat": "TIRES DES PRODUITS GLASS",
+        "Secteur d�": "Service",
+        "Nature PME": "Extention",
+        "Montant MP": "250000",
+        "Photo": "DCIM/JPEG_20240906020932170.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -12.47398,
+          22.730558
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "32",
+        "Id": "32",
+        "x": -12.41511,
+        "y": 22.66616,
+        "Nom et Pre": "Fatimetou Mohamed Abdellahi",
+        "NNI": 8936159339,
+        "Genre": "Femme",
+        "Telephone": "41419460",
+        "Wilaya": "Tirs Zemour",
+        "Moughataa": "Zouerate",
+        "Dénominat": "ETS MECHETELE",
+        "Secteur d�": "Agriculeture",
+        "Nature PME": "Extention",
+        "Montant MP": "390000",
+        "Photo": "DCIM/JPEG_20240906020758026.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -12.415107,
+          22.666155
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "33",
+        "Id": "33",
+        "x": -12.53522,
+        "y": 22.75974,
+        "Nom et Pre": "Fatimetou Meimoune",
+        "NNI": 1618008986,
+        "Genre": "Femme",
+        "Telephone": "44456264",
+        "Wilaya": "Tirs Zemour",
+        "Moughataa": "Zouerate",
+        "Dénominat": "Fatimatou agricole",
+        "Secteur d�": "Agriculeture",
+        "Nature PME": "Extention",
+        "Montant MP": "200000",
+        "Photo": "DCIM/JPEG_20240906020821128.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -12.535215,
+          22.759741
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "34",
+        "Id": "34",
+        "x": -12.48673,
+        "y": 22.74319,
+        "Nom et Pre": "Khadijetou Sidi Mohamed Ahmedou",
+        "NNI": 828588066,
+        "Genre": "Femme",
+        "Telephone": "20091314",
+        "Wilaya": "Tirs Zemour",
+        "Moughataa": "Zouerate",
+        "Dénominat": "Est KHADI PÂTISSERIE",
+        "Secteur d�": "Industries",
+        "Nature PME": "Extention",
+        "Montant MP": "150000",
+        "Photo": "DCIM/JPEG_20240906020838083.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -12.486727,
+          22.743193
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "35",
+        "Id": "35",
+        "x": -12.47726,
+        "y": 22.7267,
+        "Nom et Pre": "Sidi Abdoullah",
+        "NNI": 9541431094,
+        "Genre": "Homme",
+        "Telephone": "33188281",
+        "Wilaya": "Tirs Zemour",
+        "Moughataa": "Zouerate",
+        "Dénominat": "El Salam Agriculteur",
+        "Secteur d�": "Agriculeture",
+        "Nature PME": "Extention",
+        "Montant MP": "300000",
+        "Photo": "DCIM/JPEG_20240906020900302.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -12.477257,
+          22.7267
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "36",
+        "Id": "36",
+        "x": -14.38594,
+        "y": 19.74171,
+        "Nom et Pre": "Beitata/Diah",
+        "NNI": 9088934630,
+        "Genre": "Femme",
+        "Telephone": "22147808",
+        "Wilaya": "Inchiri",
+        "Moughataa": "Akjoujt",
+        "Dénominat": "Ferme modèle",
+        "Secteur d�": "Agriculture",
+        "Nature PME": "Création",
+        "Montant MP": "250000",
+        "Photo": "DCIM/JPEG_20240906020512557.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -14.385943,
+          19.741713
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "37",
+        "Id": "37",
+        "x": -14.38237,
+        "y": 19.75005,
+        "Nom et Pre": "Oum kelthoum Hemet",
+        "NNI": 3662955129,
+        "Genre": "Femme",
+        "Telephone": "49205265",
+        "Wilaya": "Inchiri",
+        "Moughataa": "Akjoujt",
+        "Dénominat": "Jardins typiques",
+        "Secteur d�": "Agriculture",
+        "Nature PME": "Création",
+        "Montant MP": "215000",
+        "Photo": "DCIM/JPEG_20240906020609994.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -14.382374,
+          19.750048
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "38",
+        "Id": "38",
+        "x": -14.39372,
+        "y": 19.74932,
+        "Nom et Pre": "Fatimetou Mohamed Voulan",
+        "NNI": 3857324214,
+        "Genre": "Femme",
+        "Telephone": "34459639",
+        "Wilaya": "Inchiri",
+        "Moughataa": "Akjoujt",
+        "Dénominat": "Coopérative Loueibda",
+        "Secteur d�": "Agriculture",
+        "Nature PME": "Extension",
+        "Montant MP": "200000",
+        "Photo": "DCIM/JPEG_20240906020528027.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -14.393721,
+          19.749317
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "39",
+        "Id": "39",
+        "x": -14.38649,
+        "y": 19.74896,
+        "Nom et Pre": "Mene Doudou El Ame",
+        "NNI": 64034745,
+        "Genre": "Femme",
+        "Telephone": "46593905",
+        "Wilaya": "Inchiri",
+        "Moughataa": "Akjoujt",
+        "Dénominat": "Lejwad agriculture",
+        "Secteur d�": "Agriculture",
+        "Nature PME": "Création",
+        "Montant MP": "260000",
+        "Photo": "DCIM/JPEG_20240906020545384.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -14.386494,
+          19.748961
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "40",
+        "Id": "40",
+        "x": -14.39187,
+        "y": 19.74092,
+        "Nom et Pre": "Fatimetou sidi mahmoud",
+        "NNI": 2016656579,
+        "Genre": "Femme",
+        "Telephone": "37509690",
+        "Wilaya": "Inchiri",
+        "Moughataa": "Akjoujt",
+        "Dénominat": "Badhenjan Deman",
+        "Secteur d�": "Agriculture",
+        "Nature PME": "Extension",
+        "Montant MP": "259500",
+        "Photo": "DCIM/JPEG_20240906020447292.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -14.391865,
+          19.740921
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": "41",
+        "Id": "41",
+        "x": -14.39087,
+        "y": 19.73731,
+        "Nom et Pre": "Ahmed Mahmoud Nedhir",
+        "NNI": 4145468922,
+        "Genre": "Homme",
+        "Telephone": "36588081",
+        "Wilaya": "Inchiri",
+        "Moughataa": "Akjoujt",
+        "Dénominat": "Briquetterie Litghan",
+        "Secteur d�": "BTP",
+        "Nature PME": "Création",
+        "Montant MP": "190000",
+        "Photo": "DCIM/JPEG_20240906020428685.jfif.jpg"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -14.390868,
+          19.737314
+        ]
+      }
+    }
+  ]
+}

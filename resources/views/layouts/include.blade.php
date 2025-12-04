@@ -8,12 +8,7 @@
 <link rel="stylesheet" href="{{ asset('/assets/jquery-toast-plugin/jquery.toast.min.css') }}">
 <link rel="stylesheet" href="{{ asset('/assets/color-picker/color.min.css') }}" async>
 
-{{--        @if (App::getLocale() == 'fr')--}}
-        <link rel="stylesheet" href="{{ asset('/assets/css/style.css') }}">
-
-{{--        @else--}}
-{{--        <link rel="stylesheet" href="{{ asset('/assets/css/rtl.css') }}">--}}
-{{--        @endif--}}
+<link rel="stylesheet" href="{{ asset('/assets/css/style.css') }}">
 
 
 <link rel="stylesheet" href="{{ asset('/assets/css/datepicker.min.css') }}" async>
@@ -22,11 +17,20 @@
 <link rel="stylesheet" href="{{ asset('/assets/bootstrap-table/bootstrap-table.min.css') }}">
 <link rel="stylesheet" href="{{ asset('/assets/bootstrap-table/fixed-columns.min.css') }}">
 
-
- <link rel="shortcut icon" href="" />
+<link rel="shortcut icon" href="" />
 <link rel="shortcut icon" href=""/>
+<link rel="stylesheet" type="text/css" href="{{URL::asset('app-assets/vendors/css/vendors.min.css')}}">
+<link rel="stylesheet" type="text/css" href="{{URL::asset('app-assets/vendors/css/forms/selects/select2.min.css')}}">
+<link rel="stylesheet" type="text/css" href="{{URL::asset('app-assets/vendors/css/extensions/toastr.css')}}">
+<link rel="stylesheet" type="text/css" href="{{URL::asset('app-assets/css/plugins/extensions/toastr.css')}}">
 
-
+<link rel="stylesheet" type="text/css" href="{{URL::asset('vendor/fontawesome-free/css/all.min.css')}}">
+<link rel="stylesheet" type="text/css" href="{{ URL::asset('app-assets/fonts/line-awesome/css/line-awesome.css') }}">
+<link rel="stylesheet" type="text/css" href="{{URL::asset('vendor/jquery-ui/jquery-ui.min.css')}}">
+<link rel="stylesheet" type="text/css" href="{{URL::asset('vendor/jquery-confirm/dist/jquery-confirm.min.css')}}">
+<link rel="stylesheet" type="text/css" href="{{URL::asset('vendor/datatables-responsive/dataTables.responsive.css')}}">
+<link rel="stylesheet" type="text/css" href="{{URL::asset('vendor/datatables/dataTables.bootstrap4.min.css')}}">
+<link rel="stylesheet" type="text/css" href="{{URL::asset('vendor/bootstrap-select/dist/css/bootstrap-select.min.css')}}">
 <style>
 
 </style>

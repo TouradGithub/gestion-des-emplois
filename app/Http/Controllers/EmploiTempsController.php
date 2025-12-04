@@ -10,6 +10,7 @@ use App\Models\Jour;
 use App\Models\Subject;
 use App\Models\SubjectTeacher;
 use App\Models\Teacher;
+use App\Services\NotificationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -22,6 +23,406 @@ class EmploiTempsController extends Controller
     {
         $emplois = EmploiTemps::with(['classe', 'subject', 'teacher', 'horairess'])->get();
         return view('admin.emplois.index', compact('emplois'));
+    }
+
+    /**
+     * Afficher le calendrier des emplois du temps
+     */
+    public function showCalender()
+    {
+        $anneeActive = Anneescolaire::where('is_active', true)->first();
+        if (!$anneeActive) {
+            return redirect()->back()->with('error', 'Aucune année scolaire active trouvée.');
+        }
+
+        $classes_of_this_year = Classe::where('annee_id', $anneeActive->id)->orderBy('nom')->get();
+        $start_time_calandrie = Carbon::createFromTimeString('08:00:00')->format('H:i:s');
+        $end_time_calandrie = Carbon::createFromTimeString('19:00:00')->format('H:i:s');
+
+        return view('admin.emplois.fullcalender.index', compact('classes_of_this_year', 'start_time_calandrie', 'end_time_calandrie'));
+    }
+
+    /**
+     * Récupérer les données de référence (jours, horaires, salles)
+     */
+    public function getReferenceData()
+    {
+        $jours = Jour::orderBy('ordre')->get();
+        $horaires = Horaire::orderBy('ordre')->get();
+        $salles = \App\Models\SalleDeClasse::orderBy('name')->get();
+
+        return response()->json([
+            'jours' => $jours,
+            'horaires' => $horaires,
+            'salles' => $salles
+        ]);
+    }
+
+    /**
+     * Récupérer les événements du calendrier pour une classe et un trimestre
+     */
+    public function getCalendarEvents(Request $request)
+    {
+        $classId = $request->class_id;
+        $trimesterId = $request->trimester_id;
+        $start = $request->start;
+        $end = $request->end;
+
+        if (!$classId || !$trimesterId) {
+            return response()->json(['events' => []]);
+        }
+
+        $anneeId = Anneescolaire::where('is_active', true)->first()?->id;
+
+        $emplois = EmploiTemps::with(['subject', 'teacher', 'jour', 'ref_horaires', 'salle'])
+            ->where('class_id', $classId)
+            ->where('trimester_id', $trimesterId)
+            ->where('annee_id', $anneeId)
+            ->get();
+
+        $events = [];
+        $colorIndex = 0;
+        $subjectColors = [];
+
+        foreach ($emplois as $emploi) {
+            // Attribuer une couleur par matière
+            if (!isset($subjectColors[$emploi->subject_id])) {
+                $subjectColors[$emploi->subject_id] = $colorIndex++;
+            }
+
+            // Obtenir les horaires de début et de fin
+            $horairesList = $emploi->ref_horaires()->orderBy('ordre')->get();
+            if ($horairesList->isEmpty()) {
+                continue;
+            }
+
+            $startTime = $horairesList->first()->start_time;
+            $endTime = $horairesList->last()->end_time;
+
+            // Mapper le jour de la semaine
+            $jourOrdre = $emploi->jour->ordre ?? 1;
+            $dayMapping = [1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 0];
+            $dayOfWeek = $dayMapping[$jourOrdre] ?? 1;
+
+            // Calculer la date de l'événement
+            $startDate = Carbon::parse($start);
+            while ($startDate->dayOfWeek != $dayOfWeek) {
+                $startDate->addDay();
+            }
+
+            $eventStart = $startDate->format('Y-m-d') . 'T' . $startTime;
+            $eventEnd = $startDate->format('Y-m-d') . 'T' . $endTime;
+
+            $title = $emploi->subject->name ?? 'Matière';
+            $prof = $emploi->teacher->name ?? 'Enseignant';
+            $salle = $emploi->salle->name ?? '';
+
+            $events[] = [
+                'id' => $emploi->id,
+                'title' => $title . "\n" . $prof . ($salle ? "\n📍 " . $salle : ''),
+                'start' => $eventStart,
+                'end' => $eventEnd,
+                'extendedProps' => [
+                    'colorIndex' => $subjectColors[$emploi->subject_id],
+                    'teacher' => $prof,
+                    'salle' => $salle,
+                    'subject' => $title
+                ]
+            ];
+        }
+
+        return response()->json(['events' => $events]);
+    }
+
+    /**
+     * Récupérer les détails d'une séance
+     */
+    public function getCalendarEvent($id)
+    {
+        $emploi = EmploiTemps::with(['ref_horaires'])->find($id);
+
+        if (!$emploi) {
+            return response()->json(['success' => false, 'message' => 'Séance non trouvée.']);
+        }
+
+        return response()->json([
+            'success' => true,
+            'seance' => [
+                'id' => $emploi->id,
+                'class_id' => $emploi->class_id,
+                'subject_id' => $emploi->subject_id,
+                'teacher_id' => $emploi->teacher_id,
+                'trimester_id' => $emploi->trimester_id,
+                'jour_id' => $emploi->jour_id,
+                'salle_de_classe_id' => $emploi->salle_de_classe_id,
+                'horaire_ids' => $emploi->ref_horaires->pluck('id')->toArray()
+            ]
+        ]);
+    }
+
+    /**
+     * Créer une nouvelle séance via le calendrier
+     */
+    public function storeCalendarEvent(Request $request)
+    {
+        $request->validate([
+            'class_id' => 'required|exists:classes,id',
+            'subject_id' => 'required|exists:subjects,id',
+            'teacher_id' => 'required|exists:teachers,id',
+            'trimester_id' => 'required|exists:trimesters,id',
+            'jour_id' => 'required|exists:sct_refjours,id',
+            'horaire_ids' => 'required|array|min:1',
+            'horaire_ids.*' => 'required|exists:sct_ref_horaires,id',
+            'salle_de_classe_id' => 'nullable|exists:salle_de_classes,id',
+        ], [
+            'class_id.required' => 'La classe est obligatoire.',
+            'subject_id.required' => 'La matière est obligatoire.',
+            'teacher_id.required' => 'L\'enseignant est obligatoire.',
+            'trimester_id.required' => 'Le trimestre est obligatoire.',
+            'jour_id.required' => 'Le jour est obligatoire.',
+            'horaire_ids.required' => 'Au moins un horaire est obligatoire.',
+        ]);
+
+        $anneeId = Anneescolaire::where('is_active', true)->first()?->id;
+        if (!$anneeId) {
+            return response()->json(['success' => false, 'message' => 'Aucune année scolaire active trouvée.'], 400);
+        }
+
+        // Vérification des conflits
+        $errors = $this->checkConflicts($request, $anneeId, null);
+        if (!empty($errors)) {
+            return response()->json(['success' => false, 'message' => implode("\n", $errors)], 422);
+        }
+
+        // Créer la séance
+        $emploi = EmploiTemps::create([
+            'class_id' => $request->class_id,
+            'subject_id' => $request->subject_id,
+            'teacher_id' => $request->teacher_id,
+            'trimester_id' => $request->trimester_id,
+            'annee_id' => $anneeId,
+            'jour_id' => $request->jour_id,
+            'salle_de_classe_id' => $request->salle_de_classe_id,
+        ]);
+
+        // Ajouter les horaires
+        foreach ($request->horaire_ids as $horaireId) {
+            EmploiHoraire::create([
+                'emploi_temps_id' => $emploi->id,
+                'horaire_id' => $horaireId,
+            ]);
+        }
+
+        // Envoyer notification aux étudiants de la classe
+        NotificationService::notifyScheduleCreated($emploi);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Séance créée avec succès.',
+            'id' => $emploi->id
+        ]);
+    }
+
+    /**
+     * Mettre à jour une séance via le calendrier
+     */
+    public function updateCalendarEvent(Request $request, $id)
+    {
+        $emploi = EmploiTemps::find($id);
+        if (!$emploi) {
+            return response()->json(['success' => false, 'message' => 'Séance non trouvée.'], 404);
+        }
+
+        $request->validate([
+            'subject_id' => 'required|exists:subjects,id',
+            'teacher_id' => 'required|exists:teachers,id',
+            'jour_id' => 'required|exists:sct_refjours,id',
+            'horaire_ids' => 'required|array|min:1',
+            'horaire_ids.*' => 'required|exists:sct_ref_horaires,id',
+            'salle_de_classe_id' => 'nullable|exists:salle_de_classes,id',
+        ]);
+
+        $anneeId = Anneescolaire::where('is_active', true)->first()?->id;
+
+        // Vérification des conflits (en excluant la séance actuelle)
+        $errors = $this->checkConflicts($request, $anneeId, $id);
+        if (!empty($errors)) {
+            return response()->json(['success' => false, 'message' => implode("\n", $errors)], 422);
+        }
+
+        // Mettre à jour la séance
+        $emploi->update([
+            'subject_id' => $request->subject_id,
+            'teacher_id' => $request->teacher_id,
+            'jour_id' => $request->jour_id,
+            'salle_de_classe_id' => $request->salle_de_classe_id,
+        ]);
+
+        // Mettre à jour les horaires
+        $emploi->ref_horaires()->sync($request->horaire_ids);
+
+        // Envoyer notification aux étudiants de la classe
+        NotificationService::notifyScheduleUpdated($emploi);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Séance modifiée avec succès.'
+        ]);
+    }
+
+    /**
+     * Supprimer une séance via le calendrier
+     */
+    public function deleteCalendarEvent($id)
+    {
+        $emploi = EmploiTemps::with(['subject', 'jour', 'ref_horaires'])->find($id);
+        if (!$emploi) {
+            return response()->json(['success' => false, 'message' => 'Séance non trouvée.'], 404);
+        }
+
+        // Sauvegarder les informations avant suppression pour la notification
+        $classId = $emploi->class_id;
+        $subjectName = $emploi->subject->name ?? 'Matière';
+        $jourName = $emploi->jour->libelle_fr ?? 'Jour';
+        $horaires = $emploi->ref_horaires->pluck('libelle_fr')->implode(', ');
+
+        // Supprimer les horaires associés
+        EmploiHoraire::where('emploi_temps_id', $id)->delete();
+
+        // Supprimer la séance
+        $emploi->delete();
+
+        // Envoyer notification aux étudiants de la classe
+        NotificationService::notifyScheduleDeleted($classId, $subjectName, $jourName, $horaires);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Séance supprimée avec succès.'
+        ]);
+    }
+
+    /**
+     * Vérifier les conflits d'emploi du temps
+     */
+    private function checkConflicts(Request $request, $anneeId, $excludeId = null)
+    {
+        $errors = [];
+        $teacherId = $request->teacher_id;
+        $classId = $request->class_id;
+        $jourId = $request->jour_id;
+        $trimesterId = $request->trimester_id;
+        $horaireIds = $request->horaire_ids;
+
+        foreach ($horaireIds as $horaireId) {
+            // Vérifier si l'enseignant a déjà un cours à cette heure
+            $conflictQuery = EmploiTemps::where('teacher_id', $teacherId)
+                ->where('jour_id', $jourId)
+                ->where('trimester_id', $trimesterId)
+                ->where('annee_id', $anneeId)
+                ->whereHas('horairess', function($query) use ($horaireId) {
+                    $query->where('horaire_id', $horaireId);
+                });
+
+            if ($excludeId) {
+                $conflictQuery->where('id', '!=', $excludeId);
+            }
+
+            if ($conflictQuery->exists()) {
+                $teacher = Teacher::find($teacherId);
+                $jour = Jour::find($jourId);
+                $horaire = Horaire::find($horaireId);
+                $errors[] = "L'enseignant {$teacher->name} a déjà un cours le {$jour->libelle_fr} à {$horaire->libelle_fr}.";
+            }
+
+            // Vérifier si la classe a déjà un cours à cette heure
+            $conflictClassQuery = EmploiTemps::where('class_id', $classId)
+                ->where('jour_id', $jourId)
+                ->where('trimester_id', $trimesterId)
+                ->where('annee_id', $anneeId)
+                ->whereHas('horairess', function($query) use ($horaireId) {
+                    $query->where('horaire_id', $horaireId);
+                });
+
+            if ($excludeId) {
+                $conflictClassQuery->where('id', '!=', $excludeId);
+            }
+
+            if ($conflictClassQuery->exists()) {
+                $classe = Classe::find($classId);
+                $jour = Jour::find($jourId);
+                $horaire = Horaire::find($horaireId);
+                $errors[] = "La classe {$classe->nom} a déjà un cours le {$jour->libelle_fr} à {$horaire->libelle_fr}.";
+            }
+        }
+
+        // Vérifier le dépassement des heures hebdomadaires
+        $hoursWarning = $this->checkWeeklyHoursLimit($teacherId, $classId, $trimesterId, $anneeId, $horaireIds, $excludeId);
+        if ($hoursWarning) {
+            $errors[] = $hoursWarning;
+        }
+
+        return array_unique($errors);
+    }
+
+    /**
+     * Vérifier si l'ajout de cette séance dépasse les heures hebdomadaires assignées
+     */
+    private function checkWeeklyHoursLimit($teacherId, $classId, $trimesterId, $anneeId, $horaireIds, $excludeId = null)
+    {
+        // Récupérer l'affectation enseignant-classe-trimestre
+        $assignment = SubjectTeacher::where('teacher_id', $teacherId)
+            ->where('class_id', $classId)
+            ->where('trimester_id', $trimesterId)
+            ->where('annee_id', $anneeId)
+            ->first();
+
+        if (!$assignment || !$assignment->heures_semaine) {
+            return null; // Pas de limite définie
+        }
+
+        // Calculer les heures actuelles
+        $currentHours = $assignment->heures_reelles;
+
+        // Calculer les nouvelles heures à ajouter
+        $newMinutes = 0;
+        foreach ($horaireIds as $horaireId) {
+            $horaire = Horaire::find($horaireId);
+            if ($horaire && $horaire->start_time && $horaire->end_time) {
+                $start = Carbon::parse($horaire->start_time);
+                $end = Carbon::parse($horaire->end_time);
+                $newMinutes += $end->diffInMinutes($start);
+            }
+        }
+        $newHours = $newMinutes / 60;
+
+        // Si c'est une mise à jour, soustraire les heures de la séance existante
+        if ($excludeId) {
+            $existingEmploi = EmploiTemps::with('ref_horaires')->find($excludeId);
+            if ($existingEmploi) {
+                $existingMinutes = 0;
+                foreach ($existingEmploi->ref_horaires as $horaire) {
+                    if ($horaire->start_time && $horaire->end_time) {
+                        $start = Carbon::parse($horaire->start_time);
+                        $end = Carbon::parse($horaire->end_time);
+                        $existingMinutes += $end->diffInMinutes($start);
+                    }
+                }
+                $currentHours -= ($existingMinutes / 60);
+            }
+        }
+
+        // Vérifier le total
+        $totalHours = $currentHours + $newHours;
+        $limit = $assignment->heures_semaine;
+
+        if ($totalHours > $limit) {
+            $teacher = Teacher::find($teacherId);
+            $classe = Classe::find($classId);
+            return "Attention: L'enseignant {$teacher->name} dépassera sa limite d'heures hebdomadaires pour la classe {$classe->nom}. "
+                . "Limite: {$limit}h, Total après ajout: " . round($totalHours, 1) . "h";
+        }
+
+        return null;
     }
 
     public function getTrimesters(Request $request)
@@ -195,6 +596,9 @@ class EmploiTempsController extends Controller
                     'horaire_id' => $horaireId,
                 ]);
             }
+
+            // إرسال إشعار للطلاب
+            NotificationService::notifyScheduleCreated($emploi);
         }
 
         return redirect()->route('web.emplois.index')->with('success', 'Emploi du temps ajouté avec succès.');
@@ -336,12 +740,27 @@ class EmploiTempsController extends Controller
         // Sync the horaires relationship (this will remove old ones and add new ones)
         $emploi->ref_horaires()->sync($request->horaires);
 
+        // إرسال إشعار للطلاب بتعديل الحصة
+        NotificationService::notifyScheduleUpdated($emploi);
+
         return redirect()->route('web.emplois.index')->with('success', 'Emploi du temps modifié avec succès.');
     }
 
     public function destroy(EmploiTemps $emploi)
     {
+        // تحميل البيانات قبل الحذف للإشعار
+        $emploi->load(['subject', 'jour', 'ref_horaires']);
+
+        $classId = $emploi->class_id;
+        $subjectName = $emploi->subject->name ?? 'Matière';
+        $jourName = $emploi->jour->libelle_fr ?? 'Jour';
+        $horaires = $emploi->ref_horaires->pluck('libelle_fr')->implode(', ');
+
         $emploi->delete();
+
+        // إرسال إشعار للطلاب بحذف الحصة
+        NotificationService::notifyScheduleDeleted($classId, $subjectName, $jourName, $horaires);
+
         return redirect()->route('web.emplois.index')->with('success', 'Emploi supprimé.');
     }
 
@@ -508,6 +927,55 @@ class EmploiTempsController extends Controller
     /**
      * جلب الأساتذة الذين يدرسون في قسم معين
      */
+    /**
+     * Récupérer les statistiques pour la page index
+     */
+    public function getStats()
+    {
+        $anneeId = Anneescolaire::where('is_active', true)->first()?->id;
+
+        if (!$anneeId) {
+            return response()->json([
+                'total' => 0,
+                'classes' => 0,
+                'teachers' => 0,
+                'subjects' => 0
+            ]);
+        }
+
+        $total = EmploiTemps::where('annee_id', $anneeId)->count();
+        $classes = EmploiTemps::where('annee_id', $anneeId)->distinct('class_id')->count('class_id');
+        $teachers = EmploiTemps::where('annee_id', $anneeId)->distinct('teacher_id')->count('teacher_id');
+        $subjects = EmploiTemps::where('annee_id', $anneeId)->distinct('subject_id')->count('subject_id');
+
+        return response()->json([
+            'total' => $total,
+            'classes' => $classes,
+            'teachers' => $teachers,
+            'subjects' => $subjects
+        ]);
+    }
+
+    /**
+     * Récupérer les données pour les filtres
+     */
+    public function getFilters()
+    {
+        $anneeId = Anneescolaire::where('is_active', true)->first()?->id;
+
+        $classes = Classe::where('annee_id', $anneeId)->orderBy('nom')->get(['id', 'nom']);
+        $teachers = Teacher::orderBy('name')->get(['id', 'name']);
+        $jours = Jour::orderBy('ordre')->get(['id', 'libelle_fr']);
+        $trimesters = \App\Models\Trimester::orderBy('name')->get(['id', 'name']);
+
+        return response()->json([
+            'classes' => $classes,
+            'teachers' => $teachers,
+            'jours' => $jours,
+            'trimesters' => $trimesters
+        ]);
+    }
+
     public function getTeachersByDepartment(Request $request)
     {
         $specialiteId = $request->specialite_id;

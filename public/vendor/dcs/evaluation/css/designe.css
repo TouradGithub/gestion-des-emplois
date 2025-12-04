@@ -1,0 +1,12 @@
+.required_field{
+    color: red;
+}
+.m_blue{
+    color: blue;
+}
+.typem{
+    display: inline-block;
+}
+#tableUnite tr:hover{
+	cursor: pointer;
+}

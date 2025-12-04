@@ -1,0 +1,16 @@
+.associations-valeur{
+  position: absolute;
+  min-width: 300px;
+  z-index: 999;
+  top: -50px;
+}
+.btn-close{
+  position: absolute;
+  right: 5px;
+  top: 0;
+}
+.test-lights{
+  position: absolute;
+  right: 30px;
+  font-size: 1.3rem;
+}

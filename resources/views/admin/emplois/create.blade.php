@@ -4,593 +4,818 @@
     {{ __('Créer un emploi du temps') }}
 @endsection
 
-@section('styles')
-<!-- Select2 CSS -->
+@section('css')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
 
 <style>
+    .page-header-custom {
+        background: #1a1a1a;
+        border-radius: 15px;
+        padding: 25px 30px;
+        margin-bottom: 25px;
+        color: #fff;
+    }
+    .page-header-custom h3 {
+        margin: 0;
+        font-weight: 700;
+    }
+    .page-header-custom p {
+        margin: 5px 0 0 0;
+        opacity: 0.8;
+    }
+    .main-card {
+        border-radius: 15px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        border: 1px solid #e0e0e0;
+    }
+    .main-card .card-body {
+        padding: 30px;
+    }
+    .selection-card {
+        background: #f5f5f5;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 25px;
+        border: 2px solid #e0e0e0;
+    }
+    .selection-card .form-label {
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+    }
+    .selection-card .form-select {
+        border-radius: 10px;
+        border: 2px solid #e0e0e0;
+        padding: 12px 15px;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+    .selection-card .form-select:focus {
+        border-color: #1a1a1a;
+        box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+    }
+    .info-alert {
+        background: #f5f5f5;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        padding: 20px;
+        color: #1a1a1a;
+    }
+    .info-alert i {
+        font-size: 1.5rem;
+        margin-right: 10px;
+    }
     .emploi-row {
-        border: 1px solid #e5e5e5;
-        border-radius: 8px;
+        background: #fff;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        padding: 20px;
         margin-bottom: 15px;
-        padding: 15px;
-        background: #f8f9fa;
+        transition: all 0.3s;
+        position: relative;
     }
-
     .emploi-row:hover {
-        background: #ffffff;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-color: #1a1a1a;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
     }
-
-    .text-success {
-        color: #28a745 !important;
+    .emploi-row.first-row {
+        background: #fafafa;
+        border-color: #1a1a1a;
     }
-
-    .text-warning {
-        color: #ffc107 !important;
+    .row-number {
+        position: absolute;
+        top: -12px;
+        left: 20px;
+        background: #1a1a1a;
+        color: #fff;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.85rem;
     }
-
-    .text-danger {
-        color: #dc3545 !important;
+    .form-group label {
+        font-weight: 600;
+        color: #1a1a1a;
+        font-size: 0.9rem;
+        margin-bottom: 6px;
     }
-
-    .professor-info {
-        font-size: 0.85em;
-        color: #6c757d;
-        font-style: italic;
+    .form-group label .text-danger {
+        color: #666 !important;
     }
-
-    .loading-spinner {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        border: 3px solid #f3f3f3;
-        border-top: 3px solid #3498db;
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 2px solid #e0e0e0;
+        padding: 10px 15px;
+        transition: all 0.3s;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #1a1a1a;
+        box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+    }
+    .select2-container--bootstrap-5 .select2-selection {
+        border: 2px solid #e0e0e0 !important;
+        border-radius: 8px !important;
+        min-height: 45px !important;
+    }
+    .select2-container--bootstrap-5.select2-container--focus .select2-selection {
+        border-color: #1a1a1a !important;
+        box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1) !important;
+    }
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
+        background: #1a1a1a !important;
+        border: none !important;
+        color: #fff !important;
+        padding: 4px 10px !important;
+        border-radius: 20px !important;
+    }
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove {
+        color: #fff !important;
+        margin-right: 5px;
+    }
+    .btn-remove-row {
+        background: #666;
+        border: none;
+        color: #fff;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+    .btn-remove-row:hover {
+        transform: scale(1.1);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        background: #1a1a1a;
+    }
+    .btn-add-row {
+        background: #fff;
+        border: 2px solid #1a1a1a;
+        color: #1a1a1a;
+        padding: 12px 25px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    .btn-add-row:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        background: #1a1a1a;
+        color: #fff;
+    }
+    .btn-submit {
+        background: #1a1a1a;
+        border: none;
+        color: #fff;
+        padding: 12px 30px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        background: #333;
+        color: #fff;
+    }
+    .btn-back {
+        background: #fff;
+        border: 2px solid #1a1a1a;
+        color: #1a1a1a;
+        padding: 12px 25px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    .btn-back:hover {
+        background: #1a1a1a;
+        color: #fff;
+    }
+    .form-feedback {
+        margin-top: 5px;
+        font-size: 0.85rem;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+    .form-feedback.text-success {
+        background: rgba(0, 0, 0, 0.05);
+        color: #333 !important;
+    }
+    .form-feedback.text-warning {
+        background: rgba(0, 0, 0, 0.05);
+        color: #666 !important;
+    }
+    .form-feedback.text-danger {
+        background: rgba(0, 0, 0, 0.05);
+        color: #333 !important;
+    }
+    .is-invalid {
+        border-color: #666 !important;
+    }
+    .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255,255,255,0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        z-index: 10;
+    }
+    .spinner-custom {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #e0e0e0;
+        border-top: 4px solid #1a1a1a;
         border-radius: 50%;
         animation: spin 1s linear infinite;
     }
-
     @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
-
-    .form-feedback {
-        margin-top: 5px;
-        font-size: 0.875em;
+    .actions-row {
+        background: #f5f5f5;
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 25px;
     }
-
-    .alert-info {
-        background-color: #d1ecf1;
-        border-color: #bee5eb;
-        color: #0c5460;
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e0e0e0;
     }
-
-    .select2-container--default .select2-selection--multiple {
-        border: 1px solid #ced4da;
-        border-radius: 4px;
-        min-height: 38px;
-    }
-
-    .select2-container--default .select2-selection--multiple .select2-selection__choice {
-        background-color: #007bff;
-        border: 1px solid #007bff;
-        color: white;
-        padding: 2px 8px;
-        margin: 2px;
-        border-radius: 3px;
-    }
-
-    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
-        color: white;
-        margin-right: 5px;
-    }
-
-    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
-        color: #ffc107;
+    .section-title i {
+        color: #1a1a1a;
+        margin-right: 8px;
     }
 </style>
 @endsection
 
 @section('content')
-    <div class="content-wrapper">
-        <div class="page-header">
-            <h3 class="page-title">Créer un emploi du temps</h3>
+<div class="content-wrapper">
+    <!-- Page Header -->
+    <div class="page-header-custom">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h3><i class="mdi mdi-calendar-plus me-2"></i> Nouvelle Séance</h3>
+                <p>Créer un nouvel emploi du temps pour une classe</p>
+            </div>
+            <a href="{{ route('web.emplois.index') }}" class="btn btn-light">
+                <i class="mdi mdi-arrow-left"></i> Retour à la liste
+            </a>
         </div>
-        <div class="row">
-            <div class="col-lg-12 grid-margin stretch-card">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="alert alert-info">
-                            <strong>Information:</strong> Les professeurs appropriés pour la classe et le trimestre sélectionnés seront récupérés. Lors de la sélection d'un professeur, les matières qu'il enseigne dans cette spécialité s'afficheront.
-                        </div>
+    </div>
 
-                        <form class="pt-3" action="{{ route('web.emplois.store') }}" method="POST">
-                            @csrf
-                            @if ($errors->any())
-                                <div class="alert alert-danger">
-                                    <ul class="mb-0">
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label>Classe <span class="text-danger">*</span></label>
-                                    <select name="class_id" id="class_classe_id" class="form-control" required>
-                                        <option value="">-- Choisir --</option>
-                                        @foreach($classes as $class)
-                                            <option value="{{ $class->id }}" {{ old('class_id') == $class->id ? 'selected' : '' }}>
-                                                {{ $class->nom }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>Trimestre <span class="text-danger">*</span></label>
-                                    <select name="trimester_id" id="trimester_create_id" class="form-control" required>
-                                        <option value="">-- Choisir --</option>
+    <!-- Info Alert -->
+    <div class="info-alert d-flex align-items-center mb-4">
+        <i class="mdi mdi-information-outline"></i>
+        <div>
+            <strong>Information:</strong> Sélectionnez d'abord une classe et un trimestre. Les enseignants assignés à cette classe pour ce trimestre seront automatiquement chargés avec leurs matières.
+        </div>
+    </div>
+
+    <form action="{{ route('web.emplois.store') }}" method="POST" id="emploiForm">
+        @csrf
+
+        @if ($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong><i class="mdi mdi-alert-circle"></i> Erreurs détectées:</strong>
+                <ul class="mb-0 mt-2">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        <!-- Selection Card -->
+        <div class="card main-card">
+            <div class="card-body">
+                <div class="section-title">
+                    <i class="mdi mdi-tune"></i> Configuration principale
+                </div>
+                <div class="selection-card">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label><i class="mdi mdi-account-group me-1"></i> Classe <span class="text-danger">*</span></label>
+                                <select name="class_id" id="class_classe_id" class="form-select" required>
+                                    <option value="">-- Sélectionner une classe --</option>
+                                    @foreach($classes as $class)
+                                        <option value="{{ $class->id }}" {{ old('class_id') == $class->id ? 'selected' : '' }}>
+                                            {{ $class->nom }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label><i class="mdi mdi-calendar-range me-1"></i> Trimestre <span class="text-danger">*</span></label>
+                                <select name="trimester_id" id="trimester_create_id" class="form-select" required disabled>
+                                    <option value="">-- Sélectionner d'abord une classe --</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-title">
+                    <i class="mdi mdi-calendar-clock"></i> Séances de cours
+                </div>
+
+                <div id="emploi-rows">
+                    <!-- First Row Template -->
+                    <div class="emploi-row first-row" data-index="0">
+                        <span class="row-number">1</span>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label><i class="mdi mdi-account-tie me-1"></i> Enseignant <span class="text-danger">*</span></label>
+                                    <select name="teacher_id[]" class="form-select teacher-select" required disabled>
+                                        <option value="">-- Sélectionner classe et trimestre --</option>
                                     </select>
                                 </div>
                             </div>
-                            <hr>
-                            <div id="emploi-rows">
-                                <div class="emploi-row row align-items-end">
-                                    <div class="form-group col-md-2">
-                                        <label>Enseignant <span class="text-danger">*</span></label>
-                                        <select name="teacher_id[]" class="form-control teacher-select" required>
-                                            <option value="">-- Choisir --</option>
-                                            @foreach($teachers as $teacher)
-                                                <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label>Matière <span class="text-danger">*</span></label>
-                                        <select name="subject_id[]" class="form-control subject-select" required>
-                                            <option value="">-- Choisir --</option>
-                                            @foreach($subjects as $subject)
-                                                <option value="{{ $subject->id }}">{{ $subject->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label>Jour <span class="text-danger">*</span></label>
-                                        <select name="jour_id[]" class="form-control" required>
-                                            <option value="">-- Choisir --</option>
-                                            @foreach($jours as $jour)
-                                                <option value="{{ $jour->id }}">{{ $jour->libelle_fr }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                                                        <div class="form-group col-md-3">
-                                        <label>Horaires <span class="text-danger">*</span></label>
-                                        <select name="horaire_id[0][]" class="form-control horaire-select-multiple" multiple="multiple" required>
-                                            @foreach($horaires as $horaire)
-                                                <option value="{{ $horaire->id }}">{{ $horaire->libelle_fr }}</option>
-                                            @endforeach
-                                        </select>
-                                        <small class="form-text text-muted">Sélectionnez une ou plusieurs plages horaires</small>
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label>Salle</label>
-                                        <select name="salle_de_classe_id[]" class="form-control">
-                                            <option value="">-- Choisir --</option>
-                                            @foreach($salles as $salle)
-                                                <option value="{{ $salle->id }}">{{ $salle->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-md-1">
-                                        <button type="button" class="btn btn-danger remove-row d-none">Supprimer</button>
-                                    </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label><i class="mdi mdi-book-open-variant me-1"></i> Matière <span class="text-danger">*</span></label>
+                                    <select name="subject_id[]" class="form-select subject-select" required disabled>
+                                        <option value="">-- Sélectionner un enseignant --</option>
+                                    </select>
                                 </div>
                             </div>
-                            <button type="button" id="add-row" class="btn btn-success mt-3">Ajouter un autre cours</button>
-                            <button type="submit" class="btn btn-theme mt-3">Enregistrer</button>
-                        </form>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label><i class="mdi mdi-calendar-today me-1"></i> Jour <span class="text-danger">*</span></label>
+                                    <select name="jour_id[]" class="form-select" required>
+                                        <option value="">-- Jour --</option>
+                                        @foreach($jours as $jour)
+                                            <option value="{{ $jour->id }}">{{ $jour->libelle_fr }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label><i class="mdi mdi-clock-outline me-1"></i> Horaires <span class="text-danger">*</span></label>
+                                    <select name="horaire_id[0][]" class="form-select horaire-select-multiple" multiple="multiple" required>
+                                        @foreach($horaires as $horaire)
+                                            <option value="{{ $horaire->id }}">{{ $horaire->libelle_fr }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label><i class="mdi mdi-door me-1"></i> Salle</label>
+                                    <select name="salle_de_classe_id[]" class="form-select">
+                                        <option value="">-- Optionnel --</option>
+                                        @foreach($salles as $salle)
+                                            <option value="{{ $salle->id }}">{{ $salle->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="actions-row">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <button type="button" id="add-row" class="btn btn-add-row">
+                            <i class="mdi mdi-plus-circle me-2"></i> Ajouter une autre séance
+                        </button>
+                        <div class="d-flex gap-3">
+                            <a href="{{ route('web.emplois.index') }}" class="btn btn-back">
+                                <i class="mdi mdi-close me-2"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-submit" id="submitBtn">
+                                <i class="mdi mdi-content-save me-2"></i> Enregistrer
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+    </form>
+</div>
+
+<!-- Row Template for cloning -->
+<template id="row-template">
+    <div class="emploi-row" data-index="INDEX">
+        <span class="row-number">NUM</span>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label><i class="mdi mdi-account-tie me-1"></i> Enseignant <span class="text-danger">*</span></label>
+                    <select name="teacher_id[]" class="form-select teacher-select" required>
+                        <option value="">-- Choisir --</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label><i class="mdi mdi-book-open-variant me-1"></i> Matière <span class="text-danger">*</span></label>
+                    <select name="subject_id[]" class="form-select subject-select" required disabled>
+                        <option value="">-- Sélectionner un enseignant --</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label><i class="mdi mdi-calendar-today me-1"></i> Jour <span class="text-danger">*</span></label>
+                    <select name="jour_id[]" class="form-select" required>
+                        <option value="">-- Jour --</option>
+                        @foreach($jours as $jour)
+                            <option value="{{ $jour->id }}">{{ $jour->libelle_fr }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label><i class="mdi mdi-clock-outline me-1"></i> Horaires <span class="text-danger">*</span></label>
+                    <select name="horaire_id[INDEX][]" class="form-select horaire-select-multiple" multiple="multiple" required>
+                        @foreach($horaires as $horaire)
+                            <option value="{{ $horaire->id }}">{{ $horaire->libelle_fr }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-1">
+                <div class="form-group">
+                    <label><i class="mdi mdi-door me-1"></i> Salle</label>
+                    <select name="salle_de_classe_id[]" class="form-select">
+                        <option value="">--</option>
+                        @foreach($salles as $salle)
+                            <option value="{{ $salle->id }}">{{ $salle->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-1 d-flex align-items-end pb-2">
+                <button type="button" class="btn-remove-row" title="Supprimer cette séance">
+                    <i class="mdi mdi-delete"></i>
+                </button>
+            </div>
+        </div>
     </div>
+</template>
 @endsection
 
 @section('script')
-    <script>
-        $(document).ready(function () {
-            // Charger les professeurs et matières pour chaque ligne
-            function loadTeachersSubjects(row) {
-                let classId = $('#class_classe_id').val();
-                let trimesterId = $('#trimester_create_id').val();
-                let teacherSelect = row.find('.teacher-select');
-                let subjectSelect = row.find('.subject-select');
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-                if (classId && trimesterId) {
-                    $.ajax({
-                        url: baseUrl + '/admin/emplois/get-teachers',
-                        type: 'GET',
-                        data: { class_id: classId, trimester_id: trimesterId },
-                        success: function (response) {
-                            teacherSelect.empty().append('<option value="">-- Choisir un professeur --</option>');
-                            if (response.data && response.data.length > 0) {
-                                $.each(response.data, function (key, teacher) {
-                                    let displayName = teacher.full_name || (teacher.nom + ' ' + teacher.prenom);
-                                    let subjectsInfo = '';
-                                    if (teacher.subjects && teacher.subjects.length > 0) {
-                                        let subjectNames = teacher.subjects.map(s => s.name).join(', ');
-                                        subjectsInfo = ` (${subjectNames})`;
-                                    }
-                                    teacherSelect.append(`<option value="${teacher.id}" data-subjects='${JSON.stringify(teacher.subjects || [])}'>${displayName}${subjectsInfo}</option>`);
-                                });
-                                teacherSelect.addClass('text-success');
+<script>
+$(document).ready(function() {
+    let teachersData = [];
 
-                                // إضافة معلومات إضافية تحت القائمة
-                                let infoDiv = teacherSelect.next('.form-feedback');
-                                if (infoDiv.length === 0) {
-                                    infoDiv = $('<div class="form-feedback text-success"></div>');
-                                    teacherSelect.after(infoDiv);
-                                }
-                                infoDiv.html(`✅ ${response.data.length} professeur(s) disponible(s) pour ce trimestre`).removeClass('text-warning text-danger').addClass('text-success');
-                            } else {
-                                teacherSelect.append('<option value="">-- Aucun professeur disponible --</option>');
-                                teacherSelect.addClass('text-warning');
+    // Initialize Select2 for time slots
+    function initSelect2(container) {
+        container.find('.horaire-select-multiple').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Sélectionner...',
+            allowClear: true,
+            closeOnSelect: false,
+            width: '100%'
+        });
+    }
 
-                                let infoDiv = teacherSelect.next('.form-feedback');
-                                if (infoDiv.length === 0) {
-                                    infoDiv = $('<div class="form-feedback text-warning"></div>');
-                                    teacherSelect.after(infoDiv);
-                                }
-                                infoDiv.html('⚠️ Aucun professeur assigné à ce trimestre').removeClass('text-success text-danger').addClass('text-warning');
-                            }
-                            subjectSelect.empty().append('<option value="">-- Choisir une matière --</option>');
-                            subjectSelect.prop('disabled', false);
-                        },
-                        error: function(xhr, status, error) {
-                            console.log('Error loading teachers:', error);
-                            teacherSelect.empty().append('<option value="">-- Erreur de chargement --</option>');
-                            teacherSelect.addClass('text-danger');
+    // Initialize first row
+    initSelect2($('#emploi-rows'));
 
-                            let infoDiv = teacherSelect.next('.form-feedback');
-                            if (infoDiv.length === 0) {
-                                infoDiv = $('<div class="form-feedback text-danger"></div>');
-                                teacherSelect.after(infoDiv);
-                            }
-                            infoDiv.html('❌ Erreur lors du chargement des professeurs').removeClass('text-success text-warning').addClass('text-danger');
+    // Load trimesters when class changes
+    $('#class_classe_id').on('change', function() {
+        let classId = $(this).val();
+        let trimesterSelect = $('#trimester_create_id');
 
-                            subjectSelect.empty().append('<option value="">-- Choisir une matière --</option>');
-                            subjectSelect.prop('disabled', false);
-                        },
-                        complete: function() {
-                            teacherSelect.prop('disabled', false);
-                        }
-                    });
-                } else {
-                    teacherSelect.empty().append('<option value="">-- Choisir un professeur --</option>');
-                    subjectSelect.empty().append('<option value="">-- Choisir une matière --</option>');
-                    teacherSelect.removeClass('text-success text-warning text-danger');
-                }
-            }
+        // Reset trimesters
+        trimesterSelect.empty().append('<option value="">-- Chargement... --</option>');
+        trimesterSelect.prop('disabled', true);
 
-            // تحميل المواد حسب الأستاذ في صف معين
-            function loadSubjects(row, teacherId) {
-                let subjectSelect = row.find('.subject-select');
-                let classId = $('#class_classe_id').val();
-                let trimesterId = $('#trimester_create_id').val();
+        // Reset all rows
+        resetAllRows();
 
-                if (teacherId) {
-                    // أولاً محاولة الحصول على المواد من بيانات الأستاذ المحفوظة
-                    let teacherOption = row.find('.teacher-select option:selected');
-                    let teacherSubjects = teacherOption.data('subjects');
-
-                    if (teacherSubjects && teacherSubjects.length > 0) {
-                        // استخدام المواد المحفوظة مع بيانات الأستاذ
-                        subjectSelect.empty().append('<option value="">-- Choisir une matière --</option>');
-                        $.each(teacherSubjects, function (key, subject) {
-                            let displayName = subject.name;
-                            if (subject.coefficient) {
-                                displayName += ` (Coef: ${subject.coefficient})`;
-                            }
-                            subjectSelect.append(`<option value="${subject.id}">${displayName}</option>`);
+        if (classId) {
+            $.ajax({
+                url: baseUrl + '/admin/emplois/get-trimesters',
+                type: 'POST',
+                data: { class_id: classId, _token: '{{ csrf_token() }}' },
+                success: function(response) {
+                    trimesterSelect.empty().append('<option value="">-- Sélectionner un trimestre --</option>');
+                    if (response.trimesters && response.trimesters.length > 0) {
+                        $.each(response.trimesters, function(key, trimestre) {
+                            trimesterSelect.append(`<option value="${trimestre.id}">${trimestre.name}</option>`);
                         });
-                        subjectSelect.addClass('text-success');
+                        trimesterSelect.prop('disabled', false);
                     } else {
-                        // الاستدعاء التقليدي من الخادم
-                        $.ajax({
-                            url: baseUrl + '/admin/emplois/get-subjects',
-                            type: 'GET',
-                            data: {
-                                teacher_id: teacherId,
-                                class_id: classId,
-                                trimester_id: trimesterId
-                            },
-                            success: function (response) {
-                                subjectSelect.empty().append('<option value="">-- Choisir une matière --</option>');
-                                if (response.subjects && response.subjects.length > 0) {
-                                    $.each(response.subjects, function (key, subject) {
-                                        let displayName = subject.name;
-                                        if (subject.coefficient) {
-                                            displayName += ` (Coef: ${subject.coefficient})`;
-                                        }
-                                        if (subject.specialite_name) {
-                                            displayName += ` - ${subject.specialite_name}`;
-                                        }
-                                        subjectSelect.append(`<option value="${subject.id}">${displayName}</option>`);
-                                    });
-                                    subjectSelect.addClass('text-success');
-
-                                    // إضافة معلومات تحت قائمة المواد
-                                    let subjectInfoDiv = subjectSelect.next('.form-feedback');
-                                    if (subjectInfoDiv.length === 0) {
-                                        subjectInfoDiv = $('<div class="form-feedback text-success"></div>');
-                                        subjectSelect.after(subjectInfoDiv);
-                                    }
-                                    subjectInfoDiv.html(`📚 ${response.subjects.length} matière(s) enseignée(s) par ce professeur`).removeClass('text-warning text-danger').addClass('text-success');
-                                } else {
-                                    subjectSelect.append('<option value="">-- Aucune matière disponible --</option>');
-                                    subjectSelect.addClass('text-warning');
-
-                                    let subjectInfoDiv = subjectSelect.next('.form-feedback');
-                                    if (subjectInfoDiv.length === 0) {
-                                        subjectInfoDiv = $('<div class="form-feedback text-warning"></div>');
-                                        subjectSelect.after(subjectInfoDiv);
-                                    }
-                                    subjectInfoDiv.html('⚠️ Ce professeur n\'enseigne aucune matière dans ce trimestre').removeClass('text-success text-danger').addClass('text-warning');
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                console.log('Error loading subjects:', error);
-                                subjectSelect.empty().append('<option value="">-- Erreur de chargement --</option>');
-                                subjectSelect.addClass('text-danger');
-                            }
-                        });
+                        trimesterSelect.append('<option value="">-- Aucun trimestre disponible --</option>');
                     }
-                } else {
-                    subjectSelect.empty().append('<option value="">-- Choisir une matière --</option>');
-                    subjectSelect.removeClass('text-success text-warning text-danger');
+                },
+                error: function() {
+                    trimesterSelect.empty().append('<option value="">-- Erreur de chargement --</option>');
                 }
-            }
+            });
+        } else {
+            trimesterSelect.empty().append('<option value="">-- Sélectionner d\'abord une classe --</option>');
+        }
+    });
 
-                        // عند تغيير القسم، جلب الفصول الدراسية
-            $('#class_classe_id').on('change', function () {
-                let classId = $(this).val();
-                let trimesterSelect = $('#trimester_create_id');
+    // Load teachers when trimester changes
+    $('#trimester_create_id').on('change', function() {
+        let classId = $('#class_classe_id').val();
+        let trimesterId = $(this).val();
 
-                trimesterSelect.empty().append('<option value="">-- Choisir --</option>');
+        if (classId && trimesterId) {
+            loadTeachersForAllRows(classId, trimesterId);
+        } else {
+            resetAllRows();
+        }
+    });
 
-                if (classId) {
-                    // إضافة مؤشر التحميل
-                    trimesterSelect.append('<option value="">🔄 Chargement des trimestres...</option>');
-                    trimesterSelect.prop('disabled', true);
+    // Load teachers for all rows
+    function loadTeachersForAllRows(classId, trimesterId) {
+        $('.emploi-row').each(function() {
+            let row = $(this);
+            let teacherSelect = row.find('.teacher-select');
+            let subjectSelect = row.find('.subject-select');
 
-                    $.ajax({
-                        url: baseUrl + '/admin/emplois/get-trimesters',
-                        type: 'POST',
-                        data: { class_id: classId },
-                        success: function (response) {
-                            trimesterSelect.empty().append('<option value="">-- Choisir un trimestre --</option>');
-                            if (response.trimesters && response.trimesters.length > 0) {
-                                $.each(response.trimesters, function (key, trimestre) {
-                                    trimesterSelect.append(`<option value="${trimestre.id}">${trimestre.name}</option>`);
-                                });
-                                trimesterSelect.addClass('text-success');
-                            } else {
-                                trimesterSelect.append('<option value="">-- Aucun trimestre disponible --</option>');
-                                trimesterSelect.addClass('text-warning');
+            teacherSelect.empty().append('<option value="">Chargement...</option>');
+            teacherSelect.prop('disabled', true);
+            subjectSelect.empty().append('<option value="">-- Sélectionner un enseignant --</option>');
+            subjectSelect.prop('disabled', true);
+        });
+
+        $.ajax({
+            url: baseUrl + '/admin/emplois/get-teachers',
+            type: 'GET',
+            data: { class_id: classId, trimester_id: trimesterId },
+            success: function(response) {
+                teachersData = response.data || [];
+
+                $('.emploi-row').each(function() {
+                    let row = $(this);
+                    let teacherSelect = row.find('.teacher-select');
+
+                    teacherSelect.empty().append('<option value="">-- Sélectionner un enseignant --</option>');
+
+                    if (teachersData.length > 0) {
+                        $.each(teachersData, function(key, teacher) {
+                            let displayName = teacher.full_name || teacher.name;
+                            let subjectsInfo = '';
+                            if (teacher.subjects && teacher.subjects.length > 0) {
+                                let subjectNames = teacher.subjects.map(s => s.name).join(', ');
+                                subjectsInfo = ` (${subjectNames})`;
                             }
-                        },
-                        error: function() {
-                            console.log('Error loading trimesters');
-                            trimesterSelect.empty().append('<option value="">-- Erreur de chargement --</option>');
-                            trimesterSelect.addClass('text-danger');
-                        },
-                        complete: function() {
-                            trimesterSelect.prop('disabled', false);
-                        }
-                    });
-                } else {
-                    trimesterSelect.removeClass('text-success text-warning text-danger');
-                }
+                            teacherSelect.append(`<option value="${teacher.id}" data-subjects='${JSON.stringify(teacher.subjects || [])}'>${displayName}${subjectsInfo}</option>`);
+                        });
+                        teacherSelect.prop('disabled', false);
 
-                // إفراغ الأساتذة والمواد في جميع الصفوف
-                $('.emploi-row').each(function () {
+                        // Show feedback
+                        showFeedback(teacherSelect, `${teachersData.length} enseignant(s) disponible(s)`, 'success');
+                    } else {
+                        teacherSelect.append('<option value="">-- Aucun enseignant disponible --</option>');
+                        showFeedback(teacherSelect, 'Aucun enseignant assigné pour ce trimestre', 'warning');
+                    }
+                });
+            },
+            error: function() {
+                $('.emploi-row').each(function() {
                     let teacherSelect = $(this).find('.teacher-select');
-                    let subjectSelect = $(this).find('.subject-select');
-                    teacherSelect.empty().append('<option value="">-- Choisir un professeur --</option>');
-                    subjectSelect.empty().append('<option value="">-- Choisir une matière --</option>');
-                    teacherSelect.removeClass('text-success text-warning text-danger');
-                    subjectSelect.removeClass('text-success text-warning text-danger');
+                    teacherSelect.empty().append('<option value="">-- Erreur de chargement --</option>');
+                    teacherSelect.prop('disabled', false);
+                    showFeedback(teacherSelect, 'Erreur lors du chargement', 'danger');
                 });
-            });
-
-            // عند تغيير السمستر، تحميل الأساتذة والمواد
-            $('#trimester_create_id').on('change', function () {
-                let trimesterId = $(this).val();
-                if (trimesterId) {
-                    // إضافة مؤشر تحميل لجميع صفوف الأساتذة
-                    $('.emploi-row').each(function () {
-                        let teacherSelect = $(this).find('.teacher-select');
-                        let subjectSelect = $(this).find('.subject-select');
-                        teacherSelect.empty().append('<option value="">🔄 Chargement des professeurs...</option>');
-                        teacherSelect.prop('disabled', true);
-                        subjectSelect.empty().append('<option value="">-- Attendez la sélection du professeur --</option>');
-                        subjectSelect.prop('disabled', true);
-
-                        loadTeachersSubjects($(this));
-                    });
-                } else {
-                    $('.emploi-row').each(function () {
-                        let teacherSelect = $(this).find('.teacher-select');
-                        let subjectSelect = $(this).find('.subject-select');
-                        teacherSelect.empty().append('<option value="">-- Choisir un professeur --</option>');
-                        subjectSelect.empty().append('<option value="">-- Choisir une matière --</option>');
-                        teacherSelect.removeClass('text-success text-warning text-danger').prop('disabled', false);
-                        subjectSelect.removeClass('text-success text-warning text-danger').prop('disabled', false);
-                    });
-                }
-            });
-
-            // عند تغيير الأستاذ في أي صف
-            $(document).on('change', '.teacher-select', function () {
-                let row = $(this).closest('.emploi-row');
-                let teacherId = $(this).val();
-                loadSubjects(row, teacherId);
-            });
-
-            // تم نقل منطق إضافة الصف إلى الأسفل مع Select2            // حذف صف (يمنع حذف السطر الأول)
-            $(document).on('click', '.remove-row', function () {
-                if ($('.emploi-row').length > 1) {
-                    $(this).closest('.emploi-row').remove();
-                } else {
-                    alert('Impossible de supprimer la première ligne !');
-                }
-            });
-
-            // فاليديشن جافاسكريبت قبل الإرسال
-            $('form').on('submit', function (e) {
-                let valid = true;
-                let errorMessages = [];
-
-                // التحقق من القسم والسمستر
-                if (!$('#class_classe_id').val()) {
-                    $('#class_classe_id').addClass('is-invalid');
-                    errorMessages.push('Veuillez choisir une classe');
-                    valid = false;
-                } else {
-                    $('#class_classe_id').removeClass('is-invalid');
-                }
-
-                if (!$('#trimester_create_id').val()) {
-                    $('#trimester_create_id').addClass('is-invalid');
-                    errorMessages.push('Veuillez choisir un trimestre');
-                    valid = false;
-                } else {
-                    $('#trimester_create_id').removeClass('is-invalid');
-                }
-
-                // التحقق من كل صف
-                $('.emploi-row').each(function (index) {
-                    let rowNumber = index + 1;
-                    $(this).find('select[required], input[required]').each(function () {
-                        if (!$(this).val()) {
-                            $(this).addClass('is-invalid');
-                            let fieldName = $(this).closest('.form-group').find('label').text().replace('*', '').trim();
-                            errorMessages.push(`Ligne ${rowNumber}: ${fieldName} est requis`);
-                            valid = false;
-                        } else {
-                            $(this).removeClass('is-invalid');
-                        }
-                    });
-                });
-
-                if (!valid) {
-                    e.preventDefault();
-                    let message = 'Erreurs de validation:\n' + errorMessages.join('\n');
-                    alert(message);
-                }
-            });
-
-            // تحميل الأساتذة والمواد للصف الأول عند التحميل - فقط إذا كان القسم والسمستر محددين
-            if ($('#class_classe_id').val() && $('#trimester_create_id').val()) {
-                loadTeachersSubjects($('.emploi-row').first());
             }
         });
-    </script>
-    <style>
-        .is-invalid {
-            border-color: #dc3545 !important;
-            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
-        }
-        .emploi-row {
-            margin-bottom: 15px;
-            padding: 15px;
-            border: 1px solid #e9ecef;
-            border-radius: 5px;
-        }
-        .emploi-row:first-child {
-            background-color: #f8f9fa;
-        }
-        .remove-row {
-            margin-top: 25px;
-        }
-    </style>
+    }
 
-    <!-- Select2 JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    // Load subjects when teacher changes
+    $(document).on('change', '.teacher-select', function() {
+        let row = $(this).closest('.emploi-row');
+        let teacherId = $(this).val();
+        let subjectSelect = row.find('.subject-select');
+        let teacherOption = $(this).find('option:selected');
+        let teacherSubjects = teacherOption.data('subjects');
 
-    <script>
-        $(document).ready(function() {
-            // تهيئة Select2 للحصص الزمنية
-            function initSelect2(container) {
-                container.find('.horaire-select-multiple').select2({
-                    theme: 'bootstrap-5',
-                    placeholder: 'Sélectionnez les horaires...',
-                    allowClear: true,
-                    closeOnSelect: false,
-                    width: '100%'
-                });
-            }
+        subjectSelect.empty().append('<option value="">-- Sélectionner une matière --</option>');
 
-            // تهيئة Select2 للصف الأول
-            initSelect2($('#emploi-rows'));
+        if (teacherId && teacherSubjects && teacherSubjects.length > 0) {
+            $.each(teacherSubjects, function(key, subject) {
+                let displayName = subject.name;
+                if (subject.coefficient) {
+                    displayName += ` (Coef: ${subject.coefficient})`;
+                }
+                subjectSelect.append(`<option value="${subject.id}">${displayName}</option>`);
+            });
+            subjectSelect.prop('disabled', false);
+            showFeedback(subjectSelect, `${teacherSubjects.length} matière(s) disponible(s)`, 'success');
+        } else if (teacherId) {
+            // Fallback: load from server
+            let classId = $('#class_classe_id').val();
+            let trimesterId = $('#trimester_create_id').val();
 
-            // تحديث منطق إضافة صف جديد
-            $('#add-row').on('click', function () {
-                let lastRow = $('.emploi-row').last();
-                let valid = true;
-
-                // فحص الحقول المطلوبة
-                lastRow.find('select[required]').each(function () {
-                    if (!$(this).val()) {
-                        $(this).addClass('is-invalid');
-                        valid = false;
+            $.ajax({
+                url: baseUrl + '/admin/emplois/get-subjects',
+                type: 'GET',
+                data: { teacher_id: teacherId, class_id: classId, trimester_id: trimesterId },
+                success: function(response) {
+                    subjectSelect.empty().append('<option value="">-- Sélectionner une matière --</option>');
+                    if (response.subjects && response.subjects.length > 0) {
+                        $.each(response.subjects, function(key, subject) {
+                            subjectSelect.append(`<option value="${subject.id}">${subject.name}</option>`);
+                        });
+                        subjectSelect.prop('disabled', false);
+                        showFeedback(subjectSelect, `${response.subjects.length} matière(s) disponible(s)`, 'success');
                     } else {
-                        $(this).removeClass('is-invalid');
+                        showFeedback(subjectSelect, 'Aucune matière pour cet enseignant', 'warning');
                     }
-                });
+                }
+            });
+        } else {
+            subjectSelect.prop('disabled', true);
+            removeFeedback(subjectSelect);
+        }
+    });
 
-                // فحص إذا تم اختيار على الأقل حصة زمنية واحدة
-                let horaireSelected = lastRow.find('.horaire-select-multiple').val();
-                if (!horaireSelected || horaireSelected.length === 0) {
-                    lastRow.find('.horaire-select-multiple').next('.select2-container').addClass('border-danger');
+    // Reset all rows
+    function resetAllRows() {
+        $('.emploi-row').each(function() {
+            let teacherSelect = $(this).find('.teacher-select');
+            let subjectSelect = $(this).find('.subject-select');
+
+            teacherSelect.empty().append('<option value="">-- Sélectionner classe et trimestre --</option>');
+            teacherSelect.prop('disabled', true);
+            subjectSelect.empty().append('<option value="">-- Sélectionner un enseignant --</option>');
+            subjectSelect.prop('disabled', true);
+
+            removeFeedback(teacherSelect);
+            removeFeedback(subjectSelect);
+        });
+    }
+
+    // Show feedback message
+    function showFeedback(element, message, type) {
+        let feedbackDiv = element.parent().find('.form-feedback');
+        if (feedbackDiv.length === 0) {
+            feedbackDiv = $('<div class="form-feedback"></div>');
+            element.after(feedbackDiv);
+        }
+
+        let icon = type === 'success' ? 'check-circle' : (type === 'warning' ? 'alert' : 'alert-circle');
+        feedbackDiv.html(`<i class="mdi mdi-${icon} me-1"></i>${message}`)
+            .removeClass('text-success text-warning text-danger')
+            .addClass('text-' + type);
+    }
+
+    // Remove feedback message
+    function removeFeedback(element) {
+        element.parent().find('.form-feedback').remove();
+    }
+
+    // Add new row
+    $('#add-row').on('click', function() {
+        let classId = $('#class_classe_id').val();
+        let trimesterId = $('#trimester_create_id').val();
+
+        if (!classId || !trimesterId) {
+            alert('Veuillez d\'abord sélectionner une classe et un trimestre.');
+            return;
+        }
+
+        // Validate last row
+        let lastRow = $('.emploi-row').last();
+        let valid = true;
+
+        lastRow.find('select[required]').each(function() {
+            if (!$(this).val() || (Array.isArray($(this).val()) && $(this).val().length === 0)) {
+                $(this).addClass('is-invalid');
+                valid = false;
+            } else {
+                $(this).removeClass('is-invalid');
+            }
+        });
+
+        if (!valid) {
+            alert('Veuillez remplir tous les champs obligatoires de la dernière séance avant d\'en ajouter une nouvelle.');
+            return;
+        }
+
+        let rowCount = $('.emploi-row').length;
+        let template = $('#row-template').html();
+        template = template.replace(/INDEX/g, rowCount).replace(/NUM/g, rowCount + 1);
+
+        let newRow = $(template);
+        $('#emploi-rows').append(newRow);
+
+        // Initialize Select2
+        initSelect2(newRow);
+
+        // Populate teachers
+        let teacherSelect = newRow.find('.teacher-select');
+        teacherSelect.empty().append('<option value="">-- Sélectionner un enseignant --</option>');
+
+        if (teachersData.length > 0) {
+            $.each(teachersData, function(key, teacher) {
+                let displayName = teacher.full_name || teacher.name;
+                let subjectsInfo = '';
+                if (teacher.subjects && teacher.subjects.length > 0) {
+                    let subjectNames = teacher.subjects.map(s => s.name).join(', ');
+                    subjectsInfo = ` (${subjectNames})`;
+                }
+                teacherSelect.append(`<option value="${teacher.id}" data-subjects='${JSON.stringify(teacher.subjects || [])}'>${displayName}${subjectsInfo}</option>`);
+            });
+        }
+
+        // Update row numbers
+        updateRowNumbers();
+    });
+
+    // Remove row
+    $(document).on('click', '.btn-remove-row', function() {
+        if ($('.emploi-row').length > 1) {
+            $(this).closest('.emploi-row').remove();
+            updateRowNumbers();
+        }
+    });
+
+    // Update row numbers
+    function updateRowNumbers() {
+        $('.emploi-row').each(function(index) {
+            $(this).find('.row-number').text(index + 1);
+            $(this).attr('data-index', index);
+            $(this).find('.horaire-select-multiple').attr('name', `horaire_id[${index}][]`);
+
+            // First row styling
+            if (index === 0) {
+                $(this).addClass('first-row');
+                $(this).find('.btn-remove-row').parent().remove();
+            } else {
+                $(this).removeClass('first-row');
+            }
+        });
+    }
+
+    // Form validation
+    $('#emploiForm').on('submit', function(e) {
+        let valid = true;
+        let errors = [];
+
+        // Check main fields
+        if (!$('#class_classe_id').val()) {
+            $('#class_classe_id').addClass('is-invalid');
+            errors.push('Veuillez sélectionner une classe');
+            valid = false;
+        } else {
+            $('#class_classe_id').removeClass('is-invalid');
+        }
+
+        if (!$('#trimester_create_id').val()) {
+            $('#trimester_create_id').addClass('is-invalid');
+            errors.push('Veuillez sélectionner un trimestre');
+            valid = false;
+        } else {
+            $('#trimester_create_id').removeClass('is-invalid');
+        }
+
+        // Check each row
+        $('.emploi-row').each(function(index) {
+            let rowNum = index + 1;
+            $(this).find('select[required]').each(function() {
+                let val = $(this).val();
+                if (!val || (Array.isArray(val) && val.length === 0)) {
+                    $(this).addClass('is-invalid');
+                    let fieldName = $(this).closest('.form-group').find('label').text().replace('*', '').trim();
+                    errors.push(`Séance ${rowNum}: ${fieldName} est requis`);
                     valid = false;
                 } else {
-                    lastRow.find('.horaire-select-multiple').next('.select2-container').removeClass('border-danger');
+                    $(this).removeClass('is-invalid');
                 }
-
-                if (!valid) {
-                    alert('Veuillez remplir tous les champs du dernier ligne et sélectionner au moins un horaire avant d\'ajouter une nouvelle séance !');
-                    return;
-                }
-
-                let firstRow = $('.emploi-row').first();
-                let newRow = firstRow.clone();
-                let rowIndex = $('.emploi-row').length;
-
-                // إعادة تعيين الحقول
-                newRow.find('select').val('');
-                newRow.find('.remove-row').removeClass('d-none');
-
-                // تحديث أسماء الحقول
-                newRow.find('.horaire-select-multiple').attr('name', `horaire_id[${rowIndex}][]`);
-
-                // تدمير Select2 القديم وإنشاء جديد
-                newRow.find('.select2-container').remove();
-                newRow.find('.horaire-select-multiple').show();
-
-                $('#emploi-rows').append(newRow);
-
-                // تهيئة Select2 للصف الجديد
-                initSelect2(newRow);
-
-                loadTeachersSubjects(newRow);
             });
-
-            // باقي الكود الموجود...
         });
-    </script>
-@endsection
 
+        if (!valid) {
+            e.preventDefault();
+            alert('Erreurs de validation:\n\n' + errors.join('\n'));
+        }
+    });
+});
+</script>
+@endsection

@@ -1,0 +1,52 @@
+@media screen and (max-width: 650px){
+    .modal-dialog { /* Width */
+        max-width: 98%!important;;
+        width: auto !important;
+        display: inline-block;
+    }
+    .top-right{
+        display: none;
+    }
+    #map {
+        height: 85vh;
+    }
+    .map-legend {
+        background: rgba(255,255,255,0.3);
+    }
+}
+/*@media screen and (min-width: 351px) and (max-width: 650px) {
+    .modal-dialog { /* Width */
+       /* max-width: 98%!important;
+        width: auto !important;
+        display: inline-block;
+
+
+    }
+
+}*/
+@media screen and (min-width: 651px){
+    .modal-dialog { /* Width */
+        max-width: 98%!important;
+        width: auto !important;
+        display: inline-block;
+        min-width: 600px !important;
+
+    }
+
+}
+
+.modal-title {
+    text-align: left;
+}
+
+.modal.in{
+    text-align: center;
+}
+.modal.in .row {
+    text-align: left;
+}
+
+/****************************/
+.modal-lg {
+    min-width: 75% !important;
+}

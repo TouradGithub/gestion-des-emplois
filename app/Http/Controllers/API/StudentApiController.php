@@ -409,6 +409,87 @@ class StudentApiController extends Controller
     }
 
     /**
+     * Save Expo Push Token for notifications
+     */
+    public function savePushToken(Request $request)
+    {
+        try {
+            $request->validate([
+                'expo_push_token' => 'required|string'
+            ]);
+
+            $user = $request->user();
+            $student = Student::where('user_id', $user->id)->first();
+
+            if (!$student) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'الطالب غير موجود'
+                ], 404);
+            }
+
+            // Save the push token
+            $student->update([
+                'expo_push_token' => $request->expo_push_token,
+                'notifications_enabled' => true
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'تم حفظ رمز الإشعارات بنجاح'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء حفظ رمز الإشعارات: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Update notification settings
+     */
+    public function updateNotificationSettings(Request $request)
+    {
+        try {
+            $request->validate([
+                'notifications_enabled' => 'required|boolean'
+            ]);
+
+            $user = $request->user();
+            $student = Student::where('user_id', $user->id)->first();
+
+            if (!$student) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'الطالب غير موجود'
+                ], 404);
+            }
+
+            $student->update([
+                'notifications_enabled' => $request->notifications_enabled
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => $request->notifications_enabled
+                    ? 'تم تفعيل الإشعارات بنجاح'
+                    : 'تم إيقاف الإشعارات بنجاح',
+                'data' => [
+                    'notifications_enabled' => $student->notifications_enabled
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء تحديث إعدادات الإشعارات: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Generate calendar data for schedule display (used by PDF generation)
      */
     private function generateDataCalendar($jours, $emplois_temps)

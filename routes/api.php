@@ -31,5 +31,9 @@ Route::prefix('student')->group(function () {
         Route::get('/schedule/data', [StudentApiController::class, 'scheduleData']);
         Route::get('/schedule/pdf', [StudentApiController::class, 'schedulePdf']);
         Route::post('/logout', [StudentApiController::class, 'logout']);
+
+        // Push notifications routes
+        Route::post('/push-token', [StudentApiController::class, 'savePushToken']);
+        Route::post('/notifications/settings', [StudentApiController::class, 'updateNotificationSettings']);
     });
 });

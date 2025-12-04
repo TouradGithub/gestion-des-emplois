@@ -1,0 +1,301 @@
+/*
+.table-new thead {
+    display: none;
+}
+.table-new {
+    width: 100%!important;
+}
+.table-new td {
+    padding: 0;
+    border:none;
+}
+.post-card {
+    margin: 10px 0px;
+}
+.profile-pic {
+    position: relative;
+    display: inline-block;
+}
+
+.profile-pic:hover .edit {
+    display: block;
+}
+.prof_emp {
+    display: block;
+    border:1px solid red;
+}
+
+.edit {
+    padding-top: 7px;
+    padding-right: 7px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: none;
+}
+
+.edit a {
+    color: #f6c23e;
+}
+
+
+.card .info_profil{
+    width: 400px;
+    margin: 40px auto 0;
+    background-color: #fff;
+    box-shadow: 0 3px 30px rgba(0, 0, 0, .14);
+    color: #444;
+    text-align: center;
+    font-size: 16px;
+
+}
+
+
+.profile-img {
+    width: 96px;
+    height: 96px;
+    border-radius: 1000px;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 6px solid #fff!important;
+    box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+}
+
+
+
+.full-name {
+    font-size: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin: 10px 0 0;
+}
+
+.username {
+    font-size: 13px;
+    color: #777;
+    margin: 5px 0 0;
+}
+
+.city {
+    font-weight: 500;
+    margin: 10px 0 0;
+}
+.inf_emp {
+    min-height: 100px;
+    padding: 10px;
+    border-radius: 3px;
+    background-color: white;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;"
+}
+.pers {
+    min-height: 100px;
+    padding: 10px;
+    border-radius: 3px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+    border :1px solid #f6c23e;
+    background-color: white;
+}
+
+.desc {
+    line-height: 24px;
+    color: #f6c23e;
+}
+
+.ifo_card_light{
+    display: inline-block;
+    margin: 0px;
+    padding: 0px;
+}
+.card .social-icon {
+    font-size: 18px;
+    margin: 0 7px;
+}
+
+.card .social-icon.facebook {
+    color: #3b5999;
+}
+
+.card .social-icon.twitter {
+    color: #55acee;
+}
+
+.card .social-icon.whatsapp {
+    color: #075E54;
+}
+
+.card .social-icon.tumblr {
+    color: #34465d;
+}
+.card .social-icon.youtube {
+    color: #cd201f;
+}
+
+.card .social-icon.linkedin {
+    color: #0077b5;
+}
+
+.card .social-icon.google-plus {
+    color: #dd4b39;
+}
+
+.card .card-footer .info_profil{
+    display: table;
+    width: 100%;
+    border-top: 1px solid #e6e6e6;
+}
+
+.card .card-footer .col {
+    display: table-cell;
+    padding: 5px 10px;
+    font-size: 15px;
+}
+
+.card .card-footer .count {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.vr {
+    border-right: 1px solid #e6e6e6;
+}
+
+.badgescard,
+.firstinfo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content {
+    position: relative;
+    animation: animatop 0.9s cubic-bezier(0.425, 1.14, 0.47, 1.125) forwards;
+}
+
+.content .card:after {
+    content: '';
+    display: block;
+    width: 190px;
+    height: 300px;
+    !*background: cadetblue;*!
+    background: #f6c23e;
+    position: absolute;
+    animation: rotatemagic 0.75s cubic-bezier(0.425, 1.04, 0.47, 1.105) 1s both;
+}
+.dropdown-menu.show {
+    z-index: 10000!important;
+}
+.selectpicker {
+    z-index: -50!important;
+}
+.badgescard {
+    padding: 10px 20px;
+    border-radius: 3px;
+    background-color: #00bcd4;
+    color:#fff;
+    width: 480px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    z-index: -1;
+    left: 10px;
+    bottom: 10px;
+    animation: animainfos 0.5s cubic-bezier(0.425, 1.04, 0.47, 1.105) 0.75s forwards;
+}
+
+.badgescard span {
+    font-size: 1.6em;
+    margin: 0px 6px;
+    opacity: 0.6;
+}
+
+.firstinfo {
+    flex-direction: row;
+    z-index: 2;
+    position: relative;
+}
+
+.firstinfo img {
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+}
+
+.firstinfo .profileinfo {
+    padding: 0px 20px;
+}
+
+.firstinfo .profileinfo h1 {
+    font-size: 1.8em;
+}
+
+.firstinfo .profileinfo h3 {
+    font-size: 1.2em;
+    color: #00bcd4;
+    font-style: italic;
+}
+
+.firstinfo .profileinfo p.bio {
+    padding: 10px 0px;
+    color: #5A5A5A;
+    line-height: 1.2;
+    font-style: initial;
+}
+
+@keyframes animatop {
+    0% {
+        opacity: 0;
+        bottom: -500px;
+    }
+    100% {
+        opacity: 1;
+        bottom: 0px;
+    }
+}
+
+@keyframes animainfos {
+    0% {
+        bottom: 10px;
+    }
+    100% {
+        bottom: -42px;
+    }
+}
+
+@keyframes rotatemagic {
+    0% {
+        opacity: 0;
+        transform: rotate(0deg);
+        top: -24px;
+        left: -253px;
+    }
+    100% {
+        transform: rotate(-30deg);
+        top: -24px;
+        left: -78px;
+    }
+}
+
+@media screen and (max-width: 575px) {
+    .card {
+        width: 96%;
+    }
+
+    .card .card-body {
+        padding: 10px 20px;
+    }
+
+    .card .card-footer .col {
+        padding: 0 10px;
+    }
+
+    .card .card-footer .count {
+        display: block;
+        margin-bottom: 5px;
+    }
+}
+
+*/

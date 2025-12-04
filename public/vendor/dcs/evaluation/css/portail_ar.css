@@ -1,0 +1,157 @@
+body{
+    padding: 0;
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+    -webkit-print-color-adjust: exact;
+    -color-adjust: exact;
+
+}
+
+a:hover{
+    text-decoration: none;
+}
+.map-legend{
+    background: #fff;
+    padding: 10px;
+    bottom: 60px;
+}
+.map-legend1{
+    background: #fff !important;
+    padding: 10px;
+    bottom: 60px;
+}
+
+.map-legend ul {
+    list-style: none;
+    padding-right: 0;
+}
+.nonrtl {
+    direction: ltr !important;
+}
+.map-legend .swatch {
+    width:20px;
+    height: 15px;
+    display: inline-block;
+    margin-right: 5px;
+    font-size: 14px;
+}
+.map-legend1 ul {
+    list-style: none;
+    padding-right: 0;
+}
+.map-legend1 .swatch {
+    width:20px;
+    height: 15px;
+    display: inline-block;
+    margin-right: 5px;
+    font-size: 14px;
+}
+#map {
+
+    height:680px;
+    background: #eeeeee;
+}
+.legend {
+    background: #ffffff;
+    line-height:1.5em;
+}
+.legend i {
+    width: 5em;
+    float:left;
+}
+.legend1 {
+    background: #ffffff;
+    line-height:1.5em;
+    font-size: 11px!important;
+}
+.legend1 i {
+    width: 5em;
+    float:left;
+}
+.leaflet-popup-close-button {
+    display: none;
+}
+.leaflet-popup-content-wrapper {
+    pointer-events: none;
+    border-radius: 0px;
+}
+.nopadding{
+    padding-left: 0!important;
+    padding-right: 0!important;
+}
+.left-side {
+    padding-top: 15px;
+}
+.left-side-bloc .bootstrap-select {
+    width: 100%!important;
+}
+.left-side-bloc {
+    margin-bottom: 10px;
+    padding: 5px;
+    font-size: 11px;
+    background: #f8f8f8;
+    border: 1px solid #ddd;
+}
+.left-side-bloc .btn{
+    font-size: 12px;
+}
+.left-side-bloc h6,.top-right h6,h5 {
+    margin-top: 0px !important;
+    color: #009688 !important;
+}
+.left-side-bloc a {
+    font-size: 14px;
+}
+.marker-title{
+    font-weight: bold;
+}
+.top-right {
+    background: #fff;
+    width: 220px;
+    padding: 15px;
+}
+
+.datatable,.datatable1{
+    width: 100%!important;
+}
+.app_bgcolor{
+    background-color: #009688!important;
+    color:#fff!important;
+}
+.app_color{
+    color: #009688!important;
+}
+.panel-title {
+    font-size: 14px !important;
+}
+
+#helpModal #accordion .panel-heading [data-toggle="collapse"]:after
+{
+    font-family: 'Glyphicons Halflings';
+    content: "\e072"; /* "play" icon */
+    float: right;
+    color: #ccc;
+    font-size: 12px;
+    line-height: 22px;
+
+    /* rotate "play" icon from > (right arrow) to down arrow */
+    -webkit-transform: rotate(-90deg);
+    -moz-transform:    rotate(-90deg);
+    -ms-transform:     rotate(-90deg);
+    -o-transform:      rotate(-90deg);
+    transform:         rotate(-90deg);
+}
+#helpModal #accordion .panel-heading [data-toggle="collapse"].collapsed:after
+{
+    /* rotate "play" icon from > (right arrow) to ^ (up arrow) */
+    -webkit-transform: rotate(90deg);
+    -moz-transform:    rotate(90deg);
+    -ms-transform:     rotate(90deg);
+    -o-transform:      rotate(90deg);
+    transform:         rotate(90deg);
+}
+.direction{
+    direction: ltr !important;
+    display: inline-block;
+}
+/********************************************************/

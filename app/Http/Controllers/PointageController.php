@@ -8,6 +8,9 @@ use App\Models\EmploiTemps;
 use App\Models\Teacher;
 use App\Models\Classe;
 use App\Models\Trimester;
+use App\Models\Anneescolaire;
+use App\Models\Jour;
+use App\Models\Horaire;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -325,5 +328,198 @@ class PointageController extends Controller
             DB::rollback();
             return back()->withErrors(['error' => __('pointages.erreur_creation')]);
         }
+    }
+
+    /**
+     * Afficher le calendrier des pointages
+     */
+    public function calendar()
+    {
+        $anneeActive = Anneescolaire::where('is_active', true)->first();
+        if (!$anneeActive) {
+            return redirect()->back()->with('error', 'Aucune année scolaire active trouvée.');
+        }
+
+        $classes = Classe::where('annee_id', $anneeActive->id)->orderBy('nom')->get();
+        $start_time = Carbon::createFromTimeString('08:00:00')->format('H:i:s');
+        $end_time = Carbon::createFromTimeString('19:00:00')->format('H:i:s');
+
+        return view('admin.pointages.calendar', compact('classes', 'start_time', 'end_time'));
+    }
+
+    /**
+     * Récupérer les événements du calendrier pour les pointages
+     */
+    public function getCalendarEvents(Request $request)
+    {
+        $classId = $request->class_id;
+        $trimesterId = $request->trimester_id;
+        $start = $request->start;
+        $end = $request->end;
+
+        if (!$classId || !$trimesterId) {
+            return response()->json(['events' => []]);
+        }
+
+        $anneeId = Anneescolaire::where('is_active', true)->first()?->id;
+
+        $emplois = EmploiTemps::with(['subject', 'teacher', 'jour', 'ref_horaires', 'classe'])
+            ->where('class_id', $classId)
+            ->where('trimester_id', $trimesterId)
+            ->where('annee_id', $anneeId)
+            ->get();
+
+        $events = [];
+
+        foreach ($emplois as $emploi) {
+            $horairesList = $emploi->ref_horaires()->orderBy('ordre')->get();
+            if ($horairesList->isEmpty()) {
+                continue;
+            }
+
+            $startTime = $horairesList->first()->start_time;
+            $endTime = $horairesList->last()->end_time;
+            $horairesText = $horairesList->pluck('libelle_fr')->join(', ');
+
+            $jourOrdre = $emploi->jour->ordre ?? 1;
+            $dayMapping = [1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 0];
+            $dayOfWeek = $dayMapping[$jourOrdre] ?? 1;
+
+            $startDate = Carbon::parse($start);
+            while ($startDate->dayOfWeek != $dayOfWeek) {
+                $startDate->addDay();
+            }
+
+            $eventDate = $startDate->format('Y-m-d');
+            $eventStart = $eventDate . 'T' . $startTime;
+            $eventEnd = $eventDate . 'T' . $endTime;
+
+            // Vérifier si un pointage existe pour cette séance et cette date
+            $pointage = Pointage::where('emploi_temps_id', $emploi->id)
+                ->where('date_pointage', $eventDate)
+                ->first();
+
+            $statut = $pointage ? $pointage->statut : null;
+            $pointageId = $pointage ? $pointage->id : null;
+
+            $title = $emploi->subject->name ?? 'Matière';
+            $prof = $emploi->teacher->name ?? 'Enseignant';
+            $classe = $emploi->classe->nom ?? '-';
+
+            // Ajouter un indicateur de statut au titre
+            $statutIcon = '';
+            if ($statut === 'present') {
+                $statutIcon = '✓ ';
+            } elseif ($statut === 'absent') {
+                $statutIcon = '✗ ';
+            } else {
+                $statutIcon = '○ ';
+            }
+
+            $events[] = [
+                'id' => $emploi->id,
+                'title' => $statutIcon . $title . "\n" . $prof,
+                'start' => $eventStart,
+                'end' => $eventEnd,
+                'extendedProps' => [
+                    'statut' => $statut,
+                    'pointage_id' => $pointageId,
+                    'teacher' => $prof,
+                    'subject' => $title,
+                    'classe' => $classe,
+                    'horaire' => $horairesText,
+                    'teacher_id' => $emploi->teacher_id
+                ]
+            ];
+        }
+
+        return response()->json(['events' => $events]);
+    }
+
+    /**
+     * Enregistrer ou mettre à jour un pointage via le calendrier
+     */
+    public function storeCalendarPointage(Request $request)
+    {
+        $request->validate([
+            'emploi_temps_id' => 'required|exists:emplois_temps,id',
+            'date_pointage' => 'required|date',
+            'statut' => 'required|in:present,absent',
+            'remarques' => 'nullable|string|max:500',
+        ]);
+
+        try {
+            $emploiTemps = EmploiTemps::findOrFail($request->emploi_temps_id);
+
+            $pointage = Pointage::updateOrCreate(
+                [
+                    'emploi_temps_id' => $request->emploi_temps_id,
+                    'date_pointage' => $request->date_pointage,
+                ],
+                [
+                    'teacher_id' => $emploiTemps->teacher_id,
+                    'statut' => $request->statut,
+                    'remarques' => $request->remarques,
+                    'heure_arrivee' => $request->statut === 'present' ? Carbon::now()->format('H:i') : null,
+                    'created_by' => auth()->id(),
+                ]
+            );
+
+            $message = $request->pointage_id ? 'Pointage modifié avec succès.' : 'Pointage enregistré avec succès.';
+
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'pointage_id' => $pointage->id
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de l\'enregistrement du pointage.'
+            ], 500);
+        }
+    }
+
+    /**
+     * Obtenir les statistiques pour le calendrier
+     */
+    public function getStatistiques(Request $request)
+    {
+        $classId = $request->class_id;
+        $trimesterId = $request->trimester_id;
+        $dateDebut = $request->date_debut;
+        $dateFin = $request->date_fin;
+
+        if (!$classId || !$trimesterId) {
+            return response()->json(['statistiques' => []]);
+        }
+
+        $anneeId = Anneescolaire::where('is_active', true)->first()?->id;
+
+        $emploisIds = EmploiTemps::where('class_id', $classId)
+            ->where('trimester_id', $trimesterId)
+            ->where('annee_id', $anneeId)
+            ->pluck('id');
+
+        $query = Pointage::whereIn('emploi_temps_id', $emploisIds);
+
+        if ($dateDebut) {
+            $query->where('date_pointage', '>=', $dateDebut);
+        }
+        if ($dateFin) {
+            $query->where('date_pointage', '<=', $dateFin);
+        }
+
+        $stats = [
+            'total' => $query->count(),
+            'presents' => $query->clone()->where('statut', 'present')->count(),
+            'absents' => $query->clone()->where('statut', 'absent')->count(),
+        ];
+
+        $stats['taux_presence'] = $stats['total'] > 0
+            ? round(($stats['presents'] / $stats['total']) * 100, 1)
+            : 0;
+
+        return response()->json(['statistiques' => $stats]);
     }
 }

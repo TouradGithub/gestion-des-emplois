@@ -1,0 +1,50 @@
+.container_examen {
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+}
+
+.nav_item_examen {
+    background-color: #F2F3F8;
+    color: black;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 0 10px;
+    border-color: black;
+}
+.nav_item_examen:hover{
+    background-color: #1E9FF2;
+    color: #ffffff;
+}
+
+.nav_item_examen:active{
+    background-color: #1E9FF2;
+    color: #ffffff;
+}
+
+
+.nav_item_examen.active{
+    background-color: #1E9FF2;
+    color: #ffffff;
+}
+
+.nav.nav-tabs .nav-item .nav-link .nav_it{
+    display: block;
+}
+
+.nav-vertical .nav-left.nav-tabs.nav-border-left li.nav-item a.nav-link {
+    color: #070505; }
+.nav-vertical .nav-left.nav-tabs.nav-border-left li.nav-item a.nav-link.active {
+    border-left: 3px solid #070505;
+    font-weight: bold;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    color: #555; }
+
+.nav.nav-tabs .nav-item .nav-link {
+    padding: 0.5rem 0.7rem;
+    display: flex; }
+
+.pdf-table-size {
+    font-size: 11px;
+}
