@@ -529,7 +529,7 @@ $(document).ready(function() {
             slotMaxTime: '{{ $end_time ?? "19:00:00" }}',
             slotDuration: '01:00:00',
             allDaySlot: false,
-            weekends: false,
+            weekends: true,
             firstDay: 1,
             height: 'auto',
             selectable: false,
