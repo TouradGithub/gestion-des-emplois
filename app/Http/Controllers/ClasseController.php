@@ -101,7 +101,7 @@ class ClasseController extends Controller
         }
 
         $class->update([
-            'nom' => $nom,
+            'nom' =>  $request->nom,
             'niveau_pedagogique_id' => $request->niveau_pedagogique_id,
             'specialite_id' => $request->specialite_id,
             'annee_id' => $request->annee_id,

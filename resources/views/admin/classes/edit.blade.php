@@ -14,12 +14,18 @@
                         @csrf
                         @method('PUT')
 
+                        <div class="form-group">
+                            <label>Nom</label>
+                            <input type="text" name="nom" value="{{$class->nom}}" class="form-control" required>
+                        </div>
+
+
                         <div class="form-group row">
-                            <label for="niveau_pedagogique_id" class="col-md-4 col-form-label text-md-right">{{ __('المستوى البيداغوجي') }}</label>
+                            <label for="niveau_pedagogique_id" class="col-md-4 col-form-label text-md-right">Niveau</label>
 
                             <div class="col-md-6">
                                 <select id="niveau_pedagogique_id" class="form-control @error('niveau_pedagogique_id') is-invalid @enderror" name="niveau_pedagogique_id" required>
-                                    <option value="">اختر المستوى البيداغوجي</option>
+                                    <option value="">Niveau</option>
                                     @foreach($niveaux as $niveau)
                                         <option value="{{ $niveau->id }}" {{ (old('niveau_pedagogique_id', $class->niveau_pedagogique_id) == $niveau->id) ? 'selected' : '' }}>
                                             {{ $niveau->nom }}
@@ -36,11 +42,11 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="specialite_id" class="col-md-4 col-form-label text-md-right">{{ __('التخصص') }}</label>
+                            <label for="specialite_id" class="col-md-4 col-form-label text-md-right">Specialite</label>
 
                             <div class="col-md-6">
                                 <select id="specialite_id" class="form-control @error('specialite_id') is-invalid @enderror" name="specialite_id" required>
-                                    <option value="">اختر التخصص</option>
+                                    <option value=""> Specialite</option>
                                     @foreach($specialites as $specialite)
                                         <option value="{{ $specialite->id }}" {{ (old('specialite_id', $class->specialite_id) == $specialite->id) ? 'selected' : '' }}>
                                             {{ $specialite->name }}
@@ -57,11 +63,11 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="annee_id" class="col-md-4 col-form-label text-md-right">{{ __('السنة الدراسية') }}</label>
+                            <label for="annee_id" class="col-md-4 col-form-label text-md-right">Annee</label>
 
                             <div class="col-md-6">
                                 <select id="annee_id" class="form-control @error('annee_id') is-invalid @enderror" name="annee_id" required>
-                                    <option value="">اختر السنة الدراسية</option>
+                                    <option value="">  Selectinnez annee</option>
                                     @foreach($annees as $annee)
                                         <option value="{{ $annee->id }}" {{ (old('annee_id', $class->annee_id) == $annee->id) ? 'selected' : '' }}>
                                             {{ $annee->annee }}
@@ -80,10 +86,10 @@
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
-                                    {{ __('تحديث') }}
+                                    Mettre à jour
                                 </button>
                                 <a href="{{ route('web.classes.index') }}" class="btn btn-secondary">
-                                    {{ __('إلغاء') }}
+                                   annuler
                                 </a>
                             </div>
                         </div>

@@ -183,7 +183,7 @@ class TeacherDashboardController extends Controller
 
         // بناء الاستعلام مع الفلاتر
         $query = $teacher->pointages()
-                        ->with(['emploiTemps.classe', 'emploiTemps.subject', 'emploiTemps.horaire', 'emploiTemps.jour'])
+                        ->with(['emploiTemps.classe', 'emploiTemps.subject', 'emploiTemps.horairess', 'emploiTemps.jour'])
                         ->orderBy('date_pointage', 'desc');
 
         // فلتر التاريخ
