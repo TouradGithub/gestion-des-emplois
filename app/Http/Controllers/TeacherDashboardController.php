@@ -176,41 +176,29 @@ class TeacherDashboardController extends Controller
     public function showPointages(Request $request)
     {
         $teacher = auth()->user()->teacher;
-
         if (!$teacher) {
             return redirect()->route('teacher.dashboard')->with('error', __('teacher.teacher_not_found'));
         }
-
-        // بناء الاستعلام مع الفلاتر
         $query = $teacher->pointages()
                         ->with(['emploiTemps.classe', 'emploiTemps.subject', 'emploiTemps.horairess', 'emploiTemps.jour'])
                         ->orderBy('date_pointage', 'desc');
-
-        // فلتر التاريخ
         if ($request->filled('from_date')) {
             $query->where('date_pointage', '>=', $request->from_date);
         }
-
         if ($request->filled('to_date')) {
             $query->where('date_pointage', '<=', $request->to_date);
         }
-
         $pointages = $query->paginate(15)->appends($request->query());
-
         return view('teacher.pointages', compact('pointages', 'teacher'));
     }
-
     public function profile()
     {
         $teacher = auth()->user()->teacher;
-
         if (!$teacher) {
             return redirect()->route('teacher.dashboard')->with('error', __('teacher.teacher_not_found'));
         }
-
         return view('teacher.profile', compact('teacher'));
     }
-
     private function getTeacherStats($teacher)
     {
         $thisMonthPointages = $teacher->pointages()
