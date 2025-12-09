@@ -14,16 +14,12 @@ class Pointage extends Model
         'teacher_id',
         'date_pointage',
         'statut',
-        'heure_arrivee',
-        'heure_depart',
         'remarques',
         'created_by'
     ];
 
     protected $casts = [
         'date_pointage' => 'date',
-        'heure_arrivee' => 'datetime:H:i',
-        'heure_depart' => 'datetime:H:i',
     ];
 
     /**

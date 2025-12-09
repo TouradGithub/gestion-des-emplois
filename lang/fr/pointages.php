@@ -21,8 +21,6 @@ return [
     // Informations générales
     'professeur' => 'Professeur',
     'date_pointage' => 'Date de pointage',
-    'heure_arrivee' => 'Heure d\'arrivée',
-    'heure_depart' => 'Heure de départ',
     'remarques' => 'Remarques',
     'cours' => 'Cours',
     'classe' => 'Classe',
@@ -88,7 +86,6 @@ return [
 
     // Aide
     'aide_pointage' => 'Cliquez pour marquer la présence ou l\'absence du professeur',
-    'aide_heure' => 'Saisir au format HH:MM',
     'aide_remarques' => 'Commentaires optionnels sur le pointage',
 
     // Éléments supplémentaires pour les nouvelles interfaces

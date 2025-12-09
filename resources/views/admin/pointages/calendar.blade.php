@@ -14,16 +14,22 @@
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
     .fc-event {
-        border: none !important;
+        border: 1px solid rgba(17, 153, 142, 0.3) !important;
         border-radius: 6px !important;
         padding: 4px 8px !important;
         font-size: 12px !important;
         cursor: pointer;
         transition: transform 0.2s, box-shadow 0.2s;
+        background: rgba(17, 153, 142, 0.15) !important;
+        color: #333 !important;
     }
     .fc-event:hover {
         transform: scale(1.02);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        background: rgba(17, 153, 142, 0.25) !important;
+    }
+    .fc-event-title, .fc-event-time {
+        color: #333 !important;
     }
     .fc-timegrid-slot {
         height: 50px !important;
@@ -158,16 +164,6 @@
     .page-subtitle {
         color: #666;
         font-size: 0.9rem;
-    }
-    /* Styles pour les événements avec statut */
-    .event-present {
-        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
-    }
-    .event-absent {
-        background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%) !important;
-    }
-    .event-pending {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
     }
     /* Modal pointage styles */
     .pointage-card {
@@ -536,18 +532,6 @@ $(document).ready(function() {
             editable: false,
             eventDisplay: 'block',
 
-            // Couleurs selon le statut
-            eventDidMount: function(info) {
-                let statut = info.event.extendedProps.statut;
-                if (statut === 'present') {
-                    info.el.classList.add('event-present');
-                } else if (statut === 'absent') {
-                    info.el.classList.add('event-absent');
-                } else {
-                    info.el.classList.add('event-pending');
-                }
-            },
-
             // Charger les événements
             events: function(fetchInfo, successCallback, failureCallback) {
                 $.ajax({
@@ -619,8 +603,11 @@ $(document).ready(function() {
                 selectedStatut = 'absent';
             }
         } else {
+            // Par défaut: absent (l'enseignant est considéré absent jusqu'à preuve du contraire)
             $('#pointage_id').val('');
             $('#statut_actuel_container').hide();
+            $('#btn_absent').addClass('active');
+            selectedStatut = 'absent';
         }
 
         $('#pointageModal').modal('show');

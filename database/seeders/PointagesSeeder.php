@@ -93,10 +93,6 @@ class PointagesSeeder extends Seeder
                         'teacher_id' => $emploi->teacher_id,
                         'date_pointage' => $date,
                         'statut' => $statut,
-                        'heure_arrivee' => $statut === 'present' ? 
-                            Carbon::createFromFormat('Y-m-d', $date)->addHours(8)->addMinutes(rand(0, 30))->format('H:i') : null,
-                        'heure_depart' => $statut === 'present' ? 
-                            Carbon::createFromFormat('Y-m-d', $date)->addHours(12)->addMinutes(rand(0, 30))->format('H:i') : null,
                         'remarques' => $remarques,
                         'created_by' => 1, // افتراض أن المدير له ID = 1
                     ]);

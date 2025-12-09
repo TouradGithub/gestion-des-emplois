@@ -58,8 +58,6 @@
                             <thead class="table-dark">
                                 <tr>
                                     <th>{{ __('teacher.pointage_date') }}</th>
-                                    <th>{{ __('teacher.arrival_time') }}</th>
-                                    <th>{{ __('teacher.departure_time') }}</th>
                                     <th>{{ __('teacher.status') }}</th>
                                     <th>{{ __('messages.class') }}</th>
                                     <th>{{ __('messages.subject') }}</th>
@@ -72,22 +70,6 @@
                                     <td>
                                         <i class="mdi mdi-calendar me-1"></i>
                                         {{ Carbon\Carbon::parse($pointage->date_pointage)->format('Y-m-d') }}
-                                    </td>
-                                    <td>
-                                        @if($pointage->heure_arrivee)
-                                            <i class="mdi mdi-clock-in text-success me-1"></i>
-                                            {{ Carbon\Carbon::parse($pointage->heure_arrivee)->format('H:i') }}
-                                        @else
-                                            <span class="text-muted">-</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($pointage->heure_depart)
-                                            <i class="mdi mdi-clock-out text-danger me-1"></i>
-                                            {{ Carbon\Carbon::parse($pointage->heure_depart)->format('H:i') }}
-                                        @else
-                                            <span class="text-muted">-</span>
-                                        @endif
                                     </td>
                                     <td>
                                         @if($pointage->status == 'present')

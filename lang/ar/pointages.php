@@ -21,8 +21,6 @@ return [
     // المعلومات العامة
     'professeur' => 'الأستاذ',
     'date_pointage' => 'تاريخ الحضور',
-    'heure_arrivee' => 'وقت الوصول',
-    'heure_depart' => 'وقت المغادرة',
     'remarques' => 'ملاحظات',
     'cours' => 'الحصة',
     'classe' => 'الفصل',
@@ -88,7 +86,6 @@ return [
 
     // المساعدة
     'aide_pointage' => 'انقر لتسجيل حضور أو غياب الأستاذ',
-    'aide_heure' => 'أدخل الوقت بالصيغة س:د',
     'aide_remarques' => 'تعليقات اختيارية على الحضور',
 
     // عناصر إضافية للواجهات الجديدة
@@ -125,7 +122,6 @@ return [
     'selectionner_date_professeur' => 'اختر أولاً التاريخ والأستاذ',
     'cours_chargement_automatique' => 'ستتم تحميل الدورات المتاحة تلقائياً',
     'marquer_presence_absence' => 'حدد الحضور أو الغياب',
-    'heures_optionnelles' => 'الأوقات اختيارية',
     'informations_cours' => 'معلومات الدورة',
     'retour' => 'رجوع',
     'annuler_retour' => 'إلغاء',

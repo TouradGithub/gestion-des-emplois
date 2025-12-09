@@ -92,8 +92,6 @@ class PointageController extends Controller
             'teacher_id' => 'required|exists:teachers,id',
             'date_pointage' => 'required|date',
             'statut' => 'required|in:present,absent',
-            'heure_arrivee' => 'nullable|date_format:H:i',
-            'heure_depart' => 'nullable|date_format:H:i',
             'remarques' => 'nullable|string|max:500',
         ]);
 
@@ -103,8 +101,6 @@ class PointageController extends Controller
                 'teacher_id' => $request->teacher_id,
                 'date_pointage' => $request->date_pointage,
                 'statut' => $request->statut,
-                'heure_arrivee' => $request->heure_arrivee,
-                'heure_depart' => $request->heure_depart,
                 'remarques' => $request->remarques,
                 'created_by' => auth()->id(),
             ]);
@@ -178,8 +174,6 @@ class PointageController extends Controller
             'teacher_id' => 'required|exists:teachers,id',
             'date_pointage' => 'required|date',
             'statut' => 'required|in:present,absent',
-            'heure_arrivee' => 'nullable|date_format:H:i',
-            'heure_depart' => 'nullable|date_format:H:i',
             'remarques' => 'nullable|string|max:500',
         ]);
 
@@ -189,8 +183,6 @@ class PointageController extends Controller
                 'teacher_id' => $request->teacher_id,
                 'date_pointage' => $request->date_pointage,
                 'statut' => $request->statut,
-                'heure_arrivee' => $request->heure_arrivee,
-                'heure_depart' => $request->heure_depart,
                 'remarques' => $request->remarques,
             ]);
 
@@ -460,7 +452,6 @@ class PointageController extends Controller
                     'teacher_id' => $emploiTemps->teacher_id,
                     'statut' => $request->statut,
                     'remarques' => $request->remarques,
-                    'heure_arrivee' => $request->statut === 'present' ? Carbon::now()->format('H:i') : null,
                     'created_by' => auth()->id(),
                 ]
             );

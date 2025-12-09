@@ -14,16 +14,22 @@
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
     .fc-event {
-        border: none !important;
+        border: 1px solid rgba(102, 126, 234, 0.3) !important;
         border-radius: 6px !important;
         padding: 4px 8px !important;
         font-size: 12px !important;
         cursor: pointer;
         transition: transform 0.2s, box-shadow 0.2s;
+        background: rgba(102, 126, 234, 0.15) !important;
+        color: #333 !important;
     }
     .fc-event:hover {
         transform: scale(1.02);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        background: rgba(102, 126, 234, 0.25) !important;
+    }
+    .fc-event-title, .fc-event-time {
+        color: #333 !important;
     }
     .fc-event-title {
         font-weight: 600;
@@ -558,23 +564,6 @@ $(document).ready(function() {
             selectable: true,
             editable: false,
             eventDisplay: 'block',
-
-            // Couleurs variées pour les événements
-            eventDidMount: function(info) {
-                let colors = [
-                    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-                    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-                    'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-                    'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-                    'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
-                    'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)',
-                    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-                ];
-                let colorIndex = info.event.extendedProps.colorIndex || 0;
-                info.el.style.background = colors[colorIndex % colors.length];
-                info.el.style.border = 'none';
-            },
 
             // Charger les événements
             events: function(fetchInfo, successCallback, failureCallback) {

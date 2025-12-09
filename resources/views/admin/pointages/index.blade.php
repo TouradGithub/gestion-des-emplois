@@ -457,7 +457,6 @@
                             <th>Classe</th>
                             <th>Horaires</th>
                             <th>Statut</th>
-                            <th>Heure arrivée</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -506,14 +505,6 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if($pointage->heure_arrivee)
-                                        <i class="mdi mdi-clock-outline me-1"></i>
-                                        {{ $pointage->heure_arrivee->format('H:i') }}
-                                    @else
-                                        <span class="text-muted">-</span>
-                                    @endif
-                                </td>
-                                <td>
                                     <a href="{{ route('web.pointages.show', $pointage->id) }}"
                                        class="btn-action" title="Voir">
                                         <i class="mdi mdi-eye"></i>
@@ -535,7 +526,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8">
+                                <td colspan="7">
                                     <div class="empty-state">
                                         <i class="mdi mdi-clipboard-text-clock"></i>
                                         <h5>Aucun pointage trouvé</h5>

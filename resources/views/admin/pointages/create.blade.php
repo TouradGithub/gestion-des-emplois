@@ -140,13 +140,6 @@
         font-size: 0.85rem;
         color: #666;
     }
-    .time-inputs {
-        display: flex;
-        gap: 15px;
-    }
-    .time-inputs .form-group {
-        flex: 1;
-    }
     .btn-submit {
         background: #1a1a1a;
         border: none;
@@ -409,38 +402,6 @@
                             @enderror
                         </div>
 
-                        <!-- Section: Heures (visible uniquement si présent) -->
-                        <div id="heures-section" style="display: none;">
-                            <div class="section-title">
-                                <i class="mdi mdi-clock-outline"></i> Horaires de présence
-                            </div>
-
-                            <div class="time-inputs">
-                                <div class="form-group">
-                                    <label><i class="mdi mdi-clock-in me-1"></i> Heure d'arrivée</label>
-                                    <input type="time"
-                                           class="form-control @error('heure_arrivee') is-invalid @enderror"
-                                           id="heure_arrivee"
-                                           name="heure_arrivee"
-                                           value="{{ old('heure_arrivee') }}">
-                                    @error('heure_arrivee')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="form-group">
-                                    <label><i class="mdi mdi-clock-out me-1"></i> Heure de départ</label>
-                                    <input type="time"
-                                           class="form-control @error('heure_depart') is-invalid @enderror"
-                                           id="heure_depart"
-                                           name="heure_depart"
-                                           value="{{ old('heure_depart') }}">
-                                    @error('heure_depart')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- Section: Remarques -->
                         <div class="section-title">
                             <i class="mdi mdi-comment-text"></i> Remarques
@@ -490,7 +451,6 @@
                             <li>Choisissez l'enseignant concerné</li>
                             <li>Les cours programmés s'afficheront automatiquement</li>
                             <li>Marquez le statut de présence</li>
-                            <li>Pour un présent, vous pouvez ajouter les heures</li>
                         </ul>
                     </div>
 
@@ -539,11 +499,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const dateInput = document.getElementById('date_pointage');
     const emploiSelect = document.getElementById('emploi_temps_id');
     const coursInfo = document.getElementById('cours-info');
-    const heuresSection = document.getElementById('heures-section');
     const optionPresent = document.getElementById('option-present');
     const optionAbsent = document.getElementById('option-absent');
-    const heureArrivee = document.getElementById('heure_arrivee');
-    const heureDepart = document.getElementById('heure_depart');
 
     // Charger les cours pour l'enseignant et la date
     function loadEmploisForTeacher() {
@@ -615,18 +572,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (presentRadio.checked) {
             optionPresent.classList.add('selected-present');
-            heuresSection.style.display = 'block';
-            // Auto-remplir l'heure d'arrivée
-            if (!heureArrivee.value) {
-                const now = new Date();
-                heureArrivee.value = now.getHours().toString().padStart(2, '0') + ':' +
-                                    now.getMinutes().toString().padStart(2, '0');
-            }
         } else if (absentRadio.checked) {
             optionAbsent.classList.add('selected-absent');
-            heuresSection.style.display = 'none';
-            heureArrivee.value = '';
-            heureDepart.value = '';
         }
     }
 
