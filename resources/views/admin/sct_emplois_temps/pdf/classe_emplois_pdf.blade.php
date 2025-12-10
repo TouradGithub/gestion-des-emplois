@@ -80,25 +80,24 @@ use Carbon\Carbon;
                     @if (is_array($value) && !in_array($value['id'], $printed_details))
                         <td rowspan="{{ $value['rowspan'] }}" class=" text-center" style="background-color:#f8f8f8;text-align: center">
                                 {{ $value['matiere'] }}
-                            <br>
-                            <strong >
-                                ({{ $value['nbr_heure'] }}h)
-                            </strong>
+                                @if($value['emploi']?->teacher)
                                 <br>
                                 <strong>
-                                    {{$value['emploi']?->sct_salle?->libelle_fr}}
+                                    {{ $value['emploi']->teacher->name }}
                                 </strong>
+                                @endif
+                                @if($value['emploi']?->salle)
                                 <br>
+                                <small>
+                                    {{ $value['emploi']->salle->name }}
+                                </small>
+                                @endif
                                 @if(!$classe)
+                                <br>
                                 <strong>
                                     {{ $value['emploi']?->classe?->nom}}
                                 </strong>
-
-                                <br>
                                 @endif
-
-
-
                         </td>
                         @php($printed_details[] = $value['id'])
 

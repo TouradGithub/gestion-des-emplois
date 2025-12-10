@@ -129,4 +129,13 @@ return [
     'contact_admin_subjects' => 'للحصول على تخصيص المواد والفصول الدراسية',
     'subjects_note' => 'يمكنك عرض جدولك الزمني لكل مادة عبر النقر على "عرض الجدول"',
     'schedule_for_subject' => 'الجدول الزمني للمادة: :subject',
+
+    // Teacher schedule page
+    'weekly_schedule' => 'الجدول الأسبوعي',
+    'hours' => 'الساعات',
+    'print' => 'طباعة',
+    'legend' => 'دليل الألوان',
+    'scheduled_session' => 'حصة مجدولة',
+    'free_slot' => 'فترة فارغة',
+    'no_schedule_description' => 'لم يتم إضافة أي حصص لجدولك الزمني بعد',
 ];

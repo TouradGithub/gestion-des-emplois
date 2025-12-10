@@ -246,71 +246,7 @@
 
 <!-- Departments Section -->
 <div class="row">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">
-                    <i class="mdi mdi-book-open-variant me-2"></i>
-                    {{ __('teacher.my_subjects') }}
-                </h5>
-                @if(isset($subjectTeachers) && count($subjectTeachers) > 0)
-                <a href="{{ route('teacher.departments') }}" class="btn btn-outline-primary btn-sm">
-                    <i class="mdi mdi-eye"></i> {{ __('messages.view_all') }}
-                </a>
-                @endif
-            </div>
-            <div class="card-body">
-                @if(isset($subjectTeachers) && count($subjectTeachers) > 0)
-                    <div class="row">
-                        @foreach(($subjectTeachers ?? collect())->take(2) as $subjectTeacher)
-                        <div class="col-md-6 mb-3">
-                            <div class="card department-card">
-                                <div class="card-body">
-                                    <h6 class="card-title">
-                                        <i class="mdi mdi-book-open-variant text-primary me-2"></i>
-                                        {{ $subjectTeacher->subject->name ?? 'N/A' }}
-                                    </h6>
-                                    <p class="card-text text-muted small">
-                                        {{ __('teacher.department') }}: {{ $subjectTeacher->subject->specialite->departement->name ?? 'N/A' }}
-                                    </p>
-                                    <p class="card-text text-muted small">
-                                        {{ __('teacher.class') }}: {{ $subjectTeacher->classe->nom ?? 'N/A' }}
-                                    </p>
-                                    @if($subjectTeacher->heures_semaine)
-                                    <p class="card-text small">
-                                        <strong>{{ $subjectTeacher->heures_semaine }}h/semaine</strong>
-                                        <span class="badge ms-2 {{ $subjectTeacher->taux >= 100 ? 'bg-dark' : 'bg-secondary' }}">
-                                            {{ $subjectTeacher->taux }}%
-                                        </span>
-                                    </p>
-                                    @endif
-                                    <div class="d-flex gap-2">
-                                        <a href="{{ route('teacher.schedule', $subjectTeacher->classe->id) }}"
-                                           class="btn btn-primary btn-sm">
-                                            <i class="mdi mdi-calendar-clock"></i>
-                                            {{ __('teacher.view_schedule') }}
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                    @if(isset($subjectTeachers) && count($subjectTeachers) > 2)
-                    <div class="text-center">
-                        <small class="text-muted">{{ __('messages.and_more', ['count' => count($subjectTeachers ?? []) - 2]) }}</small>
-                    </div>
-                    @endif
-                @else
-                    <div class="text-center py-4">
-                        <i class="mdi mdi-domain-off display-4 text-muted"></i>
-                        <h6 class="text-muted mt-3">{{ __('teacher.no_departments') }}</h6>
-                        <p class="text-muted small">{{ __('teacher.contact_admin') }}</p>
-                    </div>
-                @endif
-            </div>
-        </div>
-    </div>
+   
 
     <!-- Quick Links -->
     <div class="col-md-4">

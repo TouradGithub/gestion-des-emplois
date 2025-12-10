@@ -23,6 +23,7 @@ Route::prefix('teacher')->name('teacher.')->middleware(['auth', 'user.type:teach
     Route::get('/schedule/{subjectTeacher}', [App\Http\Controllers\TeacherDashboardController::class, 'showSchedule'])->name('schedule');
     Route::get('/pointages', [App\Http\Controllers\TeacherDashboardController::class, 'showPointages'])->name('pointages');
     Route::get('/profile', [App\Http\Controllers\TeacherDashboardController::class, 'profile'])->name('profile');
+    Route::get('/emploi-temps', [App\Http\Controllers\TeacherDashboardController::class, 'emploiTemps'])->name('emploi-temps');
 });
 
 

@@ -41,7 +41,9 @@ class EmploiTemps  extends Model
     public function jour()        {
         return $this->belongsTo(Jour::class ,'jour_id');
     }
-    public function salle()       { return $this->belongsTo(SalleDeClasse::class, 'salle_de_classe_id'); }
+    public function salle()       {
+        return $this->belongsTo(SalleDeClasse::class, 'salle_de_classe_id');
+    }
 
     /**
      * Relation avec les pointages

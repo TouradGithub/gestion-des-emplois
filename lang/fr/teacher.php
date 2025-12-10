@@ -130,4 +130,13 @@ return [
     'contact_admin_subjects' => 'Pour l\'attribution des matières et classes',
     'subjects_note' => 'Vous pouvez consulter votre emploi du temps pour chaque matière en cliquant sur "Voir le planning"',
     'schedule_for_subject' => 'Emploi du temps pour la matière: :subject',
+
+    // Teacher schedule page
+    'weekly_schedule' => 'Emploi du temps hebdomadaire',
+    'hours' => 'Heures',
+    'print' => 'Imprimer',
+    'legend' => 'Légende',
+    'scheduled_session' => 'Séance programmée',
+    'free_slot' => 'Créneau libre',
+    'no_schedule_description' => 'Aucune séance n\'a encore été ajoutée à votre emploi du temps',
 ];

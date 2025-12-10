@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Teacher;
 use App\Models\Departement;
 use App\Models\EmploiTemps;
+use App\Models\EmploiHoraire;
 use App\Models\SubjectTeacher;
 use App\Models\Pointage;
 use App\Models\Anneescolaire;
 use App\Models\Trimester;
+use App\Models\Jour;
+use App\Models\Horaire;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -269,5 +272,88 @@ class TeacherDashboardController extends Controller
         }
 
         return $summary;
+    }
+
+    /**
+     * عرض الجدول الزمني للأستاذ
+     */
+    public function emploiTemps()
+    {
+        $teacher = auth()->user()->teacher;
+
+        if (!$teacher) {
+            return redirect()->route('teacher.dashboard')->with('error', __('teacher.teacher_not_found'));
+        }
+
+        $anneeId = Anneescolaire::where('is_active', 1)->value('id');
+
+        // جلب جميع حصص الأستاذ للسنة النشطة
+        $emplois = EmploiTemps::with(['classe', 'subject', 'jour', 'salle', 'ref_horaires'])
+            ->where('teacher_id', $teacher->id)
+            ->where('annee_id', $anneeId)
+            ->get();
+
+        // جلب أيام الأسبوع
+        $weekDays = Jour::orderBy('ordre')->get();
+
+        // بناء بيانات التقويم
+        $calendarData = $this->generateTeacherCalendar($weekDays, $emplois);
+
+        return view('teacher.emploi-temps', compact('teacher', 'calendarData', 'weekDays'));
+    }
+
+    /**
+     * بناء بيانات التقويم للأستاذ
+     */
+    private function generateTeacherCalendar($weekDays, $emplois)
+    {
+        $calendarData = [];
+        $timeRange = Horaire::orderBy('ordre')->get();
+        $printed_details = [];
+
+        foreach ($timeRange as $time) {
+            $timeText = $time->libelle_fr;
+            $calendarData[$timeText] = [];
+
+            foreach ($weekDays as $day) {
+                $detail = $emplois->where('jour_id', $day->id)
+                    ->whereIn('id',
+                        EmploiHoraire::where('horaire_id', $time->id)
+                            ->pluck('emploi_temps_id')
+                            ->toArray()
+                    )->first();
+
+                if ($detail && !in_array($detail->id . '_' . $day->id, $printed_details)) {
+                    $horaire = $detail->getHoraires();
+                    $rowspan = abs(Carbon::parse($horaire[1])->diffInMinutes($horaire[0]) / 60);
+
+                    $calendarData[$timeText][] = [
+                        'matiere' => $detail->subject->name ?? '-',
+                        'classe' => $detail->classe->nom ?? '-',
+                        'salle' => $detail->salle->name ?? null,
+                        'rowspan' => $rowspan ?: 1,
+                        'date' => $day->libelle_fr,
+                        'id' => $detail->id,
+                        'emploi' => $detail,
+                    ];
+                    $printed_details[] = $detail->id . '_' . $day->id;
+                } else if (!$emplois->where('jour_id', $day->id)
+                    ->whereIn('id',
+                        EmploiHoraire::query()
+                            ->whereIn('horaire_id',
+                                Horaire::query()
+                                    ->where('start_time', '<', $time->start_time)
+                                    ->where('end_time', '>=', $time->end_time)
+                                    ->pluck('id'))
+                            ->pluck('emploi_temps_id'))->count()
+                ) {
+                    $calendarData[$timeText][] = 1; // خلية فارغة
+                } else {
+                    $calendarData[$timeText][] = 0; // خلية مدمجة (rowspan)
+                }
+            }
+        }
+
+        return $calendarData;
     }
 }

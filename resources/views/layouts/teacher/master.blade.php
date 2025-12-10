@@ -176,6 +176,12 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{ route('teacher.emploi-temps') }}" class="{{ request()->routeIs('teacher.emploi-temps') ? 'active' : '' }}">
+                            <i class="mdi mdi-calendar-clock me-2"></i>
+                            {{ __('teacher.my_schedule') }}
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ route('teacher.departments') }}" class="{{ request()->routeIs('teacher.departments*') || request()->routeIs('teacher.schedule*') ? 'active' : '' }}">
                             <i class="mdi mdi-book-open-variant me-2"></i>
                             {{ __('teacher.my_subjects') }}

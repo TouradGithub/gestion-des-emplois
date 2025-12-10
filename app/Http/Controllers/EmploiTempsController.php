@@ -463,7 +463,7 @@ class EmploiTempsController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $request->validate([
             'class_id' => 'required|exists:classes,id',
             'subject_id' => 'required|array',
@@ -672,7 +672,7 @@ class EmploiTempsController extends Controller
     public function showEmploi($classId)
     {
         $classe = Classe::findOrFail($classId);
-        $emplois_temps =EmploiTemps::where('class_id', $classe->id)->get();
+        $emplois_temps =EmploiTemps::with('salle')->where('class_id', $classe->id)->get();
         $calendarData = $this->generateDataCalendar(Jour::orderBy('ordre')->get(), $emplois_temps);
 //dd($calendarData);
 
