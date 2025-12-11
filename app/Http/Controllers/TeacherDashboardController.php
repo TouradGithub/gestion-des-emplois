@@ -322,7 +322,10 @@ class TeacherDashboardController extends Controller
         ];
 
         foreach ($timeSlots as $slot) {
-            $timeText = substr($slot['start'], 0, 5) . ' - ' . substr($slot['end'], 0, 5);
+            // تنسيق الوقت بصيغة 8h-10h
+            $startHour = intval(substr($slot['start'], 0, 2));
+            $endHour = intval(substr($slot['end'], 0, 2));
+            $timeText = $startHour . 'h-' . $endHour . 'h';
 
             // الحصول على معرفات الحصص لهذه الفترة
             $horaireIds = $timeRangeArray->filter(function($horaire) use ($slot) {

@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(php artisan:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(dir /s /b c:laragonwwwgestion-des-emploispackages)",
+      "Bash(findstr:*)",
+      "Bash(del /f \"c:\\laragon\\www\\gestion-des-emplois\\nul\")",
+      "Bash(git add:*)"
     ]
   }
 }

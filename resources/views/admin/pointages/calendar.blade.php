@@ -14,25 +14,50 @@
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
     .fc-event {
-        border: 1px solid rgba(17, 153, 142, 0.3) !important;
+        border: 1px solid rgba(0, 0, 0, 0.15) !important;
         border-radius: 6px !important;
         padding: 4px 8px !important;
         font-size: 12px !important;
         cursor: pointer;
         transition: transform 0.2s, box-shadow 0.2s;
-        background: rgba(17, 153, 142, 0.15) !important;
-        color: #333 !important;
+        background: rgba(220, 220, 220, 0.4) !important;
+        color: #000 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
     }
     .fc-event:hover {
         transform: scale(1.02);
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        background: rgba(17, 153, 142, 0.25) !important;
+        background: rgba(200, 200, 200, 0.5) !important;
     }
     .fc-event-title, .fc-event-time {
-        color: #333 !important;
+        color: #000 !important;
+    }
+    .fc-event .event-content,
+    .fc-event .event-matiere,
+    .fc-event .event-prof,
+    .fc-event .event-salle,
+    .fc-event * {
+        color: #000 !important;
     }
     .fc-timegrid-slot {
-        height: 50px !important;
+        height: 80px !important;
+        border-bottom: none !important;
+    }
+    /* Remove borders from intermediate hour slots */
+    .fc-timegrid-slot-lane {
+        border-top: none !important;
+    }
+    /* Only show border at main time slot starts (8, 10, 12, 15, 17) */
+    .fc-timegrid-slot[data-time="08:00:00"],
+    .fc-timegrid-slot[data-time="10:00:00"],
+    .fc-timegrid-slot[data-time="12:00:00"],
+    .fc-timegrid-slot[data-time="14:00:00"],
+    .fc-timegrid-slot[data-time="15:00:00"],
+    .fc-timegrid-slot[data-time="17:00:00"] {
+        border-top: 1px solid #ddd !important;
     }
     .fc-col-header-cell {
         background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
@@ -539,12 +564,13 @@ $(document).ready(function() {
             slotLabelInterval: '01:00:00',
             slotLabelFormat: function(date) {
                 let hour = date.date.hour;
-                // عرض التسميات فقط للساعات الزوجية (8, 10, 12, 15, 17) مع استثناء 14
-                if (hour === 8) return '8-10h';
-                if (hour === 10) return '10-12h';
-                if (hour === 12) return '12-14h';
-                if (hour === 15) return '15-17h';
-                if (hour === 17) return '17-19h';
+                // Display 2-hour block labels: 8-10, 10-12, 12-14, 15-17, 17-19 (skip 14-15 break)
+                if (hour === 8) return '8h-10h';
+                if (hour === 10) return '10h-12h';
+                if (hour === 12) return '12h-14h';
+                if (hour === 15) return '15h-17h';
+                if (hour === 17) return '17h-19h';
+                // Hide labels for intermediate hours (9, 11, 13, 14, 16, 18)
                 return '';
             },
             allDaySlot: false,
