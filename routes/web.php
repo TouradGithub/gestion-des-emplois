@@ -120,7 +120,8 @@ Route::prefix('admin')->name('web.')->middleware(['auth', 'user.type:admin'])->g
 
         // Page du pointage rapide
         Route::get('/rapide/aujourd-hui', [PointageController::class, 'rapide'])->name('rapide');
-        Route::post('/rapide/store', [PointageController::class, 'storeRapide'])->name('store-rapide');
+        Route::get('/rapide/data', [PointageController::class, 'getRapideData'])->name('rapide.data');
+        Route::post('/rapide/store', [PointageController::class, 'storeRapideAjax'])->name('rapide.store');
 
         // AJAX endpoints
         Route::get('/ajax/emplois', [PointageController::class, 'getEmploisForTeacher'])->name('get-emplois');

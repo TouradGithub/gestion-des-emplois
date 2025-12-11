@@ -7,7 +7,7 @@
 @section('css')
 <style>
     .page-header-custom {
-        background: #1a1a1a;
+        background:  #06a465;
         border-radius: 15px;
         padding: 25px 30px;
         margin-bottom: 25px;
@@ -99,7 +99,7 @@
         color: #1a1a1a;
     }
     .btn-submit {
-        background: #1a1a1a;
+        background:  #06a465;
         border: none;
         color: #fff;
         padding: 12px 30px;
@@ -191,15 +191,18 @@
 
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
-                                    <label><i class="mdi mdi-book-open-variant me-1"></i> Matière <span class="text-danger">*</span></label>
-                                    <select name="subject_id" id="subject_id" class="form-select" required>
-                                        <option value="">-- Sélectionner une matière --</option>
+                                    <label><i class="mdi mdi-book-open-variant me-1"></i> Matières <span class="text-danger">*</span></label>
+                                    <select name="subject_ids[]" id="subject_ids" class="form-select" multiple required style="height: 120px;">
                                         @foreach($subjects as $subject)
-                                            <option value="{{ $subject->id }}" {{ old('subject_id') == $subject->id ? 'selected' : '' }}>
+                                            <option value="{{ $subject->id }}" {{ is_array(old('subject_ids')) && in_array($subject->id, old('subject_ids')) ? 'selected' : '' }}>
                                                 {{ $subject->name }}
                                             </option>
                                         @endforeach
                                     </select>
+                                    <small class="text-muted">
+                                        <i class="mdi mdi-information-outline me-1"></i>
+                                        Maintenez Ctrl pour sélectionner plusieurs matières
+                                    </small>
                                 </div>
                             </div>
                         </div>
@@ -311,11 +314,20 @@
                         <strong>Comment procéder :</strong>
                         <ul class="mb-0 mt-2">
                             <li>Sélectionnez le professeur</li>
-                            <li>Choisissez la matière enseignée</li>
+                            <li>Choisissez une ou plusieurs matières (Ctrl+clic)</li>
                             <li>Sélectionnez la classe</li>
                             <li>Choisissez le trimestre</li>
                             <li><strong>Définissez les heures/semaine</strong></li>
                         </ul>
+                    </div>
+
+                    <div class="alert mt-3" style="background: #e8f5e9; border: 1px solid #4caf50; color: #2e7d32;">
+                        <i class="mdi mdi-check-circle me-2"></i>
+                        <strong>Note :</strong>
+                        <p class="mb-0 mt-2 small">
+                            Un professeur peut enseigner plusieurs matières dans la même classe.
+                            Les affectations existantes seront ignorées automatiquement.
+                        </p>
                     </div>
 
                     <div class="alert mt-3" style="background: #fff; border: 2px solid #1a1a1a; color: #1a1a1a;">

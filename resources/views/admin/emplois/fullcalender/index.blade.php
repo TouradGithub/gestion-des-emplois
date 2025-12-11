@@ -20,7 +20,7 @@
         font-size: 12px !important;
         cursor: pointer;
         transition: transform 0.2s, box-shadow 0.2s;
-        background: rgba(102, 126, 234, 0.15) !important;
+        background:   #06a465 !important;
         color: #333 !important;
     }
     .fc-event:hover {
@@ -557,6 +557,17 @@ $(document).ready(function() {
             slotMinTime: '{{ $start_time_calandrie ?? "08:00:00" }}',
             slotMaxTime: '{{ $end_time_calandrie ?? "19:00:00" }}',
             slotDuration: '01:00:00',
+            slotLabelInterval: '01:00:00',
+            slotLabelFormat: function(date) {
+                let hour = date.date.hour;
+                // عرض التسميات فقط للساعات الزوجية (8, 10, 12, 15, 17) مع استثناء 14
+                if (hour === 8) return '8-10h';
+                if (hour === 10) return '10-12h';
+                if (hour === 12) return '12-14h';
+                if (hour === 15) return '15-17h';
+                if (hour === 17) return '17-19h';
+                return '';
+            },
             allDaySlot: false,
             weekends: true,
             firstDay: 1,
@@ -564,6 +575,27 @@ $(document).ready(function() {
             selectable: true,
             editable: false,
             eventDisplay: 'block',
+            displayEventTime: false,
+
+            // Personnaliser l'affichage des événements
+            eventContent: function(arg) {
+                let event = arg.event;
+                let matiere = event.extendedProps.matiere || event.title || '';
+                let prof = event.extendedProps.prof || event.extendedProps.teacher || '';
+                let salle = event.extendedProps.salle || '';
+
+                let html = '<div class="event-content">';
+                html += '<div class="event-matiere">' + matiere + '</div>';
+                if (prof) {
+                    html += '<div class="event-prof">' + prof + '</div>';
+                }
+                if (salle) {
+                    html += '<div class="event-salle">' + salle + '</div>';
+                }
+                html += '</div>';
+
+                return { html: html };
+            },
 
             // Charger les événements
             events: function(fetchInfo, successCallback, failureCallback) {

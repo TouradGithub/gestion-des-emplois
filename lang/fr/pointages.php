@@ -114,4 +114,15 @@ return [
     'creation_initiale' => 'Création initiale',
     'cours_aide_modification' => 'La liste des cours sera mise à jour lors du changement de professeur ou de date',
     'commentaires_aide' => 'Saisissez toute remarque supplémentaire sur la présence (facultatif)',
+
+    // Pointage rapide
+    'date' => 'Date',
+    'charger' => 'Charger',
+    'tous_presents' => 'Tous présents',
+    'tous_absents' => 'Tous absents',
+    'resume' => 'Résumé',
+    'aucun_cours_programme' => 'Aucun cours programmé pour cette date',
+    'selectionnez_date' => 'Sélectionnez une date',
+    'selectionnez_date_desc' => 'Choisissez une date pour afficher les cours et enregistrer les pointages',
+    'pointages_enregistres' => 'Pointages enregistrés avec succès',
 ];

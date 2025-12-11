@@ -7,7 +7,7 @@
 @section('css')
 <style>
     .page-header-custom {
-        background: #1a1a1a;
+        background: #06a465;
         border-radius: 15px;
         padding: 25px 30px;
         margin-bottom: 25px;
@@ -95,7 +95,7 @@
         overflow: hidden;
     }
     .table thead th {
-        background: #1a1a1a;
+         background: #06a465;
         color: #fff;
         font-weight: 600;
         border: none;

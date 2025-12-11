@@ -4,366 +4,409 @@
     {{ __('pointages.pointage_rapide') }}
 @endsection
 
+@section('css')
+<style>
+    .filter-card {
+        background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .table-pointage {
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .table-pointage th {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: #fff;
+        font-weight: 600;
+        padding: 12px;
+        border: none;
+    }
+    .table-pointage td {
+        padding: 10px 12px;
+        vertical-align: middle;
+        border-bottom: 1px solid #eee;
+    }
+    .table-pointage tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    .btn-statut {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 2px solid transparent;
+    }
+    .btn-present {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+    .btn-present.active, .btn-present:hover {
+        background: #2e7d32;
+        color: #fff;
+    }
+    .btn-absent {
+        background: #ffebee;
+        color: #c62828;
+    }
+    .btn-absent.active, .btn-absent:hover {
+        background: #c62828;
+        color: #fff;
+    }
+    .summary-card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-top: 20px;
+    }
+    .count-badge {
+        font-size: 1.2rem;
+        padding: 8px 16px;
+        border-radius: 10px;
+    }
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255,255,255,0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }
+    .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #11998e;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: #fff;
+        border-radius: 15px;
+    }
+    .empty-state i {
+        font-size: 80px;
+        color: #ccc;
+    }
+</style>
+@endsection
+
 @section('content')
 <div class="content-wrapper">
-    <div class="page-header">
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Page Header -->
+    <div class="page-header mb-4">
         <h3 class="page-title">
             <span class="page-title-icon bg-gradient-success text-white me-2">
                 <i class="mdi mdi-clock-fast"></i>
             </span>
             {{ __('pointages.pointage_rapide') }}
         </h3>
-        <nav aria-label="breadcrumb">
-            <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">{{ __('messages.dashboard') }}</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('web.pointages.index') }}">{{ __('pointages.pointages') }}</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{{ __('pointages.pointage_rapide') }}</li>
-            </ul>
-        </nav>
     </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div>
-                            <h4 class="card-title mb-1">{{ __('pointages.pointage_rapide') }}</h4>
-                            <p class="card-description text-muted">
-                                {{ __('pointages.marquer_presence_absence_tous') }}
-                            </p>
-                        </div>
-                        <div class="text-end">
-                            <div class="badge badge-gradient-info fs-6 p-2">
-                                <i class="mdi mdi-calendar-today"></i>
-                                {{ \Carbon\Carbon::parse($today)->locale(app()->getLocale())->isoFormat('dddd, LL') }}
-                            </div>
-                        </div>
-                    </div>
-
-                    @if($emploisAujourdhui->isEmpty())
-                        <div class="text-center py-5">
-                            <i class="mdi mdi-calendar-remove display-1 text-muted"></i>
-                            <h5 class="mt-3 text-muted">{{ __('pointages.aucun_cours_programme') }}</h5>
-                            <a href="{{ route('web.pointages.index') }}" class="btn btn-gradient-primary mt-3">
-                                <i class="mdi mdi-arrow-left"></i>
-                                {{ __('pointages.retour_liste') }}
-                            </a>
-                        </div>
-                    @else
-                        <form method="POST" action="{{ route('web.pointages.store-rapide') }}" id="pointageRapideForm">
-                            @csrf
-                            <input type="hidden" name="date_pointage" value="{{ $today }}">
-
-                            <!-- Actions en haut -->
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-success btn-sm" onclick="marquerTousPresents()">
-                                        <i class="mdi mdi-check-all"></i>
-                                        {{ __('pointages.tous_presents') }}
-                                    </button>
-                                    <button type="button" class="btn btn-danger btn-sm" onclick="marquerTousAbsents()">
-                                        <i class="mdi mdi-close-circle-multiple"></i>
-                                        {{ __('pointages.tous_absents') }}
-                                    </button>
-                                    <button type="button" class="btn btn-secondary btn-sm" onclick="reinitialiser()">
-                                        <i class="mdi mdi-refresh"></i>
-                                        {{ __('pointages.reinitialiser') }}
-                                    </button>
-                                </div>
-
-                                <div>
-                                    <span class="badge badge-light me-2">
-                                        {{ $emploisAujourdhui->count() }} {{ __('pointages.cours_au_total') }}
-                                    </span>
-                                    <span class="badge badge-warning">
-                                        <span id="count-deja-enregistres">{{ count($pointagesExistants) }}</span>
-                                        {{ __('pointages.deja_enregistres') }}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <!-- Liste des cours -->
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th style="width: 5%">#</th>
-                                            <th style="width: 20%">{{ __('pointages.professeur') }}</th>
-                                            <th style="width: 15%">{{ __('pointages.classe') }}</th>
-                                            <th style="width: 20%">{{ __('pointages.matiere') }}</th>
-                                            <th style="width: 15%">{{ __('pointages.horaires') }}</th>
-                                            <th style="width: 15%">{{ __('pointages.statut') }}</th>
-                                            <th style="width: 10%">{{ __('pointages.statut_actuel') }}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($emploisAujourdhui->groupBy('teacher_id') as $teacherId => $emploisProf)
-                                            @foreach($emploisProf as $index => $emploi)
-                                                @php
-                                                    $dejaEnregistre = in_array($emploi->id, $pointagesExistants);
-                                                    $globalIndex = $loop->parent->index * 100 + $loop->index;
-                                                @endphp
-                                                <tr class="{{ $dejaEnregistre ? 'table-warning' : '' }}"
-                                                    data-emploi-id="{{ $emploi->id }}">
-                                                    <td>{{ $globalIndex + 1 }}</td>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <i class="mdi mdi-account-circle me-2 text-primary"></i>
-                                                            <div>
-                                                                <strong>{{ $emploi->teacher->name }}</strong>
-                                                                @if($index == 0 && $emploisProf->count() > 1)
-                                                                    <br><small class="text-muted">
-                                                                        {{ $emploisProf->count() }} cours aujourd'hui
-                                                                    </small>
-                                                                @endif
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge badge-gradient-info">
-                                                            {{ $emploi->classe->nom }}
-                                                        </span>
-                                                    </td>
-                                                    <td>{{ $emploi->subject->name }}</td>
-                                                    <td>
-                                                        <small class="text-muted">
-                                                            {{ $emploi->horairess->pluck('libelle_fr')->join(', ') }}
-                                                        </small>
-                                                    </td>
-                                                    <td>
-                                                        @if($dejaEnregistre)
-                                                            <span class="badge badge-warning">
-                                                                <i class="mdi mdi-check-circle"></i>
-                                                                {{ __('Déjà enregistré') }}
-                                                            </span>
-                                                        @else
-                                                            <input type="hidden"
-                                                                   name="pointages[{{ $globalIndex }}][emploi_temps_id]"
-                                                                   value="{{ $emploi->id }}">
-
-                                                            <div class="btn-group btn-group-sm" role="group">
-                                                                <input type="radio"
-                                                                       class="btn-check"
-                                                                       name="pointages[{{ $globalIndex }}][statut]"
-                                                                       id="present_{{ $emploi->id }}"
-                                                                       value="present"
-                                                                       autocomplete="off">
-                                                                <label class="btn btn-outline-success"
-                                                                       for="present_{{ $emploi->id }}">
-                                                                    <i class="mdi mdi-check"></i>
-                                                                    {{ __('pointages.present') }}
-                                                                </label>
-
-                                                                <input type="radio"
-                                                                       class="btn-check"
-                                                                       name="pointages[{{ $globalIndex }}][statut]"
-                                                                       id="absent_{{ $emploi->id }}"
-                                                                       value="absent"
-                                                                       autocomplete="off">
-                                                                <label class="btn btn-outline-danger"
-                                                                       for="absent_{{ $emploi->id }}">
-                                                                    <i class="mdi mdi-close"></i>
-                                                                    {{ __('pointages.absent') }}
-                                                                </label>
-                                                            </div>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @if($dejaEnregistre)
-                                                            <i class="mdi mdi-check-circle text-success"></i>
-                                                        @else
-                                                            <i class="mdi mdi-clock-outline text-muted"
-                                                               id="status_{{ $emploi->id }}"></i>
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <!-- Résumé et boutons d'action -->
-                            <div class="card bg-light mt-4">
-                                <div class="card-body">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-8">
-                                            <h6 class="mb-2">{{ __('pointages.resume') }}</h6>
-                                            <div class="d-flex gap-3">
-                                                <span class="badge badge-success fs-6">
-                                                    <span id="count-presents">0</span> {{ __('pointages.present') }}
-                                                </span>
-                                                <span class="badge badge-danger fs-6">
-                                                    <span id="count-absents">0</span> {{ __('pointages.absent') }}
-                                                </span>
-                                                <span class="badge badge-secondary fs-6">
-                                                    <span id="count-non-marques">{{ $emploisAujourdhui->count() - count($pointagesExistants) }}</span>
-                                                    {{ __('pointages.non_marques') }}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 text-end">
-                                            <a href="{{ route('web.pointages.index') }}" class="btn btn-light me-2">
-                                                <i class="mdi mdi-arrow-left"></i>
-                                                {{ __('pointages.annuler_retour') }}
-                                            </a>
-                                            <button type="submit" class="btn btn-gradient-primary">
-                                                <i class="mdi mdi-content-save"></i>
-                                                {{ __('pointages.enregistrer') }}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    @endif
+    <!-- Filter Section -->
+    <div class="filter-card">
+        <div class="row align-items-end">
+            <div class="col-md-4">
+                <label class="form-label fw-bold">
+                    <i class="mdi mdi-calendar"></i> {{ __('pointages.date') }}
+                </label>
+                <input type="date" id="date_pointage" class="form-control" value="{{ date('Y-m-d') }}">
+            </div>
+            <div class="col-md-4">
+                <button type="button" id="btn_charger" class="btn btn-success">
+                    <i class="mdi mdi-magnify"></i> {{ __('pointages.charger') }}
+                </button>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-outline-success btn-sm" onclick="marquerTousPresents()">
+                        <i class="mdi mdi-check-all"></i> {{ __('pointages.tous_presents') }}
+                    </button>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="marquerTousAbsents()">
+                        <i class="mdi mdi-close-circle-multiple"></i> {{ __('pointages.tous_absents') }}
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Table Container -->
+    <div id="table_container" style="display: none;">
+        <form id="pointageForm">
+            <input type="hidden" name="date_pointage" id="form_date_pointage">
+
+            <div class="table-pointage">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%">#</th>
+                            <th style="width: 25%">{{ __('pointages.professeur') }}</th>
+                            <th style="width: 20%">{{ __('pointages.classe') }}</th>
+                            <th style="width: 25%">{{ __('pointages.matiere') }}</th>
+                            <th style="width: 15%">{{ __('pointages.horaires') }}</th>
+                            <th style="width: 10%">{{ __('pointages.statut') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pointages_tbody">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Summary -->
+            <div class="summary-card">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h6 class="mb-2">{{ __('pointages.resume') }}</h6>
+                        <div class="d-flex gap-3">
+                            <span class="badge bg-success count-badge">
+                                <span id="count_presents">0</span> {{ __('pointages.present') }}
+                            </span>
+                            <span class="badge bg-danger count-badge">
+                                <span id="count_absents">0</span> {{ __('pointages.absent') }}
+                            </span>
+                            <span class="badge bg-secondary count-badge">
+                                <span id="count_total">0</span> Total
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <button type="button" id="btn_save" class="btn btn-success btn-lg">
+                            <i class="mdi mdi-content-save"></i> {{ __('pointages.enregistrer') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty_state" class="empty-state" style="display: none;">
+        <i class="mdi mdi-calendar-remove"></i>
+        <h5 class="mt-3 text-muted">{{ __('pointages.aucun_cours_programme') }}</h5>
+    </div>
+
+    <!-- Initial State -->
+    <div id="initial_state" class="empty-state">
+        <i class="mdi mdi-calendar-search"></i>
+        <h5 class="mt-3 text-muted">{{ __('pointages.selectionnez_date') }}</h5>
+        <p class="text-muted">{{ __('pointages.selectionnez_date_desc') }}</p>
+    </div>
 </div>
 @endsection
 
-@push('scripts')
+@section('script')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Fonction pour marquer tous comme présents
-    window.marquerTousPresents = function() {
-        const presentRadios = document.querySelectorAll('input[type="radio"][value="present"]');
-        presentRadios.forEach(radio => {
-            if (!radio.disabled) {
-                radio.checked = true;
-                updateStatus(radio);
-            }
-        });
-        updateCounts();
-    };
+$(document).ready(function() {
+    const SITEURL = "{{ url('/') }}";
+    let emploisData = [];
 
-    // Fonction pour marquer tous comme absents
-    window.marquerTousAbsents = function() {
-        const absentRadios = document.querySelectorAll('input[type="radio"][value="absent"]');
-        absentRadios.forEach(radio => {
-            if (!radio.disabled) {
-                radio.checked = true;
-                updateStatus(radio);
-            }
-        });
-        updateCounts();
-    };
-
-    // Fonction pour réinitialiser
-    window.reinitialiser = function() {
-        const allRadios = document.querySelectorAll('input[type="radio"]');
-        allRadios.forEach(radio => {
-            if (!radio.disabled) {
-                radio.checked = false;
-                updateStatus(radio);
-            }
-        });
-        updateCounts();
-    };
-
-    // Fonction pour mettre à jour le statut visuel
-    function updateStatus(radio) {
-        const emploiId = radio.name.match(/\[(\d+)\]/)[1];
-        const statusIcon = document.getElementById(`status_${radio.value === 'present' ? emploiId : emploiId}`);
-
-        if (statusIcon) {
-            const row = radio.closest('tr');
-            if (radio.checked) {
-                if (radio.value === 'present') {
-                    statusIcon.className = 'mdi mdi-check-circle text-success';
-                    row.classList.add('table-success');
-                    row.classList.remove('table-danger');
-                } else {
-                    statusIcon.className = 'mdi mdi-close-circle text-danger';
-                    row.classList.add('table-danger');
-                    row.classList.remove('table-success');
-                }
-            } else {
-                statusIcon.className = 'mdi mdi-clock-outline text-muted';
-                row.classList.remove('table-success', 'table-danger');
-            }
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
+    });
+
+    // Charger les données
+    $('#btn_charger').on('click', function() {
+        loadData();
+    });
+
+    // Charger au changement de date
+    $('#date_pointage').on('change', function() {
+        loadData();
+    });
+
+    function loadData() {
+        let datePointage = $('#date_pointage').val();
+        if (!datePointage) {
+            alert('{{ __("Veuillez sélectionner une date") }}');
+            return;
+        }
+
+        $('#loadingOverlay').show();
+        $('#initial_state').hide();
+        $('#empty_state').hide();
+        $('#table_container').hide();
+
+        $.ajax({
+            url: SITEURL + '/admin/pointages/rapide/data',
+            type: 'GET',
+            data: { date: datePointage },
+            success: function(response) {
+                $('#loadingOverlay').hide();
+
+                if (response.emplois && response.emplois.length > 0) {
+                    emploisData = response.emplois;
+                    renderTable(response.emplois, response.pointages_existants || []);
+                    $('#form_date_pointage').val(datePointage);
+                    $('#table_container').show();
+                } else {
+                    $('#empty_state').show();
+                }
+            },
+            error: function() {
+                $('#loadingOverlay').hide();
+                alert('{{ __("Erreur lors du chargement des données") }}');
+            }
+        });
     }
 
-    // Fonction pour mettre à jour les compteurs
-    function updateCounts() {
-        const presentsCount = document.querySelectorAll('input[type="radio"][value="present"]:checked').length;
-        const absentsCount = document.querySelectorAll('input[type="radio"][value="absent"]:checked').length;
-        const totalPossible = {{ $emploisAujourdhui->count() - count($pointagesExistants) }};
-        const nonMarques = totalPossible - presentsCount - absentsCount;
+    function renderTable(emplois, pointagesExistants) {
+        let html = '';
 
-        document.getElementById('count-presents').textContent = presentsCount;
-        document.getElementById('count-absents').textContent = absentsCount;
-        document.getElementById('count-non-marques').textContent = nonMarques;
+        emplois.forEach(function(emploi, index) {
+            let existant = pointagesExistants.find(p => p.emploi_temps_id == emploi.id);
+            let statut = existant ? existant.statut : 'absent'; // Absent par défaut
+
+            html += `
+                <tr data-emploi-id="${emploi.id}">
+                    <td>${index + 1}</td>
+                    <td>
+                        <strong>${emploi.teacher_name}</strong>
+                    </td>
+                    <td>
+                        <span class="badge bg-info">${emploi.classe_name}</span>
+                    </td>
+                    <td>${emploi.subject_name}</td>
+                    <td>
+                        <small class="text-muted">${emploi.horaires}</small>
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button"
+                                    class="btn-statut btn-present ${statut === 'present' ? 'active' : ''}"
+                                    data-emploi="${emploi.id}"
+                                    data-statut="present">
+                                <i class="mdi mdi-check"></i>
+                            </button>
+                            <button type="button"
+                                    class="btn-statut btn-absent ${statut === 'absent' ? 'active' : ''}"
+                                    data-emploi="${emploi.id}"
+                                    data-statut="absent">
+                                <i class="mdi mdi-close"></i>
+                            </button>
+                        </div>
+                        <input type="hidden" name="pointages[${index}][emploi_temps_id]" value="${emploi.id}">
+                        <input type="hidden" name="pointages[${index}][statut]" value="${statut}" class="statut-input" data-emploi="${emploi.id}">
+                    </td>
+                </tr>
+            `;
+        });
+
+        $('#pointages_tbody').html(html);
+        updateCounts();
+        bindStatutButtons();
     }
 
-    // Event listeners pour tous les radios
-    const allRadios = document.querySelectorAll('input[type="radio"]');
-    allRadios.forEach(radio => {
-        radio.addEventListener('change', function() {
-            updateStatus(this);
+    function bindStatutButtons() {
+        $('.btn-statut').off('click').on('click', function() {
+            let emploiId = $(this).data('emploi');
+            let statut = $(this).data('statut');
+
+            // Update buttons
+            $(`.btn-statut[data-emploi="${emploiId}"]`).removeClass('active');
+            $(this).addClass('active');
+
+            // Update hidden input
+            $(`.statut-input[data-emploi="${emploiId}"]`).val(statut);
+
+            // Update row style
+            let row = $(this).closest('tr');
+            row.removeClass('table-success table-danger');
+            if (statut === 'present') {
+                row.addClass('table-success');
+            } else {
+                row.addClass('table-danger');
+            }
+
             updateCounts();
         });
-    });
+    }
 
-    // Validation avant soumission
-    document.getElementById('pointageRapideForm').addEventListener('submit', function(e) {
-        const checkedRadios = document.querySelectorAll('input[type="radio"]:checked');
-        if (checkedRadios.length === 0) {
-            e.preventDefault();
-            alert('{{ __("Veuillez marquer au moins un pointage avant d\'enregistrer") }}');
-            return false;
+    window.marquerTousPresents = function() {
+        $('.btn-statut[data-statut="present"]').click();
+    };
+
+    window.marquerTousAbsents = function() {
+        $('.btn-statut[data-statut="absent"]').click();
+    };
+
+    function updateCounts() {
+        let presents = $('.statut-input[value="present"]').length;
+        let absents = $('.statut-input[value="absent"]').length;
+        let total = $('.statut-input').length;
+
+        $('#count_presents').text(presents);
+        $('#count_absents').text(absents);
+        $('#count_total').text(total);
+    }
+
+    // Save
+    $('#btn_save').on('click', function() {
+        let datePointage = $('#form_date_pointage').val();
+        let pointages = [];
+
+        $('.statut-input').each(function() {
+            pointages.push({
+                emploi_temps_id: $(this).data('emploi'),
+                statut: $(this).val()
+            });
+        });
+
+        if (pointages.length === 0) {
+            alert('{{ __("Aucun pointage à enregistrer") }}');
+            return;
         }
+
+        $('#loadingOverlay').show();
+
+        $.ajax({
+            url: SITEURL + '/admin/pointages/rapide/store',
+            type: 'POST',
+            data: {
+                date_pointage: datePointage,
+                pointages: pointages
+            },
+            success: function(response) {
+                $('#loadingOverlay').hide();
+                if (response.success) {
+                    alert(response.message || '{{ __("Pointages enregistrés avec succès") }}');
+                    loadData(); // Reload
+                } else {
+                    alert(response.message || '{{ __("Erreur lors de l\'enregistrement") }}');
+                }
+            },
+            error: function(xhr) {
+                $('#loadingOverlay').hide();
+                alert('{{ __("Erreur lors de l\'enregistrement") }}');
+            }
+        });
     });
 
-    // Initialiser les compteurs
-    updateCounts();
+    // Auto-load today's data
+    loadData();
 });
 </script>
-@endpush
-
-@push('styles')
-<style>
-.table-hover tbody tr:hover {
-    background-color: rgba(0,123,255,.075);
-}
-
-.btn-group-sm .btn {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-}
-
-.badge.fs-6 {
-    font-size: 0.9rem !important;
-    padding: 0.5em 0.75em;
-}
-
-.table-warning {
-    background-color: rgba(255, 193, 7, 0.1);
-}
-
-.table-success {
-    background-color: rgba(40, 167, 69, 0.1);
-}
-
-.table-danger {
-    background-color: rgba(220, 53, 69, 0.1);
-}
-
-.card {
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.btn-check:checked + .btn {
-    background-color: var(--bs-primary);
-    border-color: var(--bs-primary);
-}
-
-.display-1 {
-    font-size: 6rem;
-}
-</style>
-@endpush
+@endsection

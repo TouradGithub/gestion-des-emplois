@@ -149,4 +149,10 @@ return [
     // ترجمات إضافية لصفحة التعديل
     'choisir_professeur' => 'اختر أستاذ',
     'date' => 'التاريخ',
+
+    // التسجيل السريع
+    'charger' => 'تحميل',
+    'selectionnez_date' => 'اختر تاريخ',
+    'selectionnez_date_desc' => 'اختر تاريخاً لعرض الحصص وتسجيل الحضور',
+    'pointages_enregistres' => 'تم حفظ سجلات الحضور بنجاح',
 ];

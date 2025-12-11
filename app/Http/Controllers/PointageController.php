@@ -277,11 +277,107 @@ class PointageController extends Controller
      */
     public function rapide()
     {
-        return $this->pointageRapide();
+        return view('admin.pointages.rapide');
     }
 
     /**
-     * Enregistrer un pointage rapide
+     * Récupérer les données pour le pointage rapide via AJAX
+     */
+    public function getRapideData(Request $request)
+    {
+        $date = $request->date ?? Carbon::now()->format('Y-m-d');
+        $carbonDate = Carbon::parse($date);
+        $dayOfWeek = $carbonDate->dayOfWeek;
+        $dayOfWeek = $dayOfWeek === 0 ? 7 : $dayOfWeek;
+
+        $anneeActive = Anneescolaire::where('is_active', true)->first();
+        if (!$anneeActive) {
+            return response()->json(['emplois' => [], 'pointages_existants' => []]);
+        }
+
+        // Trouver le jour correspondant
+        $jour = Jour::where('ordre', $dayOfWeek)->first();
+        if (!$jour) {
+            return response()->json(['emplois' => [], 'pointages_existants' => []]);
+        }
+
+        // Récupérer tous les emplois du temps pour ce jour
+        $emplois = EmploiTemps::with(['teacher', 'classe', 'subject', 'ref_horaires'])
+            ->where('annee_id', $anneeActive->id)
+            ->where('jour_id', $jour->id)
+            ->orderBy('teacher_id')
+            ->get();
+
+        // Formater les données
+        $emploisData = $emplois->map(function($emploi) {
+            return [
+                'id' => $emploi->id,
+                'teacher_id' => $emploi->teacher_id,
+                'teacher_name' => $emploi->teacher->name ?? '-',
+                'classe_name' => $emploi->classe->nom ?? '-',
+                'subject_name' => $emploi->subject->name ?? '-',
+                'horaires' => $emploi->ref_horaires->pluck('libelle_fr')->join(', '),
+            ];
+        });
+
+        // Récupérer les pointages existants pour cette date
+        $pointagesExistants = Pointage::where('date_pointage', $date)
+            ->whereIn('emploi_temps_id', $emplois->pluck('id'))
+            ->get(['emploi_temps_id', 'statut', 'id']);
+
+        return response()->json([
+            'emplois' => $emploisData,
+            'pointages_existants' => $pointagesExistants
+        ]);
+    }
+
+    /**
+     * Enregistrer les pointages rapides via AJAX
+     */
+    public function storeRapideAjax(Request $request)
+    {
+        $request->validate([
+            'pointages' => 'required|array',
+            'date_pointage' => 'required|date',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            foreach ($request->pointages as $pointageData) {
+                $emploiTemps = EmploiTemps::find($pointageData['emploi_temps_id']);
+                if (!$emploiTemps) continue;
+
+                Pointage::updateOrCreate(
+                    [
+                        'emploi_temps_id' => $pointageData['emploi_temps_id'],
+                        'date_pointage' => $request->date_pointage,
+                    ],
+                    [
+                        'teacher_id' => $emploiTemps->teacher_id,
+                        'statut' => $pointageData['statut'],
+                        'created_by' => auth()->id(),
+                    ]
+                );
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => __('pointages.pointages_enregistres')
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'success' => false,
+                'message' => __('pointages.erreur_creation')
+            ], 500);
+        }
+    }
+
+    /**
+     * Enregistrer un pointage rapide (ancien)
      */
     public function storeRapide(Request $request)
     {
@@ -355,7 +451,7 @@ class PointageController extends Controller
 
         $anneeId = Anneescolaire::where('is_active', true)->first()?->id;
 
-        $emplois = EmploiTemps::with(['subject', 'teacher', 'jour', 'ref_horaires', 'classe'])
+        $emplois = EmploiTemps::with(['subject', 'teacher', 'jour', 'ref_horaires', 'classe', 'salle'])
             ->where('class_id', $classId)
             ->where('trimester_id', $trimesterId)
             ->where('annee_id', $anneeId)
@@ -397,6 +493,7 @@ class PointageController extends Controller
             $title = $emploi->subject->name ?? 'Matière';
             $prof = $emploi->teacher->name ?? 'Enseignant';
             $classe = $emploi->classe->nom ?? '-';
+            $salle = $emploi->salle->name ?? '';
 
             // Ajouter un indicateur de statut au titre
             $statutIcon = '';
@@ -410,12 +507,15 @@ class PointageController extends Controller
 
             $events[] = [
                 'id' => $emploi->id,
-                'title' => $statutIcon . $title . "\n" . $prof,
+                'title' => $title,
                 'start' => $eventStart,
                 'end' => $eventEnd,
                 'extendedProps' => [
                     'statut' => $statut,
                     'pointage_id' => $pointageId,
+                    'matiere' => $title,
+                    'prof' => $prof,
+                    'salle' => $salle,
                     'teacher' => $prof,
                     'subject' => $title,
                     'classe' => $classe,

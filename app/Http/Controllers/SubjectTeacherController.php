@@ -21,12 +21,14 @@ class SubjectTeacherController extends Controller
 
     public function create()
     {
-        $subjects = Subject::all();
-        $teachers = Teacher::all();
-        $trimesters = Trimester::all();
-        $classes = \App\Models\Classe::all();
-        return view('admin.subjects_teachers.create' , compact('subjects', 'teachers' , 'trimesters', 'classes'));
+        $anneeActive = Anneescolaire::where('is_active', 1)->first();
 
+        $subjects = Subject::orderBy('name')->get();
+        $teachers = Teacher::orderBy('name')->get();
+        $trimesters = Trimester::orderBy('id')->get();
+        $classes = Classe::where('annee_id', $anneeActive?->id)->orderBy('nom')->get();
+
+        return view('admin.subjects_teachers.create', compact('subjects', 'teachers', 'trimesters', 'classes'));
     }
 
     public function store(Request $request)
@@ -34,24 +36,16 @@ class SubjectTeacherController extends Controller
         $annee_id = Anneescolaire::where('is_active', 1)->first()->id;
 
         $request->validate([
-            'subject_id' => [
-                'required',
-                'exists:subjects,id',
-                Rule::unique('subject_teacher')->where(function ($query) use ($request, $annee_id) {
-                    return $query->where('subject_id', $request->subject_id)
-                        ->where('teacher_id', $request->teacher_id)
-                        ->where('trimester_id', $request->trimester_id)
-                        ->where('class_id', $request->class_id)
-                        ->where('annee_id', $annee_id);
-                }),
-            ],
+            'subject_ids' => 'required|array|min:1',
+            'subject_ids.*' => 'exists:subjects,id',
             'teacher_id' => 'required|exists:teachers,id',
             'trimester_id' => 'required|exists:trimesters,id',
             'class_id' => 'required|exists:classes,id',
             'heures_semaine' => 'required|numeric|min:0|max:40',
         ],
         [
-            'subject_id.unique' => 'Cette combinaison matière/enseignant/trimestre/classe existe déjà.',
+            'subject_ids.required' => 'Veuillez sélectionner au moins une matière.',
+            'subject_ids.min' => 'Veuillez sélectionner au moins une matière.',
             'class_id.required' => 'Le champ classe est obligatoire.',
             'heures_semaine.required' => 'Le nombre d\'heures par semaine est obligatoire.',
             'heures_semaine.numeric' => 'Le nombre d\'heures doit être un nombre valide.',
@@ -59,26 +53,52 @@ class SubjectTeacherController extends Controller
             'heures_semaine.max' => 'Le nombre d\'heures ne peut pas dépasser 40h/semaine.',
         ]);
 
-        SubjectTeacher::create([
-            'subject_id' => $request->subject_id,
-            'teacher_id' => $request->teacher_id,
-            'trimester_id' => $request->trimester_id,
-            'class_id' => $request->class_id,
-            'annee_id' => $annee_id,
-            'heures_semaine' => $request->heures_semaine,
-        ]);
+        $created = 0;
+        $skipped = 0;
 
-        return redirect()->route('web.subjects_teachers.index')->with('success', 'Subject-Teacher assignment created successfully.');
+        foreach ($request->subject_ids as $subject_id) {
+            // Vérifier si cette combinaison existe déjà
+            $exists = SubjectTeacher::where('subject_id', $subject_id)
+                ->where('teacher_id', $request->teacher_id)
+                ->where('trimester_id', $request->trimester_id)
+                ->where('class_id', $request->class_id)
+                ->where('annee_id', $annee_id)
+                ->exists();
+
+            if (!$exists) {
+                SubjectTeacher::create([
+                    'subject_id' => $subject_id,
+                    'teacher_id' => $request->teacher_id,
+                    'trimester_id' => $request->trimester_id,
+                    'class_id' => $request->class_id,
+                    'annee_id' => $annee_id,
+                    'heures_semaine' => $request->heures_semaine,
+                ]);
+                $created++;
+            } else {
+                $skipped++;
+            }
+        }
+
+        $message = $created . ' affectation(s) créée(s) avec succès.';
+        if ($skipped > 0) {
+            $message .= ' ' . $skipped . ' affectation(s) ignorée(s) car déjà existante(s).';
+        }
+
+        return redirect()->route('web.subjects_teachers.index')->with('success', $message);
     }
 
     public function edit($id)
     {
         $subjectTeacher = SubjectTeacher::findOrFail($id);
-        $subjects = Subject::all();
-        $teachers = Teacher::all();
-        $trimesters = Trimester::all();
-        $classes = Classe::all();
+        $anneeActive = Anneescolaire::where('is_active', 1)->first();
+
+        $subjects = Subject::orderBy('name')->get();
+        $teachers = Teacher::orderBy('name')->get();
+        $trimesters = Trimester::orderBy('id')->get();
+        $classes = Classe::where('annee_id', $anneeActive?->id)->orderBy('nom')->get();
         $annees = Anneescolaire::all();
+
         return view('admin.subjects_teachers.edit', compact('subjectTeacher', 'subjects', 'teachers', 'trimesters', 'classes', 'annees'));
     }
 

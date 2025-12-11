@@ -119,14 +119,14 @@ class EmploiTempsController extends Controller
 
             $events[] = [
                 'id' => $emploi->id,
-                'title' => $title . "\n" . $prof . ($salle ? "\n📍 " . $salle : ''),
+                'title' => $title,
                 'start' => $eventStart,
                 'end' => $eventEnd,
                 'extendedProps' => [
                     'colorIndex' => $subjectColors[$emploi->subject_id],
-                    'teacher' => $prof,
-                    'salle' => $salle,
-                    'subject' => $title
+                    'matiere' => $title,
+                    'prof' => $prof,
+                    'salle' => $salle
                 ]
             ];
         }
@@ -768,44 +768,51 @@ class EmploiTempsController extends Controller
     {
         $calendarData = [];
         $timeRange = Horaire::get()->sortBy('ordre');
-        foreach ($timeRange as $time) {
-            $timeText = $time->libelle_fr;
+        $timeRangeArray = $timeRange->values();
+
+        // تحديد الفترات الزمنية مع استثناء فترة الراحة 14-15
+        $timeSlots = [
+            ['start' => '08:00', 'end' => '10:00'],
+            ['start' => '10:00', 'end' => '12:00'],
+            ['start' => '12:00', 'end' => '14:00'],
+            ['start' => '15:00', 'end' => '17:00'], // تخطي 14-15
+            ['start' => '17:00', 'end' => '19:00'],
+        ];
+
+        foreach ($timeSlots as $slot) {
+            $timeText = substr($slot['start'], 0, 5) . ' - ' . substr($slot['end'], 0, 5);
+
+            // الحصول على معرفات الحصص لهذه الفترة
+            $horaireIds = $timeRangeArray->filter(function($horaire) use ($slot) {
+                $start = substr($horaire->start_time, 0, 5);
+                return $start >= $slot['start'] && $start < $slot['end'];
+            })->pluck('id')->toArray();
+
+            if (empty($horaireIds)) {
+                continue;
+            }
+
             $calendarData[$timeText] = [];
 
             foreach ($weekDays as $day) {
                 $detail = $emplois->where('jour_id', $day->id)
                     ->whereIn('id',
-                        EmploiHoraire::where('horaire_id', $time->id)
+                        EmploiHoraire::whereIn('horaire_id', $horaireIds)
                             ->pluck('emploi_temps_id')
                             ->toArray()
                     )->first();
 
                 if ($detail) {
-                    $horaire = $detail->getHoraires();
                     $calendarData[$timeText][] = [
                         'matiere' => $detail->subject->name,
-                        'rowspan' => abs(Carbon::parse($horaire[1])->diffInMinutes($horaire[0]) / 60) ?? '',
+                        'rowspan' => 1,
                         'date' => $day->libelle,
                         'id' => $detail->id,
                         'nbr_heure' => $detail->ref_horaires()->count(),
                         'emploi' => $detail,
                     ];
-                } else if (!$emplois->where('sct_ref_jour_id', $day->id)
-                    ->whereIn('id',
-                        EmploiHoraire::query()
-                            ->whereIn('horaire_id',
-                                Horaire::query()->
-                                where('start_time', '<', $time->start_time)
-                                    ->where('end_time', '>=', $time->end_time)
-                                    ->pluck('id'))
-                            ->pluck('emploi_temps_id'))->count()
-
-                ) {
-
-                    $calendarData[$timeText][] = 1;
-
                 } else {
-                    $calendarData[$timeText][] = 0;
+                    $calendarData[$timeText][] = 1;
                 }
             }
         }
