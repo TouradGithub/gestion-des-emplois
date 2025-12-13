@@ -21,9 +21,12 @@ class PointageController extends Controller
      */
     public function index(Request $request)
     {
-        // Récupération des données pour les filtres
+        // Get only classes from active school year
+        $anneeActive = Anneescolaire::where('is_active', true)->first();
         $teachers = Teacher::orderBy('name')->get();
-        $classes = Classe::orderBy('nom')->get();
+        $classes = $anneeActive
+            ? Classe::where('annee_id', $anneeActive->id)->orderBy('nom')->get()
+            : collect();
 
         // Construction de la requête avec filtres
         $query = Pointage::with(['emploiTemps.classe', 'emploiTemps.subject', 'teacher', 'emploiTemps.jour']);
@@ -75,8 +78,12 @@ class PointageController extends Controller
      */
     public function create()
     {
+        // Get only classes from active school year
+        $anneeActive = Anneescolaire::where('is_active', true)->first();
         $teachers = Teacher::orderBy('name')->get();
-        $classes = Classe::orderBy('nom')->get();
+        $classes = $anneeActive
+            ? Classe::where('annee_id', $anneeActive->id)->orderBy('nom')->get()
+            : collect();
         $today = Carbon::now()->format('Y-m-d');
 
         return view('admin.pointages.create', compact('teachers', 'classes', 'today'));
@@ -156,8 +163,12 @@ class PointageController extends Controller
     public function edit(string $id)
     {
         $pointage = Pointage::findOrFail($id);
+        // Get only classes from active school year
+        $anneeActive = Anneescolaire::where('is_active', true)->first();
         $teachers = Teacher::orderBy('name')->get();
-        $classes = Classe::orderBy('nom')->get();
+        $classes = $anneeActive
+            ? Classe::where('annee_id', $anneeActive->id)->orderBy('nom')->get()
+            : collect();
 
         return view('admin.pointages.edit', compact('pointage', 'teachers', 'classes'));
     }
@@ -310,13 +321,24 @@ class PointageController extends Controller
 
         // Formater les données
         $emploisData = $emplois->map(function($emploi) {
+            // Formater l'horaire: première heure de début - dernière heure de fin
+            $horaires = $emploi->ref_horaires()->orderBy('ordre')->get();
+            $horaireDisplay = '-';
+            if ($horaires->count() > 0) {
+                $firstHoraire = $horaires->first();
+                $lastHoraire = $horaires->last();
+                $startHour = Carbon::parse($firstHoraire->start_time)->format('G');
+                $endHour = Carbon::parse($lastHoraire->end_time)->format('G');
+                $horaireDisplay = $startHour . 'h-' . $endHour . 'h';
+            }
+
             return [
                 'id' => $emploi->id,
                 'teacher_id' => $emploi->teacher_id,
                 'teacher_name' => $emploi->teacher->name ?? '-',
                 'classe_name' => $emploi->classe->nom ?? '-',
                 'subject_name' => $emploi->subject->name ?? '-',
-                'horaires' => $emploi->ref_horaires->pluck('libelle_fr')->join(', '),
+                'horaires' => $horaireDisplay,
             ];
         });
 
@@ -451,7 +473,7 @@ class PointageController extends Controller
 
         $anneeId = Anneescolaire::where('is_active', true)->first()?->id;
 
-        $emplois = EmploiTemps::with(['subject', 'teacher', 'jour', 'ref_horaires', 'classe', 'salle'])
+        $emplois = EmploiTemps::with(['subject.subjectType', 'teacher', 'jour', 'ref_horaires', 'classe', 'salle'])
             ->where('class_id', $classId)
             ->where('trimester_id', $trimesterId)
             ->where('annee_id', $anneeId)
@@ -495,6 +517,17 @@ class PointageController extends Controller
             $classe = $emploi->classe->nom ?? '-';
             $salle = $emploi->salle->name ?? '';
 
+            // Récupérer le type de la matière
+            $subjectType = null;
+            if ($emploi->subject && $emploi->subject->subjectType) {
+                $subjectType = [
+                    'id' => $emploi->subject->subjectType->id,
+                    'name' => $emploi->subject->subjectType->name,
+                    'code' => $emploi->subject->subjectType->code,
+                    'color' => $emploi->subject->subjectType->color
+                ];
+            }
+
             // Ajouter un indicateur de statut au titre
             $statutIcon = '';
             if ($statut === 'present') {
@@ -520,7 +553,8 @@ class PointageController extends Controller
                     'subject' => $title,
                     'classe' => $classe,
                     'horaire' => $horairesText,
-                    'teacher_id' => $emploi->teacher_id
+                    'teacher_id' => $emploi->teacher_id,
+                    'subject_type' => $subjectType
                 ]
             ];
         }
@@ -569,6 +603,62 @@ class PointageController extends Controller
                 'message' => 'Erreur lors de l\'enregistrement du pointage.'
             ], 500);
         }
+    }
+
+    /**
+     * Exporter le pointage rapide en PDF
+     */
+    public function exportRapidePdf(Request $request)
+    {
+        $date = $request->date ?? Carbon::now()->format('Y-m-d');
+        $carbonDate = Carbon::parse($date);
+        $dayOfWeek = $carbonDate->dayOfWeek;
+        $dayOfWeek = $dayOfWeek === 0 ? 7 : $dayOfWeek;
+
+        $anneeActive = Anneescolaire::where('is_active', true)->first();
+        if (!$anneeActive) {
+            return redirect()->back()->with('error', 'Aucune année scolaire active trouvée.');
+        }
+
+        // Trouver le jour correspondant
+        $jour = Jour::where('ordre', $dayOfWeek)->first();
+        if (!$jour) {
+            return redirect()->back()->with('error', 'Aucun emploi du temps pour ce jour.');
+        }
+
+        // Récupérer tous les emplois du temps pour ce jour avec classe.annee et trimester
+        $emplois = EmploiTemps::with(['teacher', 'classe.annee', 'subject', 'ref_horaires', 'salle', 'trimester'])
+            ->where('annee_id', $anneeActive->id)
+            ->where('jour_id', $jour->id)
+            ->orderBy('teacher_id')
+            ->get();
+
+        // Récupérer les pointages existants pour cette date
+        $pointagesExistants = Pointage::where('date_pointage', $date)
+            ->whereIn('emploi_temps_id', $emplois->pluck('id'))
+            ->pluck('statut', 'emploi_temps_id')
+            ->toArray();
+
+        $html = view('admin.pointages.pdf.rapide_pdf', [
+            'emplois' => $emplois,
+            'pointagesExistants' => $pointagesExistants,
+            'date' => $carbonDate,
+            'jour' => $jour
+        ])->render();
+
+        $mpdf = new \Mpdf\Mpdf([
+            'orientation' => 'P',
+            'format' => 'A4',
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 10,
+            'margin_bottom' => 15,
+        ]);
+
+        $mpdf->WriteHTML($html);
+
+        $filename = 'pointage_rapide_' . $date . '.pdf';
+        return $mpdf->Output($filename, 'I');
     }
 
     /**

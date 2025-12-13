@@ -6,7 +6,10 @@
       "Bash(dir /s /b c:laragonwwwgestion-des-emploispackages)",
       "Bash(findstr:*)",
       "Bash(del /f \"c:\\laragon\\www\\gestion-des-emplois\\nul\")",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(del \"c:\\laragon\\www\\gestion-des-emplois\\database\\migrations\\2025_12_12_214824_create_student_confirmations_table.php\")",
+      "Bash(del \"c:\\laragon\\www\\gestion-des-emplois\\app\\Models\\StudentConfirmation.php\")",
+      "Bash(del \"c:\\laragon\\www\\gestion-des-emplois\\app\\Http\\Controllers\\Admin\\StudentConfirmationController.php\")"
     ]
   }
 }

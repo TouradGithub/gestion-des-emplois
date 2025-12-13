@@ -70,20 +70,25 @@
                     </td>
                     <td>
                         <div class="btn-group" role="group">
-                            @if($classe->emplois)
-                                <a href="{{ route('web.emplois.showEmploi', $classe->id) }}" class="btn btn-info btn-sm">
-                                    <i class="mdi mdi-calendar-clock"></i> Emploi
+                            <a href="{{ route('web.classes.show', $classe->id) }}" class="btn btn-success btn-sm" title="Voir details">
+                                <i class="mdi mdi-eye"></i>
+                            </a>
+
+                            @if($classe->emplois->count() > 0)
+                                <a href="{{ route('web.emplois.showEmploi', $classe->id) }}" class="btn btn-info btn-sm" title="PDF Emploi">
+                                    <i class="mdi mdi-file-pdf-box"></i>
                                 </a>
                             @endif
 
-                            <a href="{{ route('web.classes.edit', $classe->id) }}" class="btn btn-primary btn-sm">
-                                <i class="mdi mdi-pencil"></i> {{ __('messages.edit') }}
+                            <a href="{{ route('web.classes.edit', $classe->id) }}" class="btn btn-primary btn-sm" title="Modifier">
+                                <i class="mdi mdi-pencil"></i>
                             </a>
 
                             <button type="button" class="btn btn-danger btn-sm delete-class"
                                     data-id="{{ $classe->id }}"
-                                    data-name="{{ $classe->nom }}">
-                                <i class="mdi mdi-delete"></i> {{ __('messages.delete') }}
+                                    data-name="{{ $classe->nom }}"
+                                    title="Supprimer">
+                                <i class="mdi mdi-delete"></i>
                             </button>
                         </div>
                     </td>
@@ -109,13 +114,13 @@ $(document).ready(function() {
         const row = $(this).closest('tr');
 
         Swal.fire({
-            title: 'Êtes-vous sûr?',
-            text: `{{ __('messages.confirm_delete_class') }} "${className}"?`,
+            title: 'Etes-vous sur?',
+            text: `Voulez-vous vraiment supprimer la classe "${className}"?`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
-            confirmButtonText: '{{ __('messages.yes_delete_exclamation') }}',
+            confirmButtonText: 'Oui, supprimer!',
             cancelButtonText: 'Annuler'
         }).then((result) => {
             if (result.isConfirmed) {
@@ -138,9 +143,13 @@ $(document).ready(function() {
                         );
                     },
                     error: function(xhr) {
+                        let message = 'Une erreur est survenue lors de la suppression.';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            message = xhr.responseJSON.message;
+                        }
                         Swal.fire(
                             'Erreur!',
-                            'Une erreur est survenue lors de la suppression.',
+                            message,
                             'error'
                         );
                     }

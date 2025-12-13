@@ -73,10 +73,10 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group" role="group">
-                                                    {{-- <a href="{{ route('web.students.show', $student) }}"
+                                                    <a href="{{ route('web.students.show', $student) }}"
                                                        class="btn btn-info btn-sm" title="{{ __('messages.show') }}">
                                                         <i class="mdi mdi-eye"></i>
-                                                    </a> --}}
+                                                    </a>
                                                     <a href="{{ route('web.students.edit', $student) }}"
                                                        class="btn btn-warning btn-sm" title="{{ __('messages.edit') }}">
                                                         <i class="mdi mdi-pencil"></i>

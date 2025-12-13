@@ -34,9 +34,15 @@ Route::prefix('admin')->name('web.')->middleware(['auth', 'user.type:admin'])->g
     Route::resource('teachers', TeacherController::class);
     Route::get('teachers-list', [TeacherController::class, 'show'])->name('teachers.list');
     Route::resource('niveauformations', \App\Http\Controllers\NiveauformationController::class);
-    Route::resource('anneescolaires', \App\Http\Controllers\AnneescolaireController::class);
     Route::get('niveauformations/list', [\App\Http\Controllers\NiveauformationController::class,'index'])->name('niveauformations.list');
+
+    // انتبه: يجب أن تكون الـ routes بدون parameters قبل الـ resource
     Route::get('/anneescolaires/list', [\App\Http\Controllers\AnneescolaireController::class, 'list'])->name('anneescolaires.list');
+    Route::get('/anneescolaires/get-classes', [\App\Http\Controllers\AnneescolaireController::class, 'getClassesFromYear'])->name('anneescolaires.get-classes');
+    Route::resource('anneescolaires', \App\Http\Controllers\AnneescolaireController::class);
+    Route::get('/anneescolaires/{anneescolaire}/details', [\App\Http\Controllers\AnneescolaireController::class, 'showDetails'])->name('anneescolaires.details');
+    Route::post('/anneescolaires/{anneescolaire}/clone-classes', [\App\Http\Controllers\AnneescolaireController::class, 'cloneClasses'])->name('anneescolaires.clone-classes');
+    Route::post('/anneescolaires/{anneescolaire}/store-classe', [\App\Http\Controllers\AnneescolaireController::class, 'storeClasse'])->name('anneescolaires.store-classe');
 
 
     Route::resource('salle-de-classes', SalleDeClasseController::class);
@@ -78,8 +84,16 @@ Route::prefix('admin')->name('web.')->middleware(['auth', 'user.type:admin'])->g
     });
 
 
+    // Classes routes - specific routes before resource
+    Route::get('/classes/get-matching-classes', [ClasseController::class, 'getMatchingClasses'])->name('classes.get-matching-classes');
+    Route::get('/classes/get-classes-for-students', [ClasseController::class, 'getClassesForStudents'])->name('classes.get-classes-for-students');
+    Route::get('/classes/get-emplois', [ClasseController::class, 'getEmploisFromClass'])->name('classes.get-emplois');
+    Route::get('/classes/get-students', [ClasseController::class, 'getStudentsFromClass'])->name('classes.get-students');
+    Route::get('/classes/list', [ClasseController::class, 'list'])->name('classes.list');
+    Route::get('/classes/delete/{id}', [ClasseController::class,'destroy'])->name('classes.delete');
+    Route::post('/classes/{class}/clone-emplois', [ClasseController::class, 'cloneEmplois'])->name('classes.clone-emplois');
+    Route::post('/classes/{class}/clone-students', [ClasseController::class, 'cloneStudents'])->name('classes.clone-students');
     Route::resource('classes', ClasseController::class);
-    Route::get('classes/delete/{id}', [ClasseController::class,'destroy'])->name('classes.delete');
     // Routes personnalisées avant resource routes
     Route::get('/emplois/get-teachers', [EmploiTempsController::class, 'getTeachers'])->name('emplois.getTeachers');
     Route::get('/emplois/get-subjects', [EmploiTempsController::class, 'getSubjects'])->name('emplois.getSubjects');
@@ -97,12 +111,11 @@ Route::prefix('admin')->name('web.')->middleware(['auth', 'user.type:admin'])->g
     Route::post('emplois/calendar/event', [EmploiTempsController::class, 'storeCalendarEvent'])->name('emplois.calendar.store');
     Route::put('emplois/calendar/event/{id}', [EmploiTempsController::class, 'updateCalendarEvent'])->name('emplois.calendar.update');
     Route::delete('emplois/calendar/event/{id}', [EmploiTempsController::class, 'deleteCalendarEvent'])->name('emplois.calendar.delete');
+    Route::post('emplois/calendar/check-availability', [EmploiTempsController::class, 'checkAvailability'])->name('emplois.calendar.checkAvailability');
 
     // Resource route
     Route::resource('emplois', EmploiTempsController::class);
     Route::get('show-calendrier', [EmploiTempsController::class, 'showCalender'])->name('emplois.showCalender');
-
-    Route::get('classes/list', [ClasseController::class, 'list'])->name('classes.list');
 
     Route::resource('subjects', \App\Http\Controllers\SubjectController::class);
     Route::get('subjects_teachers/list', [\App\Http\Controllers\SubjectTeacherController::class,'listSubjectTeacher'])->name('subjects_teachers.list');
@@ -122,6 +135,7 @@ Route::prefix('admin')->name('web.')->middleware(['auth', 'user.type:admin'])->g
         Route::get('/rapide/aujourd-hui', [PointageController::class, 'rapide'])->name('rapide');
         Route::get('/rapide/data', [PointageController::class, 'getRapideData'])->name('rapide.data');
         Route::post('/rapide/store', [PointageController::class, 'storeRapideAjax'])->name('rapide.store');
+        Route::get('/rapide/export-pdf', [PointageController::class, 'exportRapidePdf'])->name('rapide.export-pdf');
 
         // AJAX endpoints
         Route::get('/ajax/emplois', [PointageController::class, 'getEmploisForTeacher'])->name('get-emplois');

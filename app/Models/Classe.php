@@ -34,10 +34,28 @@ class Classe extends Model
     }
 
     /**
-     * Get the students that belong to this class.
+     * Get the students that belong to this class (current).
      */
     public function students()
     {
         return $this->hasMany(Student::class, 'class_id');
+    }
+
+    /**
+     * Get all students through pivot table (history)
+     */
+    public function allStudents()
+    {
+        return $this->belongsToMany(Student::class, 'classe_student', 'classe_id', 'student_id')
+            ->withPivot('annee_id')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get classe student history records
+     */
+    public function studentHistory()
+    {
+        return $this->hasMany(ClasseStudent::class, 'classe_id');
     }
 }

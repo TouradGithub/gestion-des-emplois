@@ -251,7 +251,7 @@ class SubjectTeacherController extends Controller
                 'subject' => $teacher->subject ? $teacher->subject->name : 'N/A',
                 'teacher' => $teacher->teacher ? $teacher->teacher->name : 'N/A',
                 'trimester' => $teacher->trimester ? $teacher->trimester->name : 'N/A',
-                'classe' => $teacher->classe ? $teacher->classe->nom : 'N/A',
+               'classe' => $teacher->classe? $teacher->classe->nom . ' (' . $teacher->classe->annee->annee . ')': 'N/A',
                 'heures_semaine' => $heuresSemaine . 'h',
                 'heures_reelles' => $heuresReelles . 'h',
                 'taux' => $tauxBadge,

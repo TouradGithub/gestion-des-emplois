@@ -6,6 +6,7 @@
 
 @section('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <style>
     .fc {
         background: #fff;
@@ -188,6 +189,148 @@
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
+    /* Conflict Alert Styles */
+    .conflict-container {
+        margin-top: 15px;
+        padding: 0;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .conflict-header {
+        background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+        color: #fff;
+        padding: 12px 15px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .conflict-header i {
+        font-size: 18px;
+    }
+    .conflict-list {
+        background: #fff5f5;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+    .conflict-item {
+        padding: 12px 15px;
+        border-bottom: 1px solid #ffe0e0;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        transition: background 0.2s;
+    }
+    .conflict-item:last-child {
+        border-bottom: none;
+    }
+    .conflict-item:hover {
+        background: #ffeded;
+    }
+    .conflict-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .conflict-icon.teacher {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+    }
+    .conflict-icon.room {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: #fff;
+    }
+    .conflict-icon.class {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: #fff;
+    }
+    .conflict-icon.warning {
+        background: linear-gradient(135deg, #f5af19 0%, #f12711 100%);
+        color: #fff;
+    }
+    .conflict-content {
+        flex: 1;
+    }
+    .conflict-message {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 4px;
+    }
+    .conflict-details {
+        font-size: 12px;
+        color: #666;
+    }
+    .conflict-time {
+        font-size: 11px;
+        color: #999;
+        margin-top: 4px;
+    }
+    /* Live validation badges */
+    .validation-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        margin-top: 5px;
+    }
+    .validation-badge.available {
+        background: #d4edda;
+        color: #155724;
+    }
+    .validation-badge.unavailable {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    .validation-badge.checking {
+        background: #e2e3e5;
+        color: #383d41;
+    }
+    .form-group-with-validation {
+        position: relative;
+    }
+    .validation-indicator {
+        position: absolute;
+        right: 10px;
+        top: 38px;
+        font-size: 16px;
+    }
+    .validation-indicator.valid {
+        color: #28a745;
+    }
+    .validation-indicator.invalid {
+        color: #dc3545;
+    }
+    .validation-indicator.checking {
+        color: #6c757d;
+        animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+    /* Sweet Alert Custom */
+    .swal2-popup.conflict-popup {
+        border-radius: 15px;
+    }
+    /* Form field states */
+    .form-control.is-checking {
+        border-color: #6c757d;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236c757d'%3e%3cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3e%3c/svg%3e");
+    }
+    .form-control.is-available {
+        border-color: #28a745;
+    }
+    .form-control.is-unavailable {
+        border-color: #dc3545;
+    }
     .event-matiere {
         font-weight: bold;
         font-size: 13px;
@@ -200,6 +343,20 @@
         font-size: 10px;
         opacity: 0.8;
     }
+    .event-type-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 9px;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 3px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .event-type-td { background-color: #28a745; }
+    .event-type-tp { background-color: #007bff; }
+    .event-type-project { background-color: #fd7e14; }
     .page-title {
         font-size: 1.5rem;
         font-weight: 700;
@@ -345,15 +502,38 @@
 
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="form-group">
+                            <div class="form-group form-group-with-validation">
                                 <label for="salle_id">
                                     <i class="fas fa-door-open"></i> Salle
                                 </label>
                                 <select id="salle_id" name="salle_de_classe_id" class="form-control">
                                     <option value="">-- Optionnel --</option>
                                 </select>
+                                <span id="salle_validation" class="validation-indicator" style="display:none;"></span>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-group-with-validation">
+                                <label for="teacher_id_validation">
+                                    <i class="fas fa-check-circle"></i> État de disponibilité
+                                </label>
+                                <div id="availability_status" class="mt-2">
+                                    <span class="validation-badge checking">
+                                        <i class="fas fa-circle-notch fa-spin"></i> En attente de sélection...
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Zone d'affichage des conflits -->
+                    <div id="conflicts_container" class="conflict-container" style="display: none;">
+                        <div class="conflict-header">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Conflits détectés</span>
+                        </div>
+                        <ul id="conflicts_list" class="conflict-list">
+                        </ul>
                     </div>
                 </form>
             </div>
@@ -377,6 +557,7 @@
 @section('script')
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/locales/fr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 $(document).ready(function() {
     const SITEURL = "{{ url('/') }}";
@@ -611,14 +792,22 @@ $(document).ready(function() {
                 let matiere = event.extendedProps.matiere || event.title || '';
                 let prof = event.extendedProps.prof || event.extendedProps.teacher || '';
                 let salle = event.extendedProps.salle || '';
+                let subjectType = event.extendedProps.subject_type || null;
 
                 let html = '<div class="event-content">';
-                html += '<div class="event-matiere">' + matiere + '</div>';
-                if (prof) {
-                    html += '<div class="event-prof">' + prof + '</div>';
+
+                // Afficher la matière avec le type entre parenthèses
+                let matiereWithType = matiere;
+                if (subjectType && subjectType.name) {
+                    matiereWithType += ' (' + subjectType.name + ')';
                 }
+
+                html += '<div class="event-matiere">' + matiereWithType + '</div>';
                 if (salle) {
                     html += '<div class="event-salle">' + salle + '</div>';
+                }
+                if (prof) {
+                    html += '<div class="event-prof">' + prof + '</div>';
                 }
                 html += '</div>';
 
@@ -735,6 +924,10 @@ $(document).ready(function() {
         $('#seanceForm')[0].reset();
         $('#seance_id').val('');
         $('#subject_id').empty().append('<option value="">-- Sélectionner un enseignant d\'abord --</option>');
+        // Réinitialiser l'affichage des conflits
+        $('#conflicts_container').hide();
+        $('#conflicts_list').empty();
+        updateAvailabilityStatus('waiting');
     }
 
     function getJourIdFromDayOfWeek(dayOfWeek) {
@@ -774,6 +967,116 @@ $(document).ready(function() {
         return hours + ':' + minutes;
     }
 
+    // Variable pour le debounce de la vérification
+    let checkAvailabilityTimeout = null;
+
+    // Fonction pour vérifier la disponibilité en temps réel
+    function checkAvailability() {
+        let jourId = $('#jour_id').val();
+        let horaireIds = $('#horaire_ids').val();
+        let teacherId = $('#teacher_id').val();
+        let salleId = $('#salle_id').val();
+        let trimesterId = $('#form_trimester_id').val();
+        let excludeId = $('#seance_id').val();
+
+        // Réinitialiser l'affichage
+        $('#conflicts_container').hide();
+        $('#conflicts_list').empty();
+
+        if (!jourId || !horaireIds || horaireIds.length == 0) {
+            updateAvailabilityStatus('waiting');
+            return;
+        }
+
+        if (!teacherId && !salleId) {
+            updateAvailabilityStatus('waiting');
+            return;
+        }
+
+        updateAvailabilityStatus('checking');
+
+        // Annuler la requête précédente
+        if (checkAvailabilityTimeout) {
+            clearTimeout(checkAvailabilityTimeout);
+        }
+
+        checkAvailabilityTimeout = setTimeout(function() {
+            $.ajax({
+                url: SITEURL + '/admin/emplois/calendar/check-availability',
+                type: 'POST',
+                data: {
+                    jour_id: jourId,
+                    horaire_ids: horaireIds,
+                    teacher_id: teacherId,
+                    salle_de_classe_id: salleId,
+                    trimester_id: trimesterId,
+                    exclude_id: excludeId
+                },
+                success: function(response) {
+                    if (response.available) {
+                        updateAvailabilityStatus('available');
+                        $('#conflicts_container').hide();
+                    } else {
+                        updateAvailabilityStatus('unavailable');
+                        displayConflicts(response.conflicts);
+                    }
+                },
+                error: function() {
+                    updateAvailabilityStatus('error');
+                }
+            });
+        }, 300);
+    }
+
+    // Mettre à jour le statut de disponibilité
+    function updateAvailabilityStatus(status) {
+        let statusHtml = '';
+        switch(status) {
+            case 'waiting':
+                statusHtml = '<span class="validation-badge checking"><i class="fas fa-clock"></i> En attente de sélection...</span>';
+                break;
+            case 'checking':
+                statusHtml = '<span class="validation-badge checking"><i class="fas fa-circle-notch fa-spin"></i> Vérification en cours...</span>';
+                break;
+            case 'available':
+                statusHtml = '<span class="validation-badge available"><i class="fas fa-check-circle"></i> Disponible</span>';
+                break;
+            case 'unavailable':
+                statusHtml = '<span class="validation-badge unavailable"><i class="fas fa-times-circle"></i> Conflit détecté</span>';
+                break;
+            case 'error':
+                statusHtml = '<span class="validation-badge unavailable"><i class="fas fa-exclamation-circle"></i> Erreur de vérification</span>';
+                break;
+        }
+        $('#availability_status').html(statusHtml);
+    }
+
+    // Afficher les conflits de manière visuelle
+    function displayConflicts(conflicts) {
+        let html = '';
+        conflicts.forEach(function(conflict) {
+            html += `
+                <li class="conflict-item">
+                    <div class="conflict-icon ${conflict.type}">
+                        <i class="${conflict.icon}"></i>
+                    </div>
+                    <div class="conflict-content">
+                        <div class="conflict-message">${conflict.message}</div>
+                        ${conflict.details ? `<div class="conflict-details">${conflict.details}</div>` : ''}
+                        ${conflict.time ? `<div class="conflict-time"><i class="fas fa-clock"></i> ${conflict.time}</div>` : ''}
+                    </div>
+                </li>
+            `;
+        });
+        $('#conflicts_list').html(html);
+        $('#conflicts_container').slideDown(300);
+    }
+
+    // Événements pour déclencher la vérification
+    $('#jour_id, #horaire_ids, #teacher_id, #salle_id').on('change', function() {
+        checkAvailability();
+    });
+
     // Sauvegarder la séance
     $('#btn_save_seance').on('click', function() {
         let seanceId = $('#seance_id').val();
@@ -792,10 +1095,15 @@ $(document).ready(function() {
             salle_de_classe_id: $('#salle_id').val()
         };
 
-        // Validation
-        if (!data.jour_id || !data.horaire_ids || data.horaire_ids.length == 0 ||
-            !data.teacher_id || !data.subject_id) {
-            alert('Veuillez remplir tous les champs obligatoires.');
+        // Validation des champs obligatoires
+        let validationErrors = [];
+        if (!data.jour_id) validationErrors.push('Le jour est obligatoire');
+        if (!data.horaire_ids || data.horaire_ids.length == 0) validationErrors.push('Au moins un horaire est obligatoire');
+        if (!data.teacher_id) validationErrors.push('L\'enseignant est obligatoire');
+        if (!data.subject_id) validationErrors.push('La matière est obligatoire');
+
+        if (validationErrors.length > 0) {
+            showValidationErrors(validationErrors);
             return;
         }
 
@@ -810,52 +1118,146 @@ $(document).ready(function() {
                 if (response.success) {
                     $('#seanceModal').modal('hide');
                     calendar.refetchEvents();
-                    showToast('Succès', response.message, 'success');
+                    showSuccessAlert(response.message);
                 } else {
-                    alert(response.message || 'Une erreur est survenue.');
+                    showErrorAlert(response.message || 'Une erreur est survenue.');
                 }
             },
             error: function(xhr) {
                 $('#loadingOverlay').hide();
-                let message = 'Une erreur est survenue.';
-                if (xhr.responseJSON && xhr.responseJSON.message) {
-                    message = xhr.responseJSON.message;
+                if (xhr.responseJSON && xhr.responseJSON.conflicts) {
+                    showConflictAlert(xhr.responseJSON.conflicts);
+                } else if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    let errors = Object.values(xhr.responseJSON.errors).flat();
+                    showValidationErrors(errors);
+                } else {
+                    let message = xhr.responseJSON?.message || 'Une erreur est survenue.';
+                    showErrorAlert(message);
                 }
-                if (xhr.responseJSON && xhr.responseJSON.errors) {
-                    let errors = xhr.responseJSON.errors;
-                    message = Object.values(errors).flat().join('\n');
-                }
-                alert(message);
             }
         });
     });
 
+    // Fonctions d'affichage des alertes
+    function showValidationErrors(errors) {
+        let html = '<ul style="text-align: left; margin: 0; padding-left: 20px;">';
+        errors.forEach(function(error) {
+            html += `<li>${error}</li>`;
+        });
+        html += '</ul>';
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Champs obligatoires',
+                html: html,
+                confirmButtonColor: '#667eea'
+            });
+        } else {
+            alert(errors.join('\n'));
+        }
+    }
+
+    function showConflictAlert(conflicts) {
+        let html = '<div style="text-align: left;">';
+        conflicts.forEach(function(conflict) {
+            html += `
+                <div style="display: flex; align-items: flex-start; gap: 12px; padding: 10px; margin-bottom: 10px; background: #fff5f5; border-radius: 8px; border-left: 4px solid #dc3545;">
+                    <div style="color: #dc3545;"><i class="${conflict.icon}" style="font-size: 20px;"></i></div>
+                    <div>
+                        <div style="font-weight: 600; color: #333;">${conflict.message}</div>
+                        ${conflict.details ? `<div style="font-size: 12px; color: #666; margin-top: 4px;">${conflict.details}</div>` : ''}
+                        ${conflict.time ? `<div style="font-size: 11px; color: #999; margin-top: 4px;"><i class="fas fa-clock"></i> ${conflict.time}</div>` : ''}
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: '<i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i> Conflits détectés',
+                html: html,
+                confirmButtonColor: '#667eea',
+                width: 500
+            });
+        } else {
+            alert('Des conflits ont été détectés. Veuillez vérifier les disponibilités.');
+        }
+    }
+
+    function showSuccessAlert(message) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'success',
+                title: 'Succès!',
+                text: message,
+                confirmButtonColor: '#667eea',
+                timer: 2000,
+                timerProgressBar: true
+            });
+        } else if (typeof toastr !== 'undefined') {
+            toastr.success(message, 'Succès');
+        }
+    }
+
+    function showErrorAlert(message) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erreur',
+                text: message,
+                confirmButtonColor: '#667eea'
+            });
+        } else {
+            alert(message);
+        }
+    }
+
     // Supprimer la séance
     $('#btn_delete_seance').on('click', function() {
-        if (!confirm('Êtes-vous sûr de vouloir supprimer cette séance ?')) {
-            return;
-        }
+        Swal.fire({
+            title: 'Confirmer la suppression',
+            text: 'Êtes-vous sûr de vouloir supprimer cette séance ?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: '<i class="fas fa-trash"></i> Oui, supprimer',
+            cancelButtonText: '<i class="fas fa-times"></i> Annuler',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let seanceId = $('#seance_id').val();
 
-        let seanceId = $('#seance_id').val();
+                $('#loadingOverlay').show();
 
-        $('#loadingOverlay').show();
-
-        $.ajax({
-            url: SITEURL + '/admin/emplois/calendar/event/' + seanceId,
-            type: 'DELETE',
-            success: function(response) {
-                $('#loadingOverlay').hide();
-                if (response.success) {
-                    $('#seanceModal').modal('hide');
-                    calendar.refetchEvents();
-                    showToast('Succès', response.message, 'success');
-                } else {
-                    alert(response.message || 'Une erreur est survenue.');
-                }
-            },
-            error: function() {
-                $('#loadingOverlay').hide();
-                alert('Une erreur est survenue lors de la suppression.');
+                $.ajax({
+                    url: SITEURL + '/admin/emplois/calendar/event/' + seanceId,
+                    type: 'DELETE',
+                    success: function(response) {
+                        $('#loadingOverlay').hide();
+                        if (response.success) {
+                            $('#seanceModal').modal('hide');
+                            calendar.refetchEvents();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Supprimé!',
+                                text: response.message,
+                                confirmButtonColor: '#667eea',
+                                timer: 2000,
+                                timerProgressBar: true
+                            });
+                        } else {
+                            showErrorAlert(response.message || 'Une erreur est survenue.');
+                        }
+                    },
+                    error: function() {
+                        $('#loadingOverlay').hide();
+                        showErrorAlert('Une erreur est survenue lors de la suppression.');
+                    }
+                });
             }
         });
     });

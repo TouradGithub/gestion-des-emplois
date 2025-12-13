@@ -26,7 +26,14 @@ class StudentController extends Controller
      */
     public function create()
     {
-        $classes = Classe::with(['niveau', 'specialite', 'annee'])->get();
+        // Get only classes from active school year
+        $anneeActive = \App\Models\Anneescolaire::where('is_active', true)->first();
+        $classes = $anneeActive
+            ? Classe::with(['niveau', 'specialite', 'annee'])
+                ->where('annee_id', $anneeActive->id)
+                ->orderBy('nom')
+                ->get()
+            : collect();
         return view('admin.students.create', compact('classes'));
     }
 
@@ -85,8 +92,22 @@ class StudentController extends Controller
      */
     public function show(Student $student)
     {
-        $student->load(['classe.niveau', 'classe.specialite', 'classe.annee', 'user', 'schedule']);
-        return view('admin.students.show', compact('student'));
+        $student->load([
+            'classe.niveau',
+            'classe.specialite',
+            'classe.annee',
+            'user',
+            'classeHistory.classe.niveau',
+            'classeHistory.classe.specialite',
+            'classeHistory.annee'
+        ]);
+
+        // Order history by year descending
+        $classHistory = $student->classeHistory->sortByDesc(function($history) {
+            return $history->annee->annee ?? '';
+        });
+
+        return view('admin.students.show', compact('student', 'classHistory'));
     }
 
     /**
@@ -94,7 +115,14 @@ class StudentController extends Controller
      */
     public function edit(Student $student)
     {
-        $classes = Classe::with(['niveau', 'specialite', 'annee'])->get();
+        // Get only classes from active school year
+        $anneeActive = \App\Models\Anneescolaire::where('is_active', true)->first();
+        $classes = $anneeActive
+            ? Classe::with(['niveau', 'specialite', 'annee'])
+                ->where('annee_id', $anneeActive->id)
+                ->orderBy('nom')
+                ->get()
+            : collect();
         return view('admin.students.edit', compact('student', 'classes'));
     }
 

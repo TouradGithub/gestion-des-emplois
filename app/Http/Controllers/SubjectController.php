@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Speciality;
 use App\Models\Subject;
+use App\Models\SubjectType;
 use Illuminate\Http\Request;
 
 class SubjectController extends Controller
@@ -13,14 +14,15 @@ class SubjectController extends Controller
      */
     public function index()
     {
-        $subjects = Subject::with('specialite')->latest()->get();
+        $subjects = Subject::with(['specialite', 'subjectType'])->latest()->get();
         return view('admin.subjects.index', compact('subjects'));
     }
 
     public function create()
     {
         $specialites = Speciality::all();
-        return view('admin.subjects.create', compact('specialites'));
+        $subjectTypes = SubjectType::orderBy('order')->get();
+        return view('admin.subjects.create', compact('specialites', 'subjectTypes'));
     }
 
     public function store(Request $request)
@@ -28,7 +30,8 @@ class SubjectController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'code' => 'required|string|max:255|unique:subjects,code',
-            'specialite_id' => 'nullable|exists:specialities,id'
+            'specialite_id' => 'nullable|exists:specialities,id',
+            'subject_type_id' => 'required|exists:subject_types,id'
         ]);
 
         Subject::create($request->all());
@@ -39,7 +42,8 @@ class SubjectController extends Controller
     public function edit(Subject $subject)
     {
         $specialites = Speciality::all();
-        return view('admin.subjects.edit', compact('subject', 'specialites'));
+        $subjectTypes = SubjectType::orderBy('order')->get();
+        return view('admin.subjects.edit', compact('subject', 'specialites', 'subjectTypes'));
     }
 
     public function update(Request $request, Subject $subject)
@@ -47,7 +51,8 @@ class SubjectController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'code' => 'required|string|max:255|unique:subjects,code,' . $subject->id,
-            'specialite_id' => 'nullable|exists:specialities,id'
+            'specialite_id' => 'nullable|exists:specialities,id',
+            'subject_type_id' => 'required|exists:subject_types,id'
         ]);
 
         $subject->update($request->all());

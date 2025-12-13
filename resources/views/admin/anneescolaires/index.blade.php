@@ -31,16 +31,17 @@
                                        data-page-list="[5, 10, 20, 50, 100]"
                                        data-search="true" data-show-refresh="true"
                                        data-show-columns="true" data-sort-name="id" data-sort-order="desc"
+                                       data-escape="false"
                                        data-query-params="queryParams">
                                     <thead>
                                     <tr>
                                         <th data-field="id" data-visible="false">#</th>
                                         <th data-field="no">No</th>
-                                        <th data-field="annee">Année</th>
+                                        <th data-field="annee" data-formatter="htmlFormatter">Année</th>
                                         <th data-field="date_debut">Date début</th>
                                         <th data-field="date_fin">Date fin</th>
-                                        <th data-field="is_active">Active</th>
-                                        <th data-field="operate" data-events="actionEvents" data-sortable="false">Actions</th>
+                                        <th data-field="is_active" data-formatter="htmlFormatter">Active</th>
+                                        <th data-field="operate" data-formatter="htmlFormatter" data-events="actionEvents" data-sortable="false">Actions</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -63,6 +64,10 @@
                 offset: p.offset,
                 search: p.search
             };
+        }
+
+        function htmlFormatter(value) {
+            return value;
         }
 
         window.actionEvents = {

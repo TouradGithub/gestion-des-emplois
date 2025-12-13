@@ -147,6 +147,9 @@
                         <i class="mdi mdi-close-circle-multiple"></i> {{ __('pointages.tous_absents') }}
                     </button>
                 </div>
+                <a href="#" id="btn_export_pdf" class="btn btn-danger ms-2" onclick="exportPdf()" style="display: none;">
+                    <i class="mdi mdi-file-pdf-box"></i> Fiche de pointage
+                </a>
             </div>
         </div>
     </div>
@@ -262,8 +265,10 @@ $(document).ready(function() {
                     renderTable(response.emplois, response.pointages_existants || []);
                     $('#form_date_pointage').val(datePointage);
                     $('#table_container').show();
+                    $('#btn_export_pdf').show();
                 } else {
                     $('#empty_state').show();
+                    $('#btn_export_pdf').hide();
                 }
             },
             error: function() {
@@ -407,6 +412,16 @@ $(document).ready(function() {
 
     // Auto-load today's data
     loadData();
+
+    // Export PDF function
+    window.exportPdf = function() {
+        let datePointage = $('#date_pointage').val();
+        if (!datePointage) {
+            alert('{{ __("Veuillez sélectionner une date") }}');
+            return;
+        }
+        window.open(SITEURL + '/admin/pointages/rapide/export-pdf?date=' + datePointage, '_blank');
+    };
 });
 </script>
 @endsection

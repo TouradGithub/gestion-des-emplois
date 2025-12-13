@@ -2,41 +2,95 @@
 
 @section('css')
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<style>
+    .type-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #fff;
+    }
+    .table th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        font-weight: 600;
+    }
+</style>
 @endsection
 
 @section('content')
-    <h2>Subjects</h2>
-    <a href="{{ route('web.subjects.create') }}" class="btn btn-primary mb-3">Add Subject</a>
-
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Code</th>
-            <th>Specialité</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach ($subjects as $subject)
-            <tr>
-                <td>{{ $subject->name }}</td>
-                <td>{{ $subject->code }}</td>
-                <td>{{ $subject->specialite?->name  .'  ( '.$subject->specialite?->niveau?->nom.' ) ' }}</td>
-                <td>
-                    <a href="{{ route('web.subjects.edit', $subject) }}" class="btn btn-sm btn-warning">
-                        <i class="mdi mdi-pencil"></i> Modifier
-                    </a>
-                    <button type="button" class="btn btn-sm btn-danger delete-subject"
-                            data-id="{{ $subject->id }}"
-                            data-name="{{ $subject->name }}">
-                        <i class="mdi mdi-delete"></i> Supprimer
-                    </button>
-                </td>
-            </tr>
-        @endforeach
-        </tbody>
-    </table>
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="card-title mb-0">
+            <i class="fas fa-book"></i> Liste des Matières
+        </h4>
+        <a href="{{ route('web.subjects.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Ajouter une Matière
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nom</th>
+                    <th>Code</th>
+                    <th>Type</th>
+                    <th>Spécialité</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                @forelse ($subjects as $index => $subject)
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td><strong>{{ $subject->name }}</strong></td>
+                        <td><code>{{ $subject->code }}</code></td>
+                        <td>
+                            @if($subject->subjectType)
+                                {{ $subject->subjectType->name }}
+                            @else
+                                <span class="text-muted">--</span>
+                            @endif
+                        </td>
+                        <td>
+                            @if($subject->specialite)
+                                {{ $subject->specialite->name }}
+                                @if($subject->specialite->niveau)
+                                    <small class="text-muted">({{ $subject->specialite->niveau->nom }})</small>
+                                @endif
+                            @else
+                                <span class="text-muted">--</span>
+                            @endif
+                        </td>
+                        <td>
+                            <a href="{{ route('web.subjects.edit', $subject) }}" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button type="button" class="btn btn-sm btn-danger delete-subject"
+                                    data-id="{{ $subject->id }}"
+                                    data-name="{{ $subject->name }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="text-center py-4">
+                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">Aucune matière trouvée</p>
+                        </td>
+                    </tr>
+                @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('script')

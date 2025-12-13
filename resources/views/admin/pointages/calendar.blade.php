@@ -277,6 +277,28 @@
         font-size: 10px;
         opacity: 0.8;
     }
+    .event-type-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 9px;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 3px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .event-type-td { background-color: #28a745; }
+    .event-type-tp { background-color: #007bff; }
+    .event-type-project { background-color: #fd7e14; }
+    .info-type-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 15px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #fff;
+    }
 </style>
 @endsection
 
@@ -588,14 +610,22 @@ $(document).ready(function() {
                 let matiere = event.extendedProps.matiere || event.extendedProps.subject || event.title || '';
                 let prof = event.extendedProps.prof || event.extendedProps.teacher || '';
                 let salle = event.extendedProps.salle || '';
+                let subjectType = event.extendedProps.subject_type || null;
 
                 let html = '<div class="event-content">';
-                html += '<div class="event-matiere">' + matiere + '</div>';
-                if (prof) {
-                    html += '<div class="event-prof">' + prof + '</div>';
+
+                // Afficher la matière avec le type entre parenthèses
+                let matiereWithType = matiere;
+                if (subjectType && subjectType.name) {
+                    matiereWithType += ' (' + subjectType.name + ')';
                 }
+
+                html += '<div class="event-matiere">' + matiereWithType + '</div>';
                 if (salle) {
                     html += '<div class="event-salle">' + salle + '</div>';
+                }
+                if (prof) {
+                    html += '<div class="event-prof">' + prof + '</div>';
                 }
                 html += '</div>';
 
@@ -647,7 +677,12 @@ $(document).ready(function() {
         $('#pointage_date').val(eventDate);
 
         // Afficher les infos
-        $('#info_matiere').text(event.extendedProps.subject || '-');
+        let matiereText = event.extendedProps.subject || '-';
+        let subjectType = event.extendedProps.subject_type;
+        if (subjectType && subjectType.name) {
+            matiereText += ' (' + subjectType.name + ')';
+        }
+        $('#info_matiere').text(matiereText);
         $('#info_enseignant').text(event.extendedProps.teacher || '-');
         $('#info_classe').text(event.extendedProps.classe || '-');
         $('#info_date').text(formatDateFr(eventDate));

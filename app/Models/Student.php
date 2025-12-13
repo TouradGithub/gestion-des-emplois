@@ -44,4 +44,22 @@ class Student extends Model
     {
         return $this->hasMany(EmploiTemps::class, 'class_id', 'class_id');
     }
+
+    /**
+     * Get all classes history for this student
+     */
+    public function classeHistory()
+    {
+        return $this->hasMany(ClasseStudent::class);
+    }
+
+    /**
+     * Get all classes through pivot table
+     */
+    public function classes()
+    {
+        return $this->belongsToMany(Classe::class, 'classe_student', 'student_id', 'classe_id')
+            ->withPivot('annee_id')
+            ->withTimestamps();
+    }
 }

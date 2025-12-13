@@ -74,7 +74,7 @@ class EmploiTempsController extends Controller
 
         $anneeId = Anneescolaire::where('is_active', true)->first()?->id;
 
-        $emplois = EmploiTemps::with(['subject', 'teacher', 'jour', 'ref_horaires', 'salle'])
+        $emplois = EmploiTemps::with(['subject.subjectType', 'teacher', 'jour', 'ref_horaires', 'salle'])
             ->where('class_id', $classId)
             ->where('trimester_id', $trimesterId)
             ->where('annee_id', $anneeId)
@@ -117,6 +117,17 @@ class EmploiTempsController extends Controller
             $prof = $emploi->teacher->name ?? 'Enseignant';
             $salle = $emploi->salle->name ?? '';
 
+            // Récupérer le type de la matière
+            $subjectType = null;
+            if ($emploi->subject && $emploi->subject->subjectType) {
+                $subjectType = [
+                    'id' => $emploi->subject->subjectType->id,
+                    'name' => $emploi->subject->subjectType->name,
+                    'code' => $emploi->subject->subjectType->code,
+                    'color' => $emploi->subject->subjectType->color
+                ];
+            }
+
             $events[] = [
                 'id' => $emploi->id,
                 'title' => $title,
@@ -126,7 +137,8 @@ class EmploiTempsController extends Controller
                     'colorIndex' => $subjectColors[$emploi->subject_id],
                     'matiere' => $title,
                     'prof' => $prof,
-                    'salle' => $salle
+                    'salle' => $salle,
+                    'subject_type' => $subjectType
                 ]
             ];
         }
@@ -191,7 +203,11 @@ class EmploiTempsController extends Controller
         // Vérification des conflits
         $errors = $this->checkConflicts($request, $anneeId, null);
         if (!empty($errors)) {
-            return response()->json(['success' => false, 'message' => implode("\n", $errors)], 422);
+            return response()->json([
+                'success' => false,
+                'conflicts' => $errors,
+                'message' => 'Des conflits ont été détectés.'
+            ], 422);
         }
 
         // Créer la séance
@@ -247,7 +263,11 @@ class EmploiTempsController extends Controller
         // Vérification des conflits (en excluant la séance actuelle)
         $errors = $this->checkConflicts($request, $anneeId, $id);
         if (!empty($errors)) {
-            return response()->json(['success' => false, 'message' => implode("\n", $errors)], 422);
+            return response()->json([
+                'success' => false,
+                'conflicts' => $errors,
+                'message' => 'Des conflits ont été détectés.'
+            ], 422);
         }
 
         // Mettre à jour la séance
@@ -312,8 +332,12 @@ class EmploiTempsController extends Controller
         $jourId = $request->jour_id;
         $trimesterId = $request->trimester_id;
         $horaireIds = $request->horaire_ids;
+        $salleId = $request->salle_de_classe_id;
 
         foreach ($horaireIds as $horaireId) {
+            $horaire = Horaire::find($horaireId);
+            $jour = Jour::find($jourId);
+
             // Vérifier si l'enseignant a déjà un cours à cette heure
             $conflictQuery = EmploiTemps::where('teacher_id', $teacherId)
                 ->where('jour_id', $jourId)
@@ -329,9 +353,14 @@ class EmploiTempsController extends Controller
 
             if ($conflictQuery->exists()) {
                 $teacher = Teacher::find($teacherId);
-                $jour = Jour::find($jourId);
-                $horaire = Horaire::find($horaireId);
-                $errors[] = "L'enseignant {$teacher->name} a déjà un cours le {$jour->libelle_fr} à {$horaire->libelle_fr}.";
+                $conflictingEmploi = $conflictQuery->with(['classe', 'subject'])->first();
+                $errors[] = [
+                    'type' => 'teacher',
+                    'icon' => 'fas fa-chalkboard-teacher',
+                    'message' => "L'enseignant <strong>{$teacher->name}</strong> a déjà un cours",
+                    'details' => "Classe: {$conflictingEmploi->classe->nom} - Matière: {$conflictingEmploi->subject->name}",
+                    'time' => "{$jour->libelle_fr} à {$horaire->libelle_fr}"
+                ];
             }
 
             // Vérifier si la classe a déjà un cours à cette heure
@@ -349,19 +378,57 @@ class EmploiTempsController extends Controller
 
             if ($conflictClassQuery->exists()) {
                 $classe = Classe::find($classId);
-                $jour = Jour::find($jourId);
-                $horaire = Horaire::find($horaireId);
-                $errors[] = "La classe {$classe->nom} a déjà un cours le {$jour->libelle_fr} à {$horaire->libelle_fr}.";
+                $conflictingEmploi = $conflictClassQuery->with(['teacher', 'subject'])->first();
+                $errors[] = [
+                    'type' => 'class',
+                    'icon' => 'fas fa-users',
+                    'message' => "La classe <strong>{$classe->nom}</strong> a déjà un cours",
+                    'details' => "Prof: {$conflictingEmploi->teacher->name} - Matière: {$conflictingEmploi->subject->name}",
+                    'time' => "{$jour->libelle_fr} à {$horaire->libelle_fr}"
+                ];
+            }
+
+            // Vérifier si la salle est déjà occupée à cette heure
+            if ($salleId) {
+                $conflictSalleQuery = EmploiTemps::where('salle_de_classe_id', $salleId)
+                    ->where('jour_id', $jourId)
+                    ->where('trimester_id', $trimesterId)
+                    ->where('annee_id', $anneeId)
+                    ->whereHas('horairess', function($query) use ($horaireId) {
+                        $query->where('horaire_id', $horaireId);
+                    });
+
+                if ($excludeId) {
+                    $conflictSalleQuery->where('id', '!=', $excludeId);
+                }
+
+                if ($conflictSalleQuery->exists()) {
+                    $salle = \App\Models\SalleDeClasse::find($salleId);
+                    $conflictingEmploi = $conflictSalleQuery->with(['classe', 'teacher', 'subject'])->first();
+                    $errors[] = [
+                        'type' => 'room',
+                        'icon' => 'fas fa-door-open',
+                        'message' => "La salle <strong>{$salle->name}</strong> est déjà occupée",
+                        'details' => "Classe: {$conflictingEmploi->classe->nom} - Prof: {$conflictingEmploi->teacher->name}",
+                        'time' => "{$jour->libelle_fr} à {$horaire->libelle_fr}"
+                    ];
+                }
             }
         }
 
         // Vérifier le dépassement des heures hebdomadaires
         $hoursWarning = $this->checkWeeklyHoursLimit($teacherId, $classId, $trimesterId, $anneeId, $horaireIds, $excludeId);
         if ($hoursWarning) {
-            $errors[] = $hoursWarning;
+            $errors[] = [
+                'type' => 'warning',
+                'icon' => 'fas fa-exclamation-triangle',
+                'message' => $hoursWarning,
+                'details' => '',
+                'time' => ''
+            ];
         }
 
-        return array_unique($errors);
+        return $errors;
     }
 
     /**
@@ -425,6 +492,93 @@ class EmploiTempsController extends Controller
         return null;
     }
 
+    /**
+     * Vérifier la disponibilité en temps réel (API)
+     */
+    public function checkAvailability(Request $request)
+    {
+        $jourId = $request->jour_id;
+        $horaireIds = $request->horaire_ids ?? [];
+        $teacherId = $request->teacher_id;
+        $salleId = $request->salle_de_classe_id;
+        $trimesterId = $request->trimester_id;
+        $excludeId = $request->exclude_id;
+
+        $anneeId = Anneescolaire::where('is_active', true)->first()?->id;
+
+        if (!$anneeId || !$jourId || empty($horaireIds)) {
+            return response()->json(['available' => true, 'conflicts' => []]);
+        }
+
+        $conflicts = [];
+        $jour = Jour::find($jourId);
+
+        foreach ($horaireIds as $horaireId) {
+            $horaire = Horaire::find($horaireId);
+
+            // Vérifier l'enseignant
+            if ($teacherId) {
+                $teacherConflict = EmploiTemps::where('teacher_id', $teacherId)
+                    ->where('jour_id', $jourId)
+                    ->where('trimester_id', $trimesterId)
+                    ->where('annee_id', $anneeId)
+                    ->whereHas('horairess', function($query) use ($horaireId) {
+                        $query->where('horaire_id', $horaireId);
+                    });
+
+                if ($excludeId) {
+                    $teacherConflict->where('id', '!=', $excludeId);
+                }
+
+                if ($teacherConflict->exists()) {
+                    $teacher = Teacher::find($teacherId);
+                    $conflictEmploi = $teacherConflict->with(['classe', 'subject'])->first();
+                    $conflicts[] = [
+                        'type' => 'teacher',
+                        'icon' => 'fas fa-chalkboard-teacher',
+                        'title' => 'Enseignant occupé',
+                        'message' => "<strong>{$teacher->name}</strong> a déjà un cours",
+                        'details' => "Classe: {$conflictEmploi->classe->nom} | Matière: {$conflictEmploi->subject->name}",
+                        'time' => "{$jour->libelle_fr} - {$horaire->libelle_fr}"
+                    ];
+                }
+            }
+
+            // Vérifier la salle
+            if ($salleId) {
+                $salleConflict = EmploiTemps::where('salle_de_classe_id', $salleId)
+                    ->where('jour_id', $jourId)
+                    ->where('trimester_id', $trimesterId)
+                    ->where('annee_id', $anneeId)
+                    ->whereHas('horairess', function($query) use ($horaireId) {
+                        $query->where('horaire_id', $horaireId);
+                    });
+
+                if ($excludeId) {
+                    $salleConflict->where('id', '!=', $excludeId);
+                }
+
+                if ($salleConflict->exists()) {
+                    $salle = \App\Models\SalleDeClasse::find($salleId);
+                    $conflictEmploi = $salleConflict->with(['classe', 'teacher'])->first();
+                    $conflicts[] = [
+                        'type' => 'room',
+                        'icon' => 'fas fa-door-open',
+                        'title' => 'Salle occupée',
+                        'message' => "<strong>{$salle->name}</strong> est déjà réservée",
+                        'details' => "Classe: {$conflictEmploi->classe->nom} | Prof: {$conflictEmploi->teacher->name}",
+                        'time' => "{$jour->libelle_fr} - {$horaire->libelle_fr}"
+                    ];
+                }
+            }
+        }
+
+        return response()->json([
+            'available' => empty($conflicts),
+            'conflicts' => $conflicts
+        ]);
+    }
+
     public function getTrimesters(Request $request)
     {
         $classId = $request->class_id;
@@ -445,16 +599,19 @@ class EmploiTempsController extends Controller
 
     public function create()
     {
-        $classes = \App\Models\Classe::all();
+        // Get only classes from active school year
+        $anneeActive = \App\Models\Anneescolaire::where('is_active', true)->first();
+        $classes = $anneeActive
+            ? \App\Models\Classe::where('annee_id', $anneeActive->id)->orderBy('nom')->get()
+            : collect();
+
         $subjects = \App\Models\Subject::all();
         $teachers = \App\Models\Teacher::all();
         $trimesters = \App\Models\Trimester::all();
-//        $annees = \App\Models\AnneeScolaire::all();
         $jours = \App\Models\Jour::all();
         $horaires = \App\Models\Horaire::all();
         $salles = \App\Models\SalleDeClasse::all();
         return view('admin.emplois.create', compact('classes', 'subjects', 'teachers', 'trimesters', 'jours', 'horaires', 'salles'));
-//        return view('admin.emplois.create');
     }
 
 
@@ -677,12 +834,18 @@ class EmploiTempsController extends Controller
 //dd($calendarData);
 
         ob_start();
-        $mpdf = new \Mpdf\Mpdf();
+        $mpdf = new \Mpdf\Mpdf([
+            'orientation' => 'L',
+            'format' => 'A4',
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 10,
+            'margin_bottom' => 15,
+        ]);
         $mpdf->SetAuthor('Emploi du temps');
         $mpdf->SetTitle('Emploi du temps ');
         $mpdf->SetSubject('Emploi du temps');
-        $mpdf->SetFont('arial', '', 10);
-        $mpdf->SetMargins(0, 0, 5, 0);
+        $mpdf->SetFont('arial', '', 12);
         $mpdf->writeHTML(view('admin.sct_emplois_temps.pdf.classe_emplois_pdf', [
             'classe' => $classe,
             'calendarData' => $calendarData,
@@ -706,7 +869,11 @@ class EmploiTempsController extends Controller
 
     public function edit(EmploiTemps $emploi)
     {
-        $classes = \App\Models\Classe::all();
+        // Get only classes from active school year
+        $anneeActive = \App\Models\Anneescolaire::where('is_active', true)->first();
+        $classes = $anneeActive
+            ? \App\Models\Classe::where('annee_id', $anneeActive->id)->orderBy('nom')->get()
+            : collect();
         $subjects = \App\Models\Subject::all();
         $teachers = \App\Models\Teacher::all();
         $trimesters = \App\Models\Trimester::all();
