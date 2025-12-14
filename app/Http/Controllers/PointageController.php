@@ -654,6 +654,15 @@ class PointageController extends Controller
             'margin_top' => 10,
             'margin_bottom' => 15,
         ]);
+         $mpdf->SetFooter('
+                <table style="border: 0; width:100%;margin-top:10;" cellspacing="0">
+                    <tr class="tR">
+                        <td style="text-align: left;border: 0px" class="tr">Imprimer le {DATE j-m-Y H:m:s}</td>
+                        <td style="text-align: center;border: 0px" class="tr">Page {PAGENO}/{nbpg}</td>
+                        <td class="tr" style="text-align: right;border: 0px">Fiche de pointage</td>
+                    </tr>
+                </table>'
+        );
 
         $mpdf->WriteHTML($html);
 

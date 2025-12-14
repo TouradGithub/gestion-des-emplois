@@ -147,9 +147,7 @@
                         <i class="mdi mdi-close-circle-multiple"></i> {{ __('pointages.tous_absents') }}
                     </button>
                 </div>
-                <a href="#" id="btn_export_pdf" class="btn btn-danger ms-2" onclick="exportPdf()" style="display: none;">
-                    <i class="mdi mdi-file-pdf-box"></i> Fiche de pointage
-                </a>
+
             </div>
         </div>
     </div>
@@ -414,14 +412,7 @@ $(document).ready(function() {
     loadData();
 
     // Export PDF function
-    window.exportPdf = function() {
-        let datePointage = $('#date_pointage').val();
-        if (!datePointage) {
-            alert('{{ __("Veuillez sélectionner une date") }}');
-            return;
-        }
-        window.open(SITEURL + '/admin/pointages/rapide/export-pdf?date=' + datePointage, '_blank');
-    };
+  
 });
 </script>
 @endsection

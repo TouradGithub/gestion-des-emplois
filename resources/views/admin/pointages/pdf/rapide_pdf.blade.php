@@ -6,7 +6,7 @@ $trimestre = $emplois->first()?->trimester;
 @endphp
 @extends('layout_pdf')
 @section('page-content')
-   @include('globales.entete')
+   @include('globales.entete_pointage')
    <!DOCTYPE html>
    <html lang="fr">
    <head>
@@ -91,10 +91,14 @@ $trimestre = $emplois->first()?->trimester;
         }
 
         .footer-section {
-            margin-top: 30px;
-            text-align: left;
-            font-size: 10px;
-            color: #666;
+          position: fixed;
+        bottom: 10px;
+        left: 0;
+        right: 0;
+        text-align: left;
+        font-size: 10px;
+        color: #666;
+        padding-left: 20px;
         }
 
        </style>
@@ -167,9 +171,7 @@ $trimestre = $emplois->first()?->trimester;
         </tbody>
     </table>
 
-    <div class="footer-section">
-        <p>Imprime le: {{ Carbon::now()->format('d/m/Y H:i') }}</p>
-    </div>
+
 @endsection
    </body>
    </html>
