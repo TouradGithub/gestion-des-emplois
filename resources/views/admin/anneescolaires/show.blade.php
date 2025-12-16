@@ -190,6 +190,317 @@
     .select2-dropdown {
         z-index: 9999 !important;
     }
+
+    /* Assign Students Modal Styles */
+    .assign-students-modal .modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        border-radius: 15px 15px 0 0;
+    }
+    .assign-students-modal .modal-content {
+        border-radius: 15px;
+        border: none;
+    }
+
+    /* Stepper Styles */
+    .stepper {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        position: relative;
+    }
+    .stepper::before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 60px;
+        right: 60px;
+        height: 3px;
+        background: #e9ecef;
+        z-index: 0;
+    }
+    .stepper-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+        flex: 1;
+    }
+    .stepper-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: #6c757d;
+        transition: all 0.3s;
+        border: 3px solid #fff;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .stepper-item.active .stepper-icon {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        transform: scale(1.1);
+    }
+    .stepper-item.completed .stepper-icon {
+        background: #28a745;
+        color: #fff;
+    }
+    .stepper-label {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        color: #6c757d;
+        font-weight: 500;
+    }
+    .stepper-item.active .stepper-label {
+        color: #667eea;
+        font-weight: 600;
+    }
+    .stepper-item.completed .stepper-label {
+        color: #28a745;
+    }
+
+    /* Step Content */
+    .step-content {
+        display: none;
+        animation: fadeIn 0.3s ease;
+    }
+    .step-content.active {
+        display: block;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Niveau/Class Selection Cards */
+    .selection-card {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: 2px solid transparent;
+    }
+    .selection-card:hover {
+        background: #e9ecef;
+        transform: translateX(5px);
+    }
+    .selection-card.selected {
+        background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+        border-color: #667eea;
+    }
+    .selection-card .card-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 1.3rem;
+    }
+    .selection-card .card-title {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 2px;
+    }
+    .selection-card .card-subtitle {
+        font-size: 0.85rem;
+        color: #666;
+    }
+
+    /* Students List */
+    .students-search-box {
+        position: relative;
+        margin-bottom: 15px;
+    }
+    .students-search-box input {
+        padding-left: 40px;
+        border-radius: 25px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s;
+    }
+    .students-search-box input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    .students-search-box i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+    }
+    .students-list {
+        max-height: 350px;
+        overflow-y: auto;
+    }
+    .student-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        margin-bottom: 8px;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+    .student-item:hover {
+        background: #e9ecef;
+    }
+    .student-item.selected {
+        background: #d4edda;
+        border-left: 3px solid #28a745;
+    }
+    .student-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 600;
+        margin-right: 12px;
+        flex-shrink: 0;
+    }
+    .student-info {
+        flex: 1;
+    }
+    .student-name {
+        font-weight: 600;
+        color: #333;
+    }
+    .student-details {
+        font-size: 0.8rem;
+        color: #666;
+    }
+    .student-checkbox {
+        width: 22px;
+        height: 22px;
+        cursor: pointer;
+    }
+
+    /* Summary */
+    .summary-box {
+        background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%);
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid #667eea30;
+    }
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px dashed #ddd;
+    }
+    .summary-item:last-child {
+        border-bottom: none;
+    }
+    .summary-label {
+        color: #666;
+    }
+    .summary-value {
+        font-weight: 600;
+        color: #333;
+    }
+    .selected-students-preview {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    .selected-student-badge {
+        display: inline-flex;
+        align-items: center;
+        background: #667eea;
+        color: #fff;
+        padding: 5px 12px;
+        border-radius: 20px;
+        margin: 3px;
+        font-size: 0.85rem;
+    }
+    .selected-student-badge .remove-student {
+        margin-left: 8px;
+        cursor: pointer;
+        opacity: 0.8;
+    }
+    .selected-student-badge .remove-student:hover {
+        opacity: 1;
+    }
+
+    /* Navigation Buttons */
+    .step-navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #e9ecef;
+    }
+    .btn-step {
+        padding: 10px 25px;
+        border-radius: 25px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+    .btn-step-prev {
+        background: #e9ecef;
+        color: #333;
+        border: none;
+    }
+    .btn-step-prev:hover {
+        background: #ddd;
+        color: #333;
+    }
+    .btn-step-next {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        border: none;
+    }
+    .btn-step-next:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    .btn-step-next:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    /* Add Students Button */
+    .btn-add-students {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+    .btn-add-students:hover {
+        transform: scale(1.05);
+        color: #fff;
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    /* Empty state for students */
+    .students-empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #6c757d;
+    }
+    .students-empty-state i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
 </style>
 @endsection
 
@@ -257,7 +568,11 @@
             <div class="row">
                 @foreach($anneescolaire->classes->sortBy('nom') as $classe)
                     <div class="col-md-6 col-lg-4">
-                        <div class="classe-card">
+                        <div class="classe-card classe-clickable"
+                             data-id="{{ $classe->id }}"
+                             data-name="{{ $classe->nom }}"
+                             data-niveau="{{ $classe->niveau->nom ?? '' }}"
+                             style="cursor: pointer;">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
                                     <div class="classe-name">{{ $classe->nom }}</div>
@@ -273,6 +588,9 @@
                                 <span class="students-count">
                                     <i class="mdi mdi-account"></i> {{ $classe->students->count() }}
                                 </span>
+                            </div>
+                            <div class="mt-2 text-center">
+                                <small class="text-muted"><i class="mdi mdi-plus-circle"></i> Cliquez pour ajouter des etudiants</small>
                             </div>
                         </div>
                     </div>
@@ -333,6 +651,174 @@
                 <button type="button" class="btn btn-primary" id="btnSaveClasse">
                     <i class="mdi mdi-content-save"></i> Enregistrer
                 </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Assign Students Modal -->
+<div class="modal fade assign-students-modal" id="assignStudentsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="mdi mdi-account-plus"></i> Ajouter des etudiants a: <span id="targetClassName"></span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Target Class Info -->
+                <div class="alert alert-info mb-4">
+                    <i class="mdi mdi-information"></i>
+                    Vous allez ajouter des etudiants a la classe <strong id="targetClassInfo"></strong>
+                </div>
+
+                <!-- Stepper -->
+                <div class="stepper">
+                    <div class="stepper-item active" data-step="1">
+                        <div class="stepper-icon"><i class="mdi mdi-calendar"></i></div>
+                        <div class="stepper-label">Annee</div>
+                    </div>
+                    <div class="stepper-item" data-step="2">
+                        <div class="stepper-icon"><i class="mdi mdi-school"></i></div>
+                        <div class="stepper-label">Classe Source</div>
+                    </div>
+                    <div class="stepper-item" data-step="3">
+                        <div class="stepper-icon"><i class="mdi mdi-account-group"></i></div>
+                        <div class="stepper-label">Etudiants</div>
+                    </div>
+                    <div class="stepper-item" data-step="4">
+                        <div class="stepper-icon"><i class="mdi mdi-check-all"></i></div>
+                        <div class="stepper-label">Confirmation</div>
+                    </div>
+                </div>
+
+                <!-- Step 1: Select Year -->
+                <div class="step-content active" id="step1">
+                    <h6 class="mb-3"><i class="mdi mdi-calendar text-primary"></i> Selectionnez l'annee scolaire source</h6>
+                    <div id="yearsList">
+                        @foreach($autresAnnees as $annee)
+                        <div class="selection-card year-card" data-id="{{ $annee->id }}" data-name="{{ $annee->annee }}">
+                            <div class="d-flex align-items-center">
+                                <div class="card-icon me-3">
+                                    <i class="mdi mdi-calendar"></i>
+                                </div>
+                                <div>
+                                    <div class="card-title">{{ $annee->annee }}</div>
+                                    <div class="card-subtitle">
+                                        {{ \Carbon\Carbon::parse($annee->date_debut)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($annee->date_fin)->format('d/m/Y') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                        @if($autresAnnees->count() == 0)
+                        <div class="students-empty-state">
+                            <i class="mdi mdi-calendar-remove"></i>
+                            <p>Aucune autre annee scolaire disponible</p>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Step 2: Select Source Class -->
+                <div class="step-content" id="step2">
+                    <h6 class="mb-3"><i class="mdi mdi-school text-primary"></i> Selectionnez la classe source</h6>
+                    <div id="classesListAssign">
+                        <!-- Classes will be loaded here -->
+                    </div>
+                    <div id="loadingClasses2" style="display: none; text-align: center; padding: 30px;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Chargement...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Chargement des classes...</p>
+                    </div>
+                    <div id="noClasses2" style="display: none;">
+                        <div class="students-empty-state">
+                            <i class="mdi mdi-school-outline"></i>
+                            <p>Aucune classe disponible pour cette annee</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Select Students -->
+                <div class="step-content" id="step3">
+                    <h6 class="mb-3"><i class="mdi mdi-account-group text-primary"></i> Selectionnez les etudiants a transferer</h6>
+
+                    <div class="students-search-box">
+                        <i class="mdi mdi-magnify"></i>
+                        <input type="text" class="form-control" id="searchStudents" placeholder="Rechercher par nom ou NNI...">
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <small class="text-muted"><span id="selectedCount">0</span> etudiant(s) selectionne(s)</small>
+                        <div>
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="selectAllStudents">
+                                <i class="mdi mdi-checkbox-multiple-marked"></i> Tout
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="deselectAllStudents">
+                                <i class="mdi mdi-checkbox-multiple-blank-outline"></i> Aucun
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="students-list" id="studentsList">
+                        <!-- Students will be loaded here -->
+                    </div>
+                    <div id="loadingStudents" style="display: none; text-align: center; padding: 30px;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Chargement...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Chargement des etudiants...</p>
+                    </div>
+                    <div id="noStudents" style="display: none;">
+                        <div class="students-empty-state">
+                            <i class="mdi mdi-account-off"></i>
+                            <p>Aucun etudiant dans cette classe</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Confirmation -->
+                <div class="step-content" id="step4">
+                    <h6 class="mb-3"><i class="mdi mdi-check-all text-primary"></i> Confirmation du transfert</h6>
+
+                    <div class="summary-box">
+                        <div class="summary-item">
+                            <span class="summary-label"><i class="mdi mdi-arrow-right-bold me-2"></i>Classe cible</span>
+                            <span class="summary-value" id="summaryTargetClasse">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label"><i class="mdi mdi-calendar me-2"></i>Annee source</span>
+                            <span class="summary-value" id="summaryYear">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label"><i class="mdi mdi-school me-2"></i>Classe source</span>
+                            <span class="summary-value" id="summarySourceClasse">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label"><i class="mdi mdi-account-group me-2"></i>Nombre d'etudiants</span>
+                            <span class="summary-value" id="summaryCount">0</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="form-label fw-bold">Etudiants a transferer:</label>
+                        <div class="selected-students-preview" id="selectedStudentsPreview">
+                            <!-- Selected students badges will appear here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="step-navigation">
+                    <button type="button" class="btn btn-step btn-step-prev" id="btnPrevStep" style="visibility: hidden;">
+                        <i class="mdi mdi-arrow-left"></i> Precedent
+                    </button>
+                    <button type="button" class="btn btn-step btn-step-next" id="btnNextStep" disabled>
+                        Suivant <i class="mdi mdi-arrow-right"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -679,6 +1165,396 @@ $(document).ready(function() {
         $('#noClasses').hide();
         $('#classesList').html('');
         $('#btnClone').prop('disabled', true);
+    });
+
+    // ============================================
+    // ASSIGN STUDENTS MODAL FUNCTIONALITY
+    // ============================================
+
+    let currentStep = 1;
+    let targetClasse = null;      // The class we clicked on (destination)
+    let selectedYear = null;      // Source year
+    let sourceClasse = null;      // Source class
+    let selectedStudents = [];
+    let allStudents = [];
+
+    // Open Assign Students Modal when clicking on a class card
+    $(document).on('click', '.classe-clickable', function() {
+        targetClasse = {
+            id: $(this).data('id'),
+            name: $(this).data('name'),
+            niveau: $(this).data('niveau')
+        };
+
+        resetAssignModal();
+        $('#targetClassName').text(targetClasse.name);
+        $('#targetClassInfo').text(targetClasse.name);
+        $('#assignStudentsModal').modal('show');
+    });
+
+    // Reset modal
+    function resetAssignModal() {
+        currentStep = 1;
+        selectedYear = null;
+        sourceClasse = null;
+        selectedStudents = [];
+        allStudents = [];
+
+        // Reset stepper
+        $('.stepper-item').removeClass('active completed');
+        $('.stepper-item[data-step="1"]').addClass('active');
+
+        // Reset steps
+        $('.step-content').removeClass('active');
+        $('#step1').addClass('active');
+
+        // Reset selections
+        $('.year-card').removeClass('selected');
+        $('#classesListAssign').html('');
+        $('#studentsList').html('');
+        $('#selectedStudentsPreview').html('');
+        $('#searchStudents').val('');
+
+        // Reset buttons
+        $('#btnPrevStep').css('visibility', 'hidden');
+        $('#btnNextStep').prop('disabled', true).html('Suivant <i class="mdi mdi-arrow-right"></i>');
+
+        // Reset counters
+        $('#selectedCount').text('0');
+        $('#summaryCount').text('0');
+        $('#summaryYear').text('-');
+        $('#summarySourceClasse').text('-');
+        $('#summaryTargetClasse').text('-');
+    }
+
+    // Select Year
+    $(document).on('click', '.year-card', function() {
+        $('.year-card').removeClass('selected');
+        $(this).addClass('selected');
+
+        selectedYear = {
+            id: $(this).data('id'),
+            name: $(this).data('name')
+        };
+
+        $('#btnNextStep').prop('disabled', false);
+    });
+
+    // Select Source Class
+    $(document).on('click', '.classe-card-assign', function() {
+        $('.classe-card-assign').removeClass('selected');
+        $(this).addClass('selected');
+
+        sourceClasse = {
+            id: $(this).data('id'),
+            name: $(this).data('name')
+        };
+
+        $('#btnNextStep').prop('disabled', false);
+    });
+
+    // Select Student
+    $(document).on('click', '.student-item', function() {
+        let studentId = $(this).data('id');
+        let studentName = $(this).data('name');
+        let checkbox = $(this).find('.student-checkbox');
+
+        if ($(this).hasClass('selected')) {
+            $(this).removeClass('selected');
+            checkbox.prop('checked', false);
+            selectedStudents = selectedStudents.filter(s => s.id !== studentId);
+        } else {
+            $(this).addClass('selected');
+            checkbox.prop('checked', true);
+            selectedStudents.push({ id: studentId, name: studentName });
+        }
+
+        updateStudentCount();
+    });
+
+    // Select All Students
+    $('#selectAllStudents').on('click', function() {
+        selectedStudents = [];
+        $('.student-item').each(function() {
+            $(this).addClass('selected');
+            $(this).find('.student-checkbox').prop('checked', true);
+            selectedStudents.push({
+                id: $(this).data('id'),
+                name: $(this).data('name')
+            });
+        });
+        updateStudentCount();
+    });
+
+    // Deselect All Students
+    $('#deselectAllStudents').on('click', function() {
+        selectedStudents = [];
+        $('.student-item').removeClass('selected');
+        $('.student-checkbox').prop('checked', false);
+        updateStudentCount();
+    });
+
+    function updateStudentCount() {
+        $('#selectedCount').text(selectedStudents.length);
+        $('#btnNextStep').prop('disabled', selectedStudents.length === 0);
+    }
+
+    // Search Students (filter locally)
+    $('#searchStudents').on('input', function() {
+        let query = $(this).val().toLowerCase();
+        if (!query) {
+            renderStudents(allStudents);
+            return;
+        }
+
+        let filtered = allStudents.filter(function(student) {
+            return student.fullname.toLowerCase().includes(query) ||
+                   (student.nni && student.nni.toLowerCase().includes(query));
+        });
+        renderStudents(filtered);
+    });
+
+    // Next Step
+    $('#btnNextStep').on('click', function() {
+        if (currentStep === 4) {
+            submitAssignment();
+            return;
+        }
+
+        currentStep++;
+        updateStepper();
+
+        if (currentStep === 2) {
+            loadClassesByYear();
+        } else if (currentStep === 3) {
+            loadStudentsFromClass();
+        } else if (currentStep === 4) {
+            showSummary();
+        }
+    });
+
+    // Previous Step
+    $('#btnPrevStep').on('click', function() {
+        if (currentStep === 1) return;
+
+        currentStep--;
+        updateStepper();
+    });
+
+    function updateStepper() {
+        // Update stepper items
+        $('.stepper-item').each(function() {
+            let step = $(this).data('step');
+            $(this).removeClass('active completed');
+
+            if (step < currentStep) {
+                $(this).addClass('completed');
+            } else if (step === currentStep) {
+                $(this).addClass('active');
+            }
+        });
+
+        // Update step content
+        $('.step-content').removeClass('active');
+        $('#step' + currentStep).addClass('active');
+
+        // Update navigation buttons
+        $('#btnPrevStep').css('visibility', currentStep > 1 ? 'visible' : 'hidden');
+
+        if (currentStep === 4) {
+            $('#btnNextStep').html('<i class="mdi mdi-check"></i> Confirmer le transfert');
+        } else {
+            $('#btnNextStep').html('Suivant <i class="mdi mdi-arrow-right"></i>');
+        }
+
+        // Disable next button based on selection
+        if (currentStep === 1) {
+            $('#btnNextStep').prop('disabled', !selectedYear);
+        } else if (currentStep === 2) {
+            $('#btnNextStep').prop('disabled', !sourceClasse);
+        } else if (currentStep === 3) {
+            $('#btnNextStep').prop('disabled', selectedStudents.length === 0);
+        } else {
+            $('#btnNextStep').prop('disabled', false);
+        }
+    }
+
+    function loadClassesByYear() {
+        $('#classesListAssign').html('');
+        $('#loadingClasses2').show();
+        $('#noClasses2').hide();
+        sourceClasse = null;
+        $('#btnNextStep').prop('disabled', true);
+
+        $.ajax({
+            url: SITEURL + '/admin/anneescolaires/get-classes',
+            type: 'GET',
+            data: {
+                annee_id: selectedYear.id
+            },
+            success: function(response) {
+                $('#loadingClasses2').hide();
+
+                if (response.classes && response.classes.length > 0) {
+                    let html = '';
+                    response.classes.forEach(function(classe) {
+                        html += `
+                            <div class="selection-card classe-card-assign" data-id="${classe.id}" data-name="${classe.nom}">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        <div class="card-icon me-3">
+                                            <i class="mdi mdi-school"></i>
+                                        </div>
+                                        <div>
+                                            <div class="card-title">${classe.nom}</div>
+                                            <div class="card-subtitle">${classe.niveau} - ${classe.specialite}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    $('#classesListAssign').html(html);
+                } else {
+                    $('#noClasses2').show();
+                }
+            },
+            error: function() {
+                $('#loadingClasses2').hide();
+                Swal.fire('Erreur!', 'Erreur lors du chargement des classes', 'error');
+            }
+        });
+    }
+
+    function loadStudentsFromClass() {
+        $('#studentsList').html('');
+        $('#loadingStudents').show();
+        $('#noStudents').hide();
+        selectedStudents = [];
+        updateStudentCount();
+
+        $.ajax({
+            url: SITEURL + '/admin/classes/get-students',
+            type: 'GET',
+            data: {
+                classe_id: sourceClasse.id
+            },
+            success: function(response) {
+                $('#loadingStudents').hide();
+
+                if (response.students && response.students.length > 0) {
+                    allStudents = response.students;
+                    renderStudents(response.students);
+                } else {
+                    $('#noStudents').show();
+                }
+            },
+            error: function() {
+                $('#loadingStudents').hide();
+                Swal.fire('Erreur!', 'Erreur lors du chargement des etudiants', 'error');
+            }
+        });
+    }
+
+    function renderStudents(students) {
+        let html = '';
+        students.forEach(function(student) {
+            let initials = student.fullname ? student.fullname.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : '??';
+            let isSelected = selectedStudents.some(s => s.id === student.id);
+
+            html += `
+                <div class="student-item ${isSelected ? 'selected' : ''}" data-id="${student.id}" data-name="${student.fullname || student.name}">
+                    <div class="student-avatar">${initials}</div>
+                    <div class="student-info">
+                        <div class="student-name">${student.fullname || student.name}</div>
+                        <div class="student-details">
+                            <span><i class="mdi mdi-card-account-details"></i> ${student.nni || '-'}</span>
+                            ${student.phone ? `<span class="ms-2"><i class="mdi mdi-phone"></i> ${student.phone}</span>` : ''}
+                        </div>
+                    </div>
+                    <input type="checkbox" class="student-checkbox" ${isSelected ? 'checked' : ''}>
+                </div>
+            `;
+        });
+        $('#studentsList').html(html);
+    }
+
+    function showSummary() {
+        $('#summaryTargetClasse').text(targetClasse.name);
+        $('#summaryYear').text(selectedYear.name);
+        $('#summarySourceClasse').text(sourceClasse.name);
+        $('#summaryCount').text(selectedStudents.length);
+
+        let html = '';
+        selectedStudents.forEach(function(student) {
+            html += `
+                <span class="selected-student-badge">
+                    ${student.name}
+                    <i class="mdi mdi-close remove-student" data-id="${student.id}"></i>
+                </span>
+            `;
+        });
+        $('#selectedStudentsPreview').html(html);
+    }
+
+    // Remove student from preview
+    $(document).on('click', '.remove-student', function(e) {
+        e.stopPropagation();
+        let studentId = $(this).data('id');
+        selectedStudents = selectedStudents.filter(s => s.id !== studentId);
+        $(this).parent().remove();
+        $('#summaryCount').text(selectedStudents.length);
+
+        if (selectedStudents.length === 0) {
+            $('#btnNextStep').prop('disabled', true);
+        }
+    });
+
+    function submitAssignment() {
+        if (selectedStudents.length === 0) {
+            Swal.fire('Attention!', 'Veuillez selectionner au moins un etudiant', 'warning');
+            return;
+        }
+
+        $('#btnNextStep').prop('disabled', true).html('<i class="mdi mdi-loading mdi-spin"></i> Transfert en cours...');
+
+        $.ajax({
+            url: SITEURL + '/admin/anneescolaires/{{ $anneescolaire->id }}/assign-students',
+            type: 'POST',
+            data: {
+                classe_id: targetClasse.id,
+                students: selectedStudents.map(s => s.id)
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#assignStudentsModal').modal('hide');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Succes!',
+                        text: response.message,
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Erreur!', response.message, 'error');
+                    $('#btnNextStep').prop('disabled', false).html('<i class="mdi mdi-check"></i> Confirmer le transfert');
+                }
+            },
+            error: function(xhr) {
+                let message = 'Une erreur est survenue';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+                Swal.fire('Erreur!', message, 'error');
+                $('#btnNextStep').prop('disabled', false).html('<i class="mdi mdi-check"></i> Confirmer le transfert');
+            }
+        });
+    }
+
+    // Reset assign modal on close
+    $('#assignStudentsModal').on('hidden.bs.modal', function() {
+        resetAssignModal();
     });
 });
 </script>

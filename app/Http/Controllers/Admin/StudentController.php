@@ -17,8 +17,20 @@ class StudentController extends Controller
      */
     public function index()
     {
-        $students = Student::with(['classe', 'user'])->latest()->paginate(15);
-        return view('admin.students.index', compact('students'));
+        // Get only students from active school year
+        $anneeActive = \App\Models\Anneescolaire::where('is_active', true)->first();
+
+        $query = Student::with(['classe.annee', 'user']);
+
+        if ($anneeActive) {
+            $query->whereHas('classe', function($q) use ($anneeActive) {
+                $q->where('annee_id', $anneeActive->id);
+            });
+        }
+
+        $students = $query->latest()->paginate(15);
+
+        return view('admin.students.index', compact('students', 'anneeActive'));
     }
 
     /**

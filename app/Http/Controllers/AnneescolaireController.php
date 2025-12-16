@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Anneescolaire;
 use App\Models\Classe;
+use App\Models\ClasseStudent;
 use App\Models\Niveauformation;
 use App\Models\NiveauPedagogique;
 use App\Models\Speciality;
+use App\Models\Student;
 use App\Models\SubjectTeacher;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
@@ -361,7 +363,7 @@ class AnneescolaireController extends Controller
 
             $message = $classesCloned . ' classe(s) clonee(s) avec succes';
             if ($avecEmploi && $emploisCloned > 0) {
-                $message .= ' avec ' . $emploisCloned . ' emploi(s) du temps';
+                $message .= ' avec ' . $emploisCloned . ' séance(s) du temps';
             }
 
             // Add warning about skipped duplicates
@@ -381,6 +383,132 @@ class AnneescolaireController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur lors du clonage: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get classes by niveau for a specific year.
+     */
+    public function getClassesByNiveau(Request $request)
+    {
+        $anneeId = $request->annee_id;
+        $niveauId = $request->niveau_id;
+
+        $classes = Classe::with(['specialite'])
+            ->where('annee_id', $anneeId)
+            ->where('niveau_pedagogique_id', $niveauId)
+            ->orderBy('nom')
+            ->get();
+
+        return response()->json([
+            'classes' => $classes->map(function($classe) {
+                return [
+                    'id' => $classe->id,
+                    'nom' => $classe->nom,
+                    'specialite' => $classe->specialite->name ?? '-',
+                    'students_count' => $classe->students->count(),
+                ];
+            })
+        ]);
+    }
+
+    /**
+     * Get available students (not assigned to any class in the current year).
+     */
+    public function getAvailableStudents(Request $request)
+    {
+        $anneeId = $request->annee_id;
+        $search = $request->search;
+
+        // Get students who are not assigned to any class in this year
+        $assignedStudentIds = Student::whereHas('classe', function($q) use ($anneeId) {
+            $q->where('annee_id', $anneeId);
+        })->pluck('id');
+
+        $query = Student::whereNotIn('id', $assignedStudentIds);
+
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('fullname', 'like', "%{$search}%")
+                  ->orWhere('nni', 'like', "%{$search}%");
+            });
+        }
+
+        $students = $query->orderBy('fullname')->limit(100)->get();
+
+        return response()->json([
+            'students' => $students->map(function($student) {
+                return [
+                    'id' => $student->id,
+                    'fullname' => $student->fullname,
+                    'nni' => $student->nni,
+                    'phone' => $student->phone,
+                    'current_class' => $student->classe ? $student->classe->nom : null,
+                ];
+            })
+        ]);
+    }
+
+    /**
+     * Assign students to a class.
+     */
+    public function assignStudents(Request $request, Anneescolaire $anneescolaire)
+    {
+        $request->validate([
+            'classe_id' => 'required|exists:classes,id',
+            'students' => 'required|array|min:1',
+            'students.*' => 'exists:students,id',
+        ]);
+
+        $classe = Classe::findOrFail($request->classe_id);
+
+        // Verify the class belongs to this year
+        if ($classe->annee_id != $anneescolaire->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cette classe n\'appartient pas a cette annee scolaire'
+            ], 400);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $assignedCount = 0;
+
+            foreach ($request->students as $studentId) {
+                $student = Student::find($studentId);
+
+                if ($student) {
+                    // Update student's current class
+                    $student->update(['class_id' => $classe->id]);
+
+                    // Add to history table
+                    ClasseStudent::updateOrCreate(
+                        [
+                            'student_id' => $studentId,
+                            'classe_id' => $classe->id,
+                            'annee_id' => $anneescolaire->id,
+                        ],
+                        []
+                    );
+
+                    $assignedCount++;
+                }
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => $assignedCount . ' etudiant(s) affecte(s) a la classe "' . $classe->nom . '" avec succes',
+                'assigned_count' => $assignedCount,
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de l\'affectation: ' . $e->getMessage()
             ], 500);
         }
     }

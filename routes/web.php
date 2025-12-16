@@ -43,6 +43,9 @@ Route::prefix('admin')->name('web.')->middleware(['auth', 'user.type:admin'])->g
     Route::get('/anneescolaires/{anneescolaire}/details', [\App\Http\Controllers\AnneescolaireController::class, 'showDetails'])->name('anneescolaires.details');
     Route::post('/anneescolaires/{anneescolaire}/clone-classes', [\App\Http\Controllers\AnneescolaireController::class, 'cloneClasses'])->name('anneescolaires.clone-classes');
     Route::post('/anneescolaires/{anneescolaire}/store-classe', [\App\Http\Controllers\AnneescolaireController::class, 'storeClasse'])->name('anneescolaires.store-classe');
+    Route::get('/anneescolaires/get-classes-by-niveau', [\App\Http\Controllers\AnneescolaireController::class, 'getClassesByNiveau'])->name('anneescolaires.get-classes-by-niveau');
+    Route::get('/anneescolaires/get-available-students', [\App\Http\Controllers\AnneescolaireController::class, 'getAvailableStudents'])->name('anneescolaires.get-available-students');
+    Route::post('/anneescolaires/{anneescolaire}/assign-students', [\App\Http\Controllers\AnneescolaireController::class, 'assignStudents'])->name('anneescolaires.assign-students');
 
 
     Route::resource('salle-de-classes', SalleDeClasseController::class);
