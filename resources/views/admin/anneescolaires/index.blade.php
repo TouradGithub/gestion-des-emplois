@@ -1,5 +1,3 @@
-// resources/views/anneescolaires/index.blade.php
-
 @extends('layouts.masters.master')
 
 @section('title')
@@ -23,29 +21,67 @@
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-12">
-                                <table class='table' id='table_list' data-toggle="table"
-                                       data-url="{{ route('web.anneescolaires.list') }}"
-                                       data-side-pagination="server" data-pagination="true"
-                                       data-page-list="[5, 10, 20, 50, 100]"
-                                       data-search="true" data-show-refresh="true"
-                                       data-show-columns="true" data-sort-name="id" data-sort-order="desc"
-                                       data-escape="false"
-                                       data-query-params="queryParams">
-                                    <thead>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
                                     <tr>
-                                        <th data-field="id" data-visible="false">#</th>
-                                        <th data-field="no">No</th>
-                                        <th data-field="annee" data-formatter="htmlFormatter">Année</th>
-                                        <th data-field="date_debut">Date début</th>
-                                        <th data-field="date_fin">Date fin</th>
-                                        <th data-field="is_active" data-formatter="htmlFormatter">Active</th>
-                                        <th data-field="operate" data-formatter="htmlFormatter" data-events="actionEvents" data-sortable="false">Actions</th>
+                                        <th>#</th>
+                                        <th>Année</th>
+                                        <th>Date début</th>
+                                        <th>Date fin</th>
+                                        <th>Classes</th>
+                                        <th>Active</th>
+                                        <th>Actions</th>
                                     </tr>
-                                    </thead>
-                                </table>
-                            </div>
+                                </thead>
+                                <tbody>
+                                    @forelse($anneescolaires as $index => $annee)
+                                        <tr>
+                                            <td>{{ $anneescolaires->firstItem() + $index }}</td>
+                                            <td>
+                                                <a href="{{ route('web.anneescolaires.details', $annee->id) }}" class="text-primary fw-bold">
+                                                    {{ $annee->annee }}
+                                                </a>
+                                            </td>
+                                            <td>{{ $annee->date_debut }}</td>
+                                            <td>{{ $annee->date_fin }}</td>
+                                            <td>
+                                                <span class="badge bg-info">{{ $annee->classes_count }} classe(s)</span>
+                                            </td>
+                                            <td>
+                                                @if($annee->is_active)
+                                                    <span class="badge bg-success">Oui</span>
+                                                @else
+                                                    <span class="badge bg-danger">Non</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <a class="btn btn-xs btn-gradient-info me-1" href="{{ route('web.anneescolaires.details', $annee->id) }}" title="Voir">
+                                                    <i class="fa fa-eye"></i>
+                                                </a>
+                                                <a class="btn btn-xs btn-gradient-primary me-1" href="{{ route('web.anneescolaires.edit', $annee->id) }}" title="Modifier">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                                <button class="btn btn-xs btn-gradient-danger btn-delete" data-id="{{ $annee->id }}" data-classes="{{ $annee->classes_count }}" title="Supprimer">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="7" class="text-center text-muted py-4">
+                                                <i class="fa fa-calendar-times fa-3x mb-3 d-block"></i>
+                                                Aucune année scolaire trouvée
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-center mt-4">
+                            {{ $anneescolaires->links() }}
                         </div>
                     </div>
                 </div>
@@ -56,25 +92,12 @@
 
 @section('script')
     <script>
-        function queryParams(p) {
-            return {
-                limit: p.limit,
-                sort: p.sort,
-                order: p.order,
-                offset: p.offset,
-                search: p.search
-            };
-        }
+        $(document).ready(function() {
+            // Delete button click
+            $('.btn-delete').on('click', function() {
+                var id = $(this).data('id');
+                var classesCount = $(this).data('classes');
 
-        function htmlFormatter(value) {
-            return value;
-        }
-
-        window.actionEvents = {
-            'click .editdata': function (e, value, row, index) {
-                window.location.href = '{{ route("web.anneescolaires.edit", ":id") }}'.replace(':id', row.id);
-            },
-            'click .deletedata': function (e, value, row, index) {
                 Swal.fire({
                     title: 'Êtes-vous sûr?',
                     text: 'Voulez-vous vraiment supprimer cette année scolaire?',
@@ -86,25 +109,32 @@
                     cancelButtonText: 'Annuler'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        fetch('{{ route("web.anneescolaires.destroy", ":id") }}'.replace(':id', row.id), {
-                            method: 'DELETE',
+                        $.ajax({
+                            url: '{{ url("admin/anneescolaires") }}/' + id,
+                            type: 'DELETE',
                             headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Content-Type': 'application/json'
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    Swal.fire('Supprimé!', response.message, 'success').then(function() {
+                                        window.location.reload();
+                                    });
+                                } else {
+                                    Swal.fire('Erreur!', response.message, 'error');
+                                }
+                            },
+                            error: function(xhr) {
+                                var message = 'Une erreur est survenue';
+                                if (xhr.responseJSON && xhr.responseJSON.message) {
+                                    message = xhr.responseJSON.message;
+                                }
+                                Swal.fire('Erreur!', message, 'error');
                             }
-                        })
-                        .then(res => res.json())
-                        .then(response => {
-                            $('#table_list').bootstrapTable('refresh');
-                            Swal.fire('Supprimé!', 'L\'année scolaire a été supprimée', 'success');
-                        })
-                        .catch(err => {
-                            console.error(err);
-                            Swal.fire('Erreur!', 'Une erreur est survenue', 'error');
                         });
                     }
                 });
-            }
-        };
+            });
+        });
     </script>
 @endsection

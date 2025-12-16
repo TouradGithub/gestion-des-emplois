@@ -20,7 +20,11 @@ class AnneescolaireController extends Controller
 
     public function index()
     {
-        return view('admin.anneescolaires.index');
+        $anneescolaires = Anneescolaire::withCount('classes')
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+
+        return view('admin.anneescolaires.index', compact('anneescolaires'));
     }
 
     public function list(Request $request)
@@ -75,6 +79,11 @@ class AnneescolaireController extends Controller
             'date_fin' => 'required|date|after_or_equal:date_debut',
         ]);
 
+        // If this year is being activated, deactivate all other years
+        if ($request->boolean('is_active')) {
+            Anneescolaire::where('is_active', true)->update(['is_active' => false]);
+        }
+
         Anneescolaire::create($request->only('annee', 'date_debut', 'date_fin', 'is_active'));
 
         return redirect()->route('web.anneescolaires.index')->with('success', 'Année scolaire ajoutée avec succès');
@@ -94,6 +103,13 @@ class AnneescolaireController extends Controller
             'date_fin' => 'required|date|after_or_equal:date_debut',
         ]);
 
+        // If this year is being activated, deactivate all other years
+        if ($request->boolean('is_active')) {
+            Anneescolaire::where('id', '!=', $anneescolaire->id)
+                ->where('is_active', true)
+                ->update(['is_active' => false]);
+        }
+
         $anneescolaire->update($request->only('annee', 'date_debut', 'date_fin', 'is_active'));
 
         return redirect()->route('web.anneescolaires.index')->with('success', 'Année scolaire mise à jour avec succès');
@@ -101,6 +117,16 @@ class AnneescolaireController extends Controller
 
     public function destroy(Anneescolaire $anneescolaire)
     {
+        // Check if the year has any classes
+        $classesCount = Classe::where('annee_id', $anneescolaire->id)->count();
+
+        if ($classesCount > 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'لا يمكن حذف هذه السنة الدراسية لأنها تحتوي على ' . $classesCount . ' قسم/أقسام. يرجى حذف الأقسام أولاً.'
+            ], 400);
+        }
+
         $anneescolaire->delete();
         return response()->json([
             'success' => true,
