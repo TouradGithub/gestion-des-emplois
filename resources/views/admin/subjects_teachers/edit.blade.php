@@ -242,52 +242,52 @@
                             </div>
                         </div>
 
-                        <!-- Section: Heures hebdomadaires -->
+                        <!-- Section: Heures du trimestre -->
                         <div class="section-title mt-4">
-                            <i class="mdi mdi-clock-outline"></i> Volume horaire hebdomadaire
+                            <i class="mdi mdi-clock-outline"></i> Volume horaire du trimestre
                         </div>
 
                         <div class="hours-input-group">
                             <div class="row align-items-center">
                                 <div class="col-md-6">
-                                    <label class="mb-2"><i class="mdi mdi-clock-time-four me-1"></i> Heures par semaine <span class="text-danger">*</span></label>
+                                    <label class="mb-2"><i class="mdi mdi-clock-time-four me-1"></i> Total heures du trimestre <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text">
                                             <i class="mdi mdi-timer"></i>
                                         </span>
                                         <input type="number"
                                                class="form-control"
-                                               id="heures_semaine"
-                                               name="heures_semaine"
+                                               id="heures_trimestre"
+                                               name="heures_trimestre"
                                                min="0"
-                                               max="40"
+                                               max="500"
                                                step="0.5"
-                                               value="{{ old('heures_semaine', $subjectTeacher->heures_semaine ?? 0) }}"
-                                               placeholder="Ex: 18"
+                                               value="{{ old('heures_trimestre', $subjectTeacher->heures_trimestre ?? 0) }}"
+                                               placeholder="Ex: 48"
                                                required>
                                         <span class="input-group-text" style="background: #fff; border: 2px solid #e0e0e0; border-left: none; border-radius: 0 10px 10px 0;">
-                                            h/semaine
+                                            h/trimestre
                                         </span>
                                     </div>
                                     <small class="text-muted mt-2 d-block">
                                         <i class="mdi mdi-information-outline me-1"></i>
-                                        Nombre d'heures que cet enseignant doit effectuer par semaine
+                                        Nombre total d'heures pour tout le trimestre
                                     </small>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="hours-info">
-                                        <h6 class="mb-3"><i class="mdi mdi-calculator me-2"></i> Calcul automatique</h6>
+                                        <h6 class="mb-3"><i class="mdi mdi-calculator me-2"></i> Suivi des heures</h6>
                                         <div class="hours-info-item">
-                                            <span class="label">Heures/mois (×4)</span>
-                                            <span class="value" id="heures_mois">0 h</span>
+                                            <span class="label">Heures/semaine (÷12)</span>
+                                            <span class="value" id="heures_semaine_calc">0 h</span>
                                         </div>
                                         <div class="hours-info-item">
-                                            <span class="label">Heures/trimestre (×12)</span>
-                                            <span class="value" id="heures_trimestre">0 h</span>
+                                            <span class="label">Heures effectuées</span>
+                                            <span class="value text-primary">{{ $subjectTeacher->heures_effectuees ?? 0 }} h</span>
                                         </div>
                                         <div class="hours-info-item">
-                                            <span class="label">Heures réelles</span>
-                                            <span class="value text-primary">{{ $subjectTeacher->heures_reelles ?? 0 }} h</span>
+                                            <span class="label">Heures restantes</span>
+                                            <span class="value text-info">{{ $subjectTeacher->heures_restantes ?? 0 }} h</span>
                                         </div>
                                         <div class="hours-info-item">
                                             <span class="label">Taux de réalisation</span>
@@ -340,8 +340,8 @@
                             <span>{{ $subjectTeacher->trimester->name ?? '-' }}</span>
                         </div>
                         <div>
-                            <strong><i class="mdi mdi-clock me-1"></i> Heures/semaine:</strong>
-                            <span>{{ $subjectTeacher->heures_semaine ?? 0 }} h</span>
+                            <strong><i class="mdi mdi-clock me-1"></i> Heures/trimestre:</strong>
+                            <span>{{ $subjectTeacher->heures_trimestre ?? 0 }} h</span>
                         </div>
                     </div>
 
@@ -362,18 +362,16 @@
 @section('script')
 <script>
 $(document).ready(function() {
-    // Calculate monthly and trimester hours
+    // Calculate weekly hours from trimester total
     function calculateHours() {
-        var heuresSemaine = parseFloat($('#heures_semaine').val()) || 0;
-        var heuresMois = heuresSemaine * 4;
-        var heuresTrimestre = heuresSemaine * 12;
+        var heuresTrimestre = parseFloat($('#heures_trimestre').val()) || 0;
+        var heuresSemaine = (heuresTrimestre / 12).toFixed(1);
 
-        $('#heures_mois').text(heuresMois + ' h');
-        $('#heures_trimestre').text(heuresTrimestre + ' h');
+        $('#heures_semaine_calc').text(heuresSemaine + ' h');
     }
 
     // Update on input change
-    $('#heures_semaine').on('input', calculateHours);
+    $('#heures_trimestre').on('input', calculateHours);
 
     // Initial calculation
     calculateHours();

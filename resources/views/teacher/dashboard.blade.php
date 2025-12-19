@@ -46,8 +46,8 @@
         <div class="card stats-card">
             <div class="card-body text-center">
                 <i class="mdi mdi-clock-outline display-4 mb-2"></i>
-                <h3>{{ $stats['total_hours_actual'] ?? 0 }}h / {{ $stats['total_hours_assigned'] ?? 0 }}h</h3>
-                <p class="mb-0">Heures (Réelles / Assignées)</p>
+                <h3>{{ $stats['total_hours_effectuees'] ?? 0 }}h / {{ $stats['total_hours_trimestre'] ?? 0 }}h</h3>
+                <p class="mb-0">Heures (Effectuées / Trimestre)</p>
             </div>
         </div>
     </div>
@@ -117,8 +117,7 @@
                                 <th>Classe</th>
                                 <th>Matière</th>
                                 <th>Trimestre</th>
-                                <th>Heures/Semaine</th>
-                                <th>Heures Réelles</th>
+                                <th>Heures/Trimestre</th>
                                 <th>Restantes</th>
                                 <th>Progression</th>
                                 <th>Statut</th>
@@ -131,10 +130,7 @@
                                 <td>{{ $item['subject'] }}</td>
                                 <td>{{ $item['trimester'] }}</td>
                                 <td>
-                                    <span class="badge-hours">{{ $item['heures_semaine'] }}h</span>
-                                </td>
-                                <td>
-                                    <span class="badge-hours-actual">{{ $item['heures_reelles'] }}h</span>
+                                    <span class="badge-hours">{{ $item['heures_trimestre'] }}h</span>
                                 </td>
                                 <td>
                                     @if($item['heures_restantes'] > 0)
@@ -213,8 +209,8 @@
                             <div class="summary-item">
                                 <i class="mdi mdi-clock-outline"></i>
                                 <div class="summary-content">
-                                    <span class="summary-value">{{ $stats['total_hours_assigned'] ?? 0 }}h</span>
-                                    <span class="summary-label">Total heures assignées</span>
+                                    <span class="summary-value">{{ $stats['total_hours_trimestre'] ?? 0 }}h</span>
+                                    <span class="summary-label">Total heures du trimestre</span>
                                 </div>
                             </div>
                         </div>
@@ -222,8 +218,8 @@
                             <div class="summary-item">
                                 <i class="mdi mdi-clock-check"></i>
                                 <div class="summary-content">
-                                    <span class="summary-value">{{ $stats['total_hours_actual'] ?? 0 }}h</span>
-                                    <span class="summary-label">Total heures réelles</span>
+                                    <span class="summary-value">{{ $stats['total_hours_effectuees'] ?? 0 }}h</span>
+                                    <span class="summary-label">Total heures effectuées</span>
                                 </div>
                             </div>
                         </div>
@@ -383,6 +379,14 @@
         border-radius: 15px;
         font-weight: 600;
         border: 1px solid #1a1a1a;
+    }
+
+    .badge-hours-secondary {
+        background: #666;
+        color: #fff;
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-weight: 600;
     }
 
     /* Progress Bar */

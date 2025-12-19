@@ -11,7 +11,7 @@ class SubjectTeacher extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'heures_semaine' => 'decimal:2',
+        'heures_trimestre' => 'decimal:2',
     ];
 
     public function subject()
@@ -48,13 +48,50 @@ class SubjectTeacher extends Model
     }
 
     /**
-     * Calculate actual weekly hours from emploi_temps
+     * Calculer le nombre total d'heures effectuées dans le trimestre
+     * basé sur les séances programmées et les semaines du trimestre
      * @return float
      */
-    public function getHeuresReellesAttribute(): float
+    public function getHeuresEffectueesAttribute(): float
     {
         $emplois = EmploiTemps::where('teacher_id', $this->teacher_id)
             ->where('class_id', $this->class_id)
+            ->where('subject_id', $this->subject_id)
+            ->where('trimester_id', $this->trimester_id)
+            ->where('annee_id', $this->annee_id)
+            ->with('ref_horaires')
+            ->get();
+
+        $totalMinutesParSemaine = 0;
+
+        foreach ($emplois as $emploi) {
+            foreach ($emploi->ref_horaires as $horaire) {
+                if ($horaire->start_time && $horaire->end_time) {
+                    $start = Carbon::parse($horaire->start_time);
+                    $end = Carbon::parse($horaire->end_time);
+                    $totalMinutesParSemaine += $end->diffInMinutes($start);
+                }
+            }
+        }
+
+        // Heures par semaine
+        $heuresParSemaine = round($totalMinutesParSemaine / 60, 2);
+
+        // Calculer le nombre de semaines dans le trimestre (environ 12-14 semaines)
+        $nombreSemaines = $this->getNombreSemainesTrimestre();
+
+        return round($heuresParSemaine * $nombreSemaines, 2);
+    }
+
+    /**
+     * Calculer les heures par semaine (pour affichage)
+     * @return float
+     */
+    public function getHeuresParSemaineAttribute(): float
+    {
+        $emplois = EmploiTemps::where('teacher_id', $this->teacher_id)
+            ->where('class_id', $this->class_id)
+            ->where('subject_id', $this->subject_id)
             ->where('trimester_id', $this->trimester_id)
             ->where('annee_id', $this->annee_id)
             ->with('ref_horaires')
@@ -76,47 +113,64 @@ class SubjectTeacher extends Model
     }
 
     /**
-     * Calculate progress percentage (taux)
+     * Obtenir le nombre de semaines dans le trimestre
+     * @return int
+     */
+    public function getNombreSemainesTrimestre(): int
+    {
+        // Si le trimestre a des dates, calculer le nombre de semaines
+        if ($this->trimester && $this->trimester->start_date && $this->trimester->end_date) {
+            $start = Carbon::parse($this->trimester->start_date);
+            $end = Carbon::parse($this->trimester->end_date);
+            return max(1, $start->diffInWeeks($end));
+        }
+
+        // Par défaut, environ 12 semaines par trimestre
+        return 12;
+    }
+
+    /**
+     * Calculer le taux de progression (pourcentage)
      * @return float
      */
     public function getTauxAttribute(): float
     {
-        if (!$this->heures_semaine || $this->heures_semaine == 0) {
+        if (!$this->heures_trimestre || $this->heures_trimestre == 0) {
             return 0;
         }
 
-        $heuresReelles = $this->heures_reelles;
-        return round(($heuresReelles / $this->heures_semaine) * 100, 1);
+        $heuresEffectuees = $this->heures_effectuees;
+        return round(($heuresEffectuees / $this->heures_trimestre) * 100, 1);
     }
 
     /**
-     * Get remaining hours
+     * Obtenir les heures restantes
      * @return float
      */
     public function getHeuresRestantesAttribute(): float
     {
-        if (!$this->heures_semaine) {
+        if (!$this->heures_trimestre) {
             return 0;
         }
 
-        return max(0, $this->heures_semaine - $this->heures_reelles);
+        return max(0, $this->heures_trimestre - $this->heures_effectuees);
     }
 
     /**
-     * Check if hours limit is exceeded
+     * Vérifier si le quota d'heures est dépassé
      * @return bool
      */
     public function getIsDepasseAttribute(): bool
     {
-        if (!$this->heures_semaine) {
+        if (!$this->heures_trimestre) {
             return false;
         }
 
-        return $this->heures_reelles > $this->heures_semaine;
+        return $this->heures_effectuees > $this->heures_trimestre;
     }
 
     /**
-     * Get status label
+     * Obtenir le statut des heures
      * @return string
      */
     public function getStatutHeuresAttribute(): string
@@ -137,7 +191,7 @@ class SubjectTeacher extends Model
     }
 
     /**
-     * Get all assignments for a teacher in current year with hours info
+     * Obtenir le résumé des heures pour un enseignant
      */
     public static function getTeacherHoursSummary($teacherId, $anneeId = null)
     {
@@ -153,8 +207,9 @@ class SubjectTeacher extends Model
                     'classe' => $assignment->classe->nom ?? '-',
                     'subject' => $assignment->subject->name ?? '-',
                     'trimester' => $assignment->trimester->name ?? '-',
-                    'heures_semaine' => $assignment->heures_semaine ?? 0,
-                    'heures_reelles' => $assignment->heures_reelles,
+                    'heures_trimestre' => $assignment->heures_trimestre ?? 0,
+                    'heures_effectuees' => $assignment->heures_effectuees,
+                    'heures_par_semaine' => $assignment->heures_par_semaine,
                     'heures_restantes' => $assignment->heures_restantes,
                     'taux' => $assignment->taux,
                     'statut' => $assignment->statut_heures,
@@ -164,9 +219,9 @@ class SubjectTeacher extends Model
     }
 
     /**
-     * Get total weekly hours for a teacher across all classes in a trimester
+     * Obtenir le total des heures pour un enseignant dans un trimestre
      */
-    public static function getTotalWeeklyHours($teacherId, $trimesterId, $anneeId = null)
+    public static function getTotalTrimesterHours($teacherId, $trimesterId, $anneeId = null)
     {
         $anneeId = $anneeId ?? Anneescolaire::where('is_active', 1)->value('id');
 
@@ -175,15 +230,15 @@ class SubjectTeacher extends Model
             ->where('annee_id', $anneeId)
             ->get();
 
-        $totalAssigned = $assignments->sum('heures_semaine');
-        $totalActual = $assignments->sum(function ($a) {
-            return $a->heures_reelles;
+        $totalAssigned = $assignments->sum('heures_trimestre');
+        $totalEffectuees = $assignments->sum(function ($a) {
+            return $a->heures_effectuees;
         });
 
         return [
             'heures_assignees' => $totalAssigned,
-            'heures_reelles' => $totalActual,
-            'taux' => $totalAssigned > 0 ? round(($totalActual / $totalAssigned) * 100, 1) : 0,
+            'heures_effectuees' => $totalEffectuees,
+            'taux' => $totalAssigned > 0 ? round(($totalEffectuees / $totalAssigned) * 100, 1) : 0,
         ];
     }
 }

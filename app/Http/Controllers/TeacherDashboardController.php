@@ -104,25 +104,9 @@ class TeacherDashboardController extends Controller
             return redirect()->route('teacher.dashboard')->with('error', __('teacher.teacher_not_found'));
         }
 
-        // التحقق من أن المعلم لديه هذه المادة
-        // $subjectTeacher = SubjectTeacher::with([
-        //         'subject.specialite.departement',
-        //         'classe',
-        //         'trimester',
-        //         'annee'
-        //     ])
-        //     ->where('id', $subjectTeacherId)
-        //     ->where('teacher_id', $teacher->id)
-        //     ->first();
-
-        // if (!$subjectTeacher) {
-        //     return redirect()->route('teacher.departments')->with('error', __('teacher.access_denied'));
-        // }
-
         // جلب الجدول الزمني لهذه المادة والفصل
         $schedules = EmploiTemps::with(['classe', 'subject', 'teacher', 'horaire', 'jour', 'salle'])
                     ->where('teacher_id', $teacher->id)
-                    // ->where('subject_id', $subjectTeacher->subject_id)
                     ->where('class_id', $subjectTeacherId)
                     ->orderBy('jour_id')
                     ->get();
@@ -141,12 +125,6 @@ class TeacherDashboardController extends Controller
 
         return view('teacher.schedule', compact('schedules', 'subjectTeacher', 'teacher'));
     }
-
-
-
-
-
-
 
     public function allSchedules()
     {
@@ -209,20 +187,20 @@ class TeacherDashboardController extends Controller
             ->whereYear('date_pointage', Carbon::now()->year)
             ->count();
 
-        // حساب إجمالي الساعات من emploi_temps
+        // حساب إجمالي ساعات الفصل
         $anneeId = Anneescolaire::where('is_active', 1)->value('id');
-        $totalHoursAssigned = SubjectTeacher::where('teacher_id', $teacher->id)
+        $totalHoursTrimestre = SubjectTeacher::where('teacher_id', $teacher->id)
             ->where('annee_id', $anneeId)
-            ->sum('heures_semaine') ?? 0;
+            ->sum('heures_trimestre') ?? 0;
 
-        // حساب الساعات الفعلية من emploi_temps
-        $totalHoursActual = 0;
+        // حساب الساعات المنجزة
+        $totalHoursEffectuees = 0;
         $assignments = SubjectTeacher::where('teacher_id', $teacher->id)
             ->where('annee_id', $anneeId)
             ->get();
 
         foreach ($assignments as $assignment) {
-            $totalHoursActual += $assignment->heures_reelles;
+            $totalHoursEffectuees += $assignment->heures_effectuees;
         }
 
         // حساب معدل الحضور
@@ -230,12 +208,11 @@ class TeacherDashboardController extends Controller
         $attendanceRate = $totalWorkDays > 0 ? round(($thisMonthPointages / $totalWorkDays) * 100, 1) : 0;
 
         // حساب taux الإجمالي
-        $tauxGlobal = $totalHoursAssigned > 0 ? round(($totalHoursActual / $totalHoursAssigned) * 100, 1) : 0;
+        $tauxGlobal = $totalHoursTrimestre > 0 ? round(($totalHoursEffectuees / $totalHoursTrimestre) * 100, 1) : 0;
 
         return [
-            'total_hours_assigned' => $totalHoursAssigned,
-            'total_hours_actual' => $totalHoursActual,
-            'total_hours' => $totalHoursActual, // للتوافق مع الإصدار القديم
+            'total_hours_trimestre' => $totalHoursTrimestre,
+            'total_hours_effectuees' => $totalHoursEffectuees,
             'this_month_pointages' => $thisMonthPointages,
             'attendance_rate' => $attendanceRate,
             'taux_global' => $tauxGlobal,
@@ -262,8 +239,9 @@ class TeacherDashboardController extends Controller
                 'classe' => $assignment->classe->nom ?? '-',
                 'subject' => $assignment->subject->name ?? '-',
                 'trimester' => $assignment->trimester->name ?? '-',
-                'heures_semaine' => $assignment->heures_semaine ?? 0,
-                'heures_reelles' => $assignment->heures_reelles,
+                'heures_trimestre' => $assignment->heures_trimestre ?? 0,
+                'heures_par_semaine' => $assignment->heures_par_semaine,
+                'heures_effectuees' => $assignment->heures_effectuees,
                 'heures_restantes' => $assignment->heures_restantes,
                 'taux' => $assignment->taux,
                 'statut' => $assignment->statut_heures,

@@ -24,6 +24,16 @@ Route::prefix('teacher')->name('teacher.')->middleware(['auth', 'user.type:teach
     Route::get('/pointages', [App\Http\Controllers\TeacherDashboardController::class, 'showPointages'])->name('pointages');
     Route::get('/profile', [App\Http\Controllers\TeacherDashboardController::class, 'profile'])->name('profile');
     Route::get('/emploi-temps', [App\Http\Controllers\TeacherDashboardController::class, 'emploiTemps'])->name('emploi-temps');
+
+    // Demandes d'ajout de séances
+    Route::get('/requests', [App\Http\Controllers\TeacherRequestController::class, 'index'])->name('requests.index');
+    Route::get('/requests/create', [App\Http\Controllers\TeacherRequestController::class, 'create'])->name('requests.create');
+    Route::post('/requests', [App\Http\Controllers\TeacherRequestController::class, 'store'])->name('requests.store');
+    Route::delete('/requests/{teacherRequest}', [App\Http\Controllers\TeacherRequestController::class, 'destroy'])->name('requests.destroy');
+    Route::get('/requests/get-subjects', [App\Http\Controllers\TeacherRequestController::class, 'getSubjectsByClass'])->name('requests.get-subjects');
+    Route::get('/requests/get-trimesters', [App\Http\Controllers\TeacherRequestController::class, 'getTrimestersByClass'])->name('requests.get-trimesters');
+    Route::get('/requests/get-horaires', [App\Http\Controllers\TeacherRequestController::class, 'getAvailableHoraires'])->name('requests.get-horaires');
+    Route::get('/requests/get-salles', [App\Http\Controllers\TeacherRequestController::class, 'getAvailableSalles'])->name('requests.get-salles');
 });
 
 
@@ -126,6 +136,12 @@ Route::prefix('admin')->name('web.')->middleware(['auth', 'user.type:admin'])->g
 
     // Students Management Routes
     Route::resource('students', \App\Http\Controllers\Admin\StudentController::class);
+
+    // طلبات الأساتذة
+    Route::get('/teacher-requests', [App\Http\Controllers\Admin\TeacherRequestController::class, 'index'])->name('teacher-requests.index');
+    Route::get('/teacher-requests/{teacherRequest}', [App\Http\Controllers\Admin\TeacherRequestController::class, 'show'])->name('teacher-requests.show');
+    Route::post('/teacher-requests/{teacherRequest}/approve', [App\Http\Controllers\Admin\TeacherRequestController::class, 'approve'])->name('teacher-requests.approve');
+    Route::post('/teacher-requests/{teacherRequest}/reject', [App\Http\Controllers\Admin\TeacherRequestController::class, 'reject'])->name('teacher-requests.reject');
 
     // Routes de gestion des pointages
     Route::prefix('pointages')->name('pointages.')->group(function () {

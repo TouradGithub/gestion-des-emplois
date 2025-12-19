@@ -117,6 +117,20 @@
             </a>
         </li>
 
+        {{-- Demandes des enseignants --}}
+        <li class="nav-item">
+            <a href="{{ route('web.teacher-requests.index') }}" class="nav-link">
+                <span class="menu-title">Demandes enseignants</span>
+                @php
+                    $pendingRequestsCount = \App\Models\TeacherRequest::where('status', 'pending')->count();
+                @endphp
+                @if($pendingRequestsCount > 0)
+                    <span class="badge bg-warning text-dark">{{ $pendingRequestsCount }}</span>
+                @endif
+                <i class="mdi mdi-clipboard-list menu-icon"></i>
+            </a>
+        </li>
+
         {{-- الأقسام --}}
 {{--        <li class="nav-item">--}}
 {{--            <a href="" class="nav-link">--}}

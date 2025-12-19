@@ -41,16 +41,16 @@ class SubjectTeacherController extends Controller
             'teacher_id' => 'required|exists:teachers,id',
             'trimester_id' => 'required|exists:trimesters,id',
             'class_id' => 'required|exists:classes,id',
-            'heures_semaine' => 'required|numeric|min:0|max:40',
+            'heures_trimestre' => 'required|numeric|min:0|max:500',
         ],
         [
             'subject_ids.required' => 'Veuillez sélectionner au moins une matière.',
             'subject_ids.min' => 'Veuillez sélectionner au moins une matière.',
             'class_id.required' => 'Le champ classe est obligatoire.',
-            'heures_semaine.required' => 'Le nombre d\'heures par semaine est obligatoire.',
-            'heures_semaine.numeric' => 'Le nombre d\'heures doit être un nombre valide.',
-            'heures_semaine.min' => 'Le nombre d\'heures ne peut pas être négatif.',
-            'heures_semaine.max' => 'Le nombre d\'heures ne peut pas dépasser 40h/semaine.',
+            'heures_trimestre.required' => 'Le nombre d\'heures du trimestre est obligatoire.',
+            'heures_trimestre.numeric' => 'Le nombre d\'heures doit être un nombre valide.',
+            'heures_trimestre.min' => 'Le nombre d\'heures ne peut pas être négatif.',
+            'heures_trimestre.max' => 'Le nombre d\'heures ne peut pas dépasser 500h/trimestre.',
         ]);
 
         $created = 0;
@@ -72,7 +72,7 @@ class SubjectTeacherController extends Controller
                     'trimester_id' => $request->trimester_id,
                     'class_id' => $request->class_id,
                     'annee_id' => $annee_id,
-                    'heures_semaine' => $request->heures_semaine,
+                    'heures_trimestre' => $request->heures_trimestre,
                 ]);
                 $created++;
             } else {
@@ -175,11 +175,11 @@ class SubjectTeacherController extends Controller
             'teacher_id' => 'required|exists:teachers,id',
             'trimester_id' => 'required|exists:trimesters,id',
             'class_id' => 'required|exists:classes,id',
-            'heures_semaine' => 'required|numeric|min:0|max:40',
+            'heures_trimestre' => 'required|numeric|min:0|max:500',
         ], [
             'subject_id.unique' => 'Cette combinaison matière/enseignant/trimestre/classe existe déjà.',
             'class_id.required' => 'Le champ classe est obligatoire.',
-            'heures_semaine.required' => 'Le nombre d\'heures par semaine est obligatoire.',
+            'heures_trimestre.required' => 'Le nombre d\'heures du trimestre est obligatoire.',
         ]);
 
         $subjectTeacher->update([
@@ -187,10 +187,10 @@ class SubjectTeacherController extends Controller
             'teacher_id' => $request->teacher_id,
             'trimester_id' => $request->trimester_id,
             'class_id' => $request->class_id,
-            'heures_semaine' => $request->heures_semaine,
+            'heures_trimestre' => $request->heures_trimestre,
         ]);
 
-        return redirect()->route('web.subjects_teachers.index')->with('success', 'Subject-Teacher assignment updated successfully.');
+        return redirect()->route('web.subjects_teachers.index')->with('success', 'Affectation mise à jour avec succès.');
     }
 
     public function destroy($id)
@@ -225,13 +225,14 @@ class SubjectTeacherController extends Controller
             $operate .= '<a class="btn btn-xs btn-gradient-danger deletedata" data-id="' . $teacher->id . '" data-url="' . route('web.subjects_teachers.destroy', $teacher->id) . '"><i class="fa fa-trash"></i></a>';
 
             // Calculate hours and taux
-            $heuresSemaine = $teacher->heures_semaine ?? 0;
-            $heuresReelles = $teacher->heures_reelles ?? 0;
+            $heuresTrimestre = $teacher->heures_trimestre ?? 0;
+            $heuresEffectuees = $teacher->heures_effectuees ?? 0;
+            $heuresParSemaine = $teacher->heures_par_semaine ?? 0;
             $taux = $teacher->taux ?? 0;
 
             // Taux badge
             $tauxBadge = '';
-            if ($heuresSemaine > 0) {
+            if ($heuresTrimestre > 0) {
                 if ($taux < 50) {
                     $tauxBadge = '<span class="badge" style="background:#fff;color:#1a1a1a;border:1px solid #1a1a1a;">' . $taux . '%</span>';
                 } elseif ($taux < 100) {
@@ -252,8 +253,9 @@ class SubjectTeacherController extends Controller
                 'teacher' => $teacher->teacher ? $teacher->teacher->name : 'N/A',
                 'trimester' => $teacher->trimester ? $teacher->trimester->name : 'N/A',
                'classe' => $teacher->classe? $teacher->classe->nom . ' (' . $teacher->classe->annee->annee . ')': 'N/A',
-                'heures_semaine' => $heuresSemaine . 'h',
-                'heures_reelles' => $heuresReelles . 'h',
+                'heures_trimestre' => $heuresTrimestre . 'h',
+                'heures_par_semaine' => $heuresParSemaine . 'h/sem',
+                'heures_effectuees' => $heuresEffectuees . 'h',
                 'taux' => $tauxBadge,
                 'operate' => $operate,
             ];

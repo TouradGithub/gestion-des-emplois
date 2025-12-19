@@ -237,48 +237,48 @@
                             </div>
                         </div>
 
-                        <!-- Section: Heures hebdomadaires -->
+                        <!-- Section: Heures du trimestre -->
                         <div class="section-title mt-4">
-                            <i class="mdi mdi-clock-outline"></i> Volume horaire hebdomadaire
+                            <i class="mdi mdi-clock-outline"></i> Volume horaire du trimestre
                         </div>
 
                         <div class="hours-input-group">
                             <div class="row align-items-center">
                                 <div class="col-md-6">
-                                    <label class="mb-2"><i class="mdi mdi-clock-time-four me-1"></i> Heures par semaine <span class="text-danger">*</span></label>
+                                    <label class="mb-2"><i class="mdi mdi-clock-time-four me-1"></i> Total heures du trimestre <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text">
                                             <i class="mdi mdi-timer"></i>
                                         </span>
                                         <input type="number"
                                                class="form-control"
-                                               id="heures_semaine"
-                                               name="heures_semaine"
+                                               id="heures_trimestre"
+                                               name="heures_trimestre"
                                                min="0"
-                                               max="40"
+                                               max="500"
                                                step="0.5"
-                                               value="{{ old('heures_semaine', 0) }}"
-                                               placeholder="Ex: 18"
+                                               value="{{ old('heures_trimestre', 0) }}"
+                                               placeholder="Ex: 48"
                                                required>
                                         <span class="input-group-text" style="background: #fff; border: 2px solid #e0e0e0; border-left: none; border-radius: 0 10px 10px 0;">
-                                            h/semaine
+                                            h/trimestre
                                         </span>
                                     </div>
                                     <small class="text-muted mt-2 d-block">
                                         <i class="mdi mdi-information-outline me-1"></i>
-                                        Définissez le nombre d'heures que cet enseignant doit effectuer par semaine pour cette classe
+                                        Définissez le nombre total d'heures que cet enseignant doit effectuer pendant tout le trimestre
                                     </small>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="hours-info">
                                         <h6 class="mb-3"><i class="mdi mdi-calculator me-2"></i> Calcul automatique</h6>
                                         <div class="hours-info-item">
-                                            <span class="label">Heures/mois (×4)</span>
-                                            <span class="value" id="heures_mois">0 h</span>
+                                            <span class="label">Heures/semaine (÷12)</span>
+                                            <span class="value" id="heures_semaine_calc">0 h</span>
                                         </div>
                                         <div class="hours-info-item">
-                                            <span class="label">Heures/trimestre (×12)</span>
-                                            <span class="value" id="heures_trimestre">0 h</span>
+                                            <span class="label">Heures/mois (÷3)</span>
+                                            <span class="value" id="heures_mois">0 h</span>
                                         </div>
                                     </div>
                                 </div>
@@ -317,7 +317,7 @@
                             <li>Choisissez une ou plusieurs matières (Ctrl+clic)</li>
                             <li>Sélectionnez la classe</li>
                             <li>Choisissez le trimestre</li>
-                            <li><strong>Définissez les heures/semaine</strong></li>
+                            <li><strong>Définissez les heures totales du trimestre</strong></li>
                         </ul>
                     </div>
 
@@ -334,8 +334,8 @@
                         <i class="mdi mdi-clock-alert me-2"></i>
                         <strong>Volume horaire :</strong>
                         <p class="mb-0 mt-2 small">
-                            Le volume horaire hebdomadaire permet de suivre le taux de réalisation des heures
-                            dans l'emploi du temps. L'enseignant pourra voir son avancement depuis son tableau de bord.
+                            Le volume horaire du trimestre représente le nombre total d'heures que l'enseignant doit effectuer
+                            pendant toute la durée du trimestre pour cette matière dans cette classe.
                         </p>
                     </div>
                 </div>
@@ -348,18 +348,18 @@
 @section('script')
 <script>
 $(document).ready(function() {
-    // Calculate monthly and trimester hours
+    // Calculate weekly and monthly hours from trimester total
     function calculateHours() {
-        var heuresSemaine = parseFloat($('#heures_semaine').val()) || 0;
-        var heuresMois = heuresSemaine * 4;
-        var heuresTrimestre = heuresSemaine * 12;
+        var heuresTrimestre = parseFloat($('#heures_trimestre').val()) || 0;
+        var heuresSemaine = (heuresTrimestre / 12).toFixed(1);
+        var heuresMois = (heuresTrimestre / 3).toFixed(1);
 
+        $('#heures_semaine_calc').text(heuresSemaine + ' h');
         $('#heures_mois').text(heuresMois + ' h');
-        $('#heures_trimestre').text(heuresTrimestre + ' h');
     }
 
     // Update on input change
-    $('#heures_semaine').on('input', calculateHours);
+    $('#heures_trimestre').on('input', calculateHours);
 
     // Initial calculation
     calculateHours();

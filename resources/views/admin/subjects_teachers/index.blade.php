@@ -36,9 +36,10 @@
                                     <th data-field="id" data-visible="false">#</th>
                                     <th data-field="no">No</th>
                                     <th data-field="subject">Matiere</th>
-                                    <th data-field="teacher">Proffesseur</th>
-                                    <th data-field="trimester">Trimester</th>
+                                    <th data-field="teacher">Professeur</th>
+                                    <th data-field="trimester">Trimestre</th>
                                     <th data-field="classe">Classe</th>
+                                    <th data-field="heures_trimestre">Heures/Trimestre</th>
                                     <th data-field="operate" data-events="actionEvents" data-sortable="false">Actions</th>
                                 </tr>
                                 </thead>

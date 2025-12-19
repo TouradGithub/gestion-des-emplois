@@ -72,32 +72,36 @@
                                         {{ Carbon\Carbon::parse($pointage->date_pointage)->format('Y-m-d') }}
                                     </td>
                                     <td>
-                                        @if($pointage->status == 'present')
+                                        @if($pointage->statut == 'present')
                                             <span class="badge bg-success">
                                                 <i class="mdi mdi-check"></i>
-                                                {{ __('teacher.present') }}
+                                                Présent
                                             </span>
-                                        @elseif($pointage->status == 'absent')
+                                        @elseif($pointage->statut == 'absent')
                                             <span class="badge bg-danger">
                                                 <i class="mdi mdi-close"></i>
-                                                {{ __('teacher.absent') }}
+                                                Absent
                                             </span>
-                                        @elseif($pointage->status == 'late')
+                                        @elseif($pointage->statut == 'late' || $pointage->statut == 'retard')
                                             <span class="badge bg-warning">
                                                 <i class="mdi mdi-clock-alert"></i>
-                                                {{ __('teacher.late') }}
+                                                En retard
                                             </span>
-                                        @elseif($pointage->status == 'excuse')
+                                        @elseif($pointage->statut == 'excuse')
                                             <span class="badge bg-info">
                                                 <i class="mdi mdi-account-check"></i>
-                                                {{ __('teacher.excuse') }}
+                                                Excusé
+                                            </span>
+                                        @else
+                                            <span class="badge bg-secondary">
+                                                {{ $pointage->statut }}
                                             </span>
                                         @endif
                                     </td>
                                     <td>
                                         @if($pointage->emploiTemps && $pointage->emploiTemps->classe)
                                             <i class="mdi mdi-account-group me-1"></i>
-                                            {{ $pointage->emploiTemps->classe->name }}
+                                            {{ $pointage->emploiTemps->classe->nom }}
                                         @else
                                             <span class="text-muted">-</span>
                                         @endif

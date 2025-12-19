@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="fr" dir="ltr">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -7,8 +7,8 @@
     <title>@yield('title') || {{ config('app.name') }} - {{ __('teacher.dashboard') }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- Bootstrap RTL CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS (LTR) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Material Design Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
@@ -72,6 +72,15 @@
 
         .info-card {
             border-left: 4px solid #007bff;
+        }
+
+        /* LTR specific styles */
+        .sidebar-menu a i {
+            margin-right: 8px;
+        }
+
+        .text-start {
+            text-align: left !important;
         }
 
         .stats-card {
@@ -194,6 +203,19 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{ route('teacher.requests.index') }}" class="{{ request()->routeIs('teacher.requests*') ? 'active' : '' }}">
+                            <i class="mdi mdi-clipboard-plus me-2"></i>
+                            Demandes de séances
+                            @php
+                                $pendingCount = \App\Models\TeacherRequest::where('teacher_id', auth()->user()->teacher->id ?? 0)
+                                    ->where('status', 'pending')->count();
+                            @endphp
+                            @if($pendingCount > 0)
+                                <span class="badge bg-warning ms-1">{{ $pendingCount }}</span>
+                            @endif
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ route('teacher.profile') }}" class="{{ request()->routeIs('teacher.profile') ? 'active' : '' }}">
                             <i class="mdi mdi-account-edit me-2"></i>
                             {{ __('teacher.profile') }}
@@ -265,25 +287,27 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         var baseUrl = "{{ URL::to('/') }}";
 
-        // تأكيد الحذف
+        // Confirmation de suppression
         function confirmDelete(message) {
             return confirm(message || '{{ __("messages.confirm_delete") }}');
         }
 
-        // عرض التحميل
+        // Afficher le chargement
         function showLoading() {
-            // يمكن إضافة spinner هنا
+            // Ajouter un spinner ici
         }
 
         function hideLoading() {
-            // إخفاء spinner
+            // Masquer le spinner
         }
     </script>
 
     @yield('js')
+    @yield('script')
 </body>
 </html>
