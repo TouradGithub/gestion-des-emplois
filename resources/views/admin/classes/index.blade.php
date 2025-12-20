@@ -23,10 +23,40 @@
             </nav>
         </div>
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="{{ route('web.classes.create') }}" class="btn btn-gradient-primary">
-                <i class="mdi mdi-plus"></i> {{ __('messages.add_class') }}
-            </a>
+        <!-- Filters and Actions Row -->
+        <div class="card mb-3">
+            <div class="card-body py-3">
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        <form method="GET" action="{{ route('web.classes.index') }}" class="d-flex align-items-center gap-2">
+                            <label class="form-label mb-0 me-2"><i class="mdi mdi-calendar"></i> Année scolaire:</label>
+                            <select name="annee_id" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                                <option value="">-- Toutes les années --</option>
+                                @foreach($annees as $annee)
+                                    <option value="{{ $annee->id }}" {{ $selectedAnneeId == $annee->id ? 'selected' : '' }}>
+                                        {{ $annee->annee }} @if($annee->is_active) (Active) @endif
+                                    </option>
+                                @endforeach
+                            </select>
+                        </form>
+                    </div>
+                    <div class="col-md-8 text-end">
+                        <div class="btn-group">
+                            <a href="{{ route('web.classes.create') }}" class="btn btn-gradient-primary">
+                                <i class="mdi mdi-plus"></i> {{ __('messages.add_class') }}
+                            </a>
+                            @if($classes->count() > 0 && $classes->filter(fn($c) => $c->emplois->count() > 0)->count() > 0)
+                                <a href="{{ route('web.emplois.exportAllClassesPdf', ['annee_id' => $selectedAnneeId]) }}"
+                                   class="btn btn-gradient-danger"
+                                   target="_blank"
+                                   title="Exporter tous les emplois du temps en PDF">
+                                    <i class="mdi mdi-file-pdf-box"></i> Exporter tous les emplois (PDF)
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         @if($errors->any())

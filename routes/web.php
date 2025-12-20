@@ -116,6 +116,7 @@ Route::prefix('admin')->name('web.')->middleware(['auth', 'user.type:admin'])->g
     Route::get('emplois/stats', [EmploiTempsController::class, 'getStats'])->name('emplois.stats');
     Route::get('emplois/filters', [EmploiTempsController::class, 'getFilters'])->name('emplois.filters');
     Route::get('emplois/showEmploi/{classId}', [EmploiTempsController::class, 'showEmploi'])->name('emplois.showEmploi');
+    Route::get('emplois/export-all-classes-pdf', [EmploiTempsController::class, 'exportAllClassesPdf'])->name('emplois.exportAllClassesPdf');
 
     // Routes du calendrier
     Route::get('emplois/calendar/reference-data', [EmploiTempsController::class, 'getReferenceData'])->name('emplois.calendar.referenceData');

@@ -18,17 +18,28 @@ class ClasseController extends Controller
      * Display a listing of the resource.
      */
 
-    public function index()
+    public function index(Request $request)
     {
-        // Get only classes from active school year
+        // Get all school years for filter
+        $annees = Anneescolaire::orderBy('annee', 'desc')->get();
+
+        // Get selected year or default to active year
+        $selectedAnneeId = $request->annee_id;
         $anneeActive = Anneescolaire::where('is_active', true)->first();
-        $classes = $anneeActive
+
+        if (!$selectedAnneeId && $anneeActive) {
+            $selectedAnneeId = $anneeActive->id;
+        }
+
+        // Get classes for selected year
+        $classes = $selectedAnneeId
             ? Classe::with(['niveau', 'specialite', 'annee', 'emplois'])
-                ->where('annee_id', $anneeActive->id)
+                ->where('annee_id', $selectedAnneeId)
                 ->orderBy('nom')
                 ->get()
             : collect();
-        return view('admin.classes.index', compact('classes'));
+
+        return view('admin.classes.index', compact('classes', 'annees', 'selectedAnneeId'));
     }
 
     public function create()

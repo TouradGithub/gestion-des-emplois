@@ -1210,7 +1210,91 @@ class EmploiTempsController extends Controller
         }
     }
 
+    /**
+     * Export all classes schedules to a single PDF
+     */
+    public function exportAllClassesPdf(Request $request)
+    {
+        $anneeId = $request->annee_id;
 
+        // If no year specified, use active year
+        if (!$anneeId) {
+            $anneeActive = Anneescolaire::where('is_active', true)->first();
+            $anneeId = $anneeActive ? $anneeActive->id : null;
+        }
 
+        if (!$anneeId) {
+            return redirect()->back()->with('error', 'Aucune année scolaire sélectionnée.');
+        }
+
+        $annee = Anneescolaire::find($anneeId);
+
+        // Get all classes for this year that have schedules
+        $classes = Classe::with(['niveau', 'specialite', 'annee'])
+            ->where('annee_id', $anneeId)
+            ->whereHas('emplois')
+            ->orderBy('nom')
+            ->get();
+
+        if ($classes->isEmpty()) {
+            return redirect()->back()->with('error', 'Aucune classe avec emploi du temps trouvée pour cette année.');
+        }
+
+        $weekDays = Jour::orderBy('ordre')->get();
+        $horaires = Horaire::get()->sortBy('ordre');
+
+        ob_start();
+        $mpdf = new \Mpdf\Mpdf([
+            'orientation' => 'L',
+            'format' => 'A4',
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 10,
+            'margin_bottom' => 15,
+        ]);
+        $mpdf->SetAuthor('Emplois du temps');
+        $mpdf->SetTitle('Emplois du temps - Toutes les classes - ' . ($annee->annee ?? ''));
+        $mpdf->SetSubject('Emplois du temps');
+        $mpdf->SetFont('arial', '', 12);
+
+        $isFirstPage = true;
+
+        foreach ($classes as $classe) {
+            $emplois_temps = EmploiTemps::with(['salle', 'subject.subjectType', 'teacher'])
+                ->where('class_id', $classe->id)
+                ->get();
+
+            if ($emplois_temps->isEmpty()) {
+                continue;
+            }
+
+            $calendarData = $this->generateDataCalendar($weekDays, $emplois_temps);
+
+            if (!$isFirstPage) {
+                $mpdf->AddPage();
+            }
+            $isFirstPage = false;
+
+            $mpdf->writeHTML(view('admin.sct_emplois_temps.pdf.classe_emplois_pdf', [
+                'classe' => $classe,
+                'calendarData' => $calendarData,
+                'sctHoraires' => $horaires,
+                'uniqueJours' => $weekDays,
+                'date_ref' => '',
+            ])->render());
+        }
+
+        $mpdf->SetHTMLFooter('
+            <table>
+                <tr>
+                    <td align="center">Imprimé le </td>
+                    <td>{DATE j-m-Y H:m:s}</td>
+                </tr>
+            </table>'
+        );
+
+        $mpdf->Output('emplois_temps_toutes_classes_' . ($annee->annee ?? '') . '.pdf', 'I');
+        ob_end_flush();
+    }
 }
 
