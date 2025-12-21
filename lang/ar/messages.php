@@ -229,4 +229,56 @@ return [
     'user_email' => 'بريد الحساب الإلكتروني',
     'last_login' => 'آخر دخول',
     'update_student' => 'تحديث الطالب',
+
+    // Optional class
+    'optional' => 'اختياري',
+    'no_class_assigned' => 'بدون قسم',
+    'class_can_be_assigned_later' => 'يمكن تعيين القسم لاحقاً',
+    'not_assigned' => 'غير معين',
+
+    // Excel Import
+    'import_students' => 'استيراد الطلاب',
+    'import_from_excel' => 'استيراد من Excel',
+    'paste_excel_data' => 'لصق بيانات Excel',
+    'upload_excel_file' => 'رفع ملف Excel',
+    'import_method' => 'طريقة الاستيراد',
+    'paste_data' => 'لصق البيانات',
+    'upload_file' => 'رفع ملف',
+    'paste_excel_instructions' => 'انسخ البيانات من Excel والصقها هنا. يجب أن تحتوي على: رقم التعريف الوطني، الاسم الكامل، اسم ولي الأمر، رقم الهاتف',
+    'excel_format_help' => 'التنسيق المطلوب: رقم التعريف | الاسم الكامل | اسم ولي الأمر | رقم الهاتف',
+    'select_excel_file' => 'اختر ملف Excel',
+    'download_template' => 'تحميل قالب Excel',
+    'preview_data' => 'معاينة البيانات',
+    'import_now' => 'استيراد الآن',
+    'importing' => 'جاري الاستيراد...',
+    'import_success' => 'تم استيراد الطلاب بنجاح',
+    'import_error' => 'خطأ في الاستيراد',
+    'rows_imported' => 'تم استيراد :count صف',
+    'rows_skipped' => 'تم تخطي :count صف بسبب أخطاء',
+    'no_data_to_import' => 'لا توجد بيانات للاستيراد',
+    'invalid_file_format' => 'تنسيق الملف غير صالح',
+    'column_nni' => 'رقم التعريف الوطني',
+    'column_fullname' => 'الاسم الكامل',
+    'column_parent_name' => 'اسم ولي الأمر',
+    'column_phone' => 'رقم الهاتف',
+    'column_gender' => 'الجنس',
+
+    // Gender
+    'gender' => 'الجنس',
+    'select_gender' => 'اختر الجنس',
+    'male' => 'ذكر',
+    'female' => 'أنثى',
+
+    // Capacity
+    'capacity' => 'السعة',
+    'class_capacity' => 'سعة القسم',
+    'room_capacity_error' => 'سعة القاعة أقل من سعة القسم',
+    'default' => 'افتراضي',
+
+    // Import students
+    'students_imported' => 'طالب(ة) تم استيرادهم',
+    'students_updated' => 'طالب(ة) تم تحديثهم',
+    'no_active_year' => 'لا توجد سنة دراسية نشطة',
+    'class_not_in_active_year' => 'هذا القسم لا ينتمي إلى السنة الدراسية النشطة',
+    'students' => 'الطلاب',
 ];

@@ -592,6 +592,15 @@
                             <div class="mt-2 text-center">
                                 <small class="text-muted"><i class="mdi mdi-plus-circle"></i> Cliquez pour ajouter des etudiants</small>
                             </div>
+                            @if($anneescolaire->is_active)
+                            <div class="mt-2 text-center">
+                                <button type="button" class="btn btn-sm btn-outline-success btn-import-excel"
+                                        data-id="{{ $classe->id }}"
+                                        data-name="{{ $classe->nom }}">
+                                    <i class="mdi mdi-file-excel"></i> {{ __('messages.import_from_excel') }}
+                                </button>
+                            </div>
+                            @endif
                         </div>
                     </div>
                 @endforeach
@@ -893,6 +902,102 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
                 <button type="button" class="btn btn-clone" id="btnClone" disabled>
                     <i class="mdi mdi-content-copy"></i> Cloner les classes selectionnees
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Import Students Modal -->
+<div class="modal fade assign-students-modal" id="importStudentsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="mdi mdi-file-excel"></i> {{ __('messages.import_students') }}: <span id="importTargetClassName"></span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Target Class Info -->
+                <div class="alert alert-info mb-4">
+                    <i class="mdi mdi-information"></i>
+                    {{ __('messages.import_from_excel') }} - <strong id="importTargetClassInfo"></strong>
+                </div>
+
+                <!-- Import Method Tabs -->
+                <ul class="nav nav-tabs mb-4" id="importMethodTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="paste-tab" data-bs-toggle="tab" data-bs-target="#paste-content" type="button" role="tab">
+                            <i class="mdi mdi-content-paste"></i> {{ __('messages.paste_data') }}
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload-content" type="button" role="tab">
+                            <i class="mdi mdi-upload"></i> {{ __('messages.upload_file') }}
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="importMethodTabsContent">
+                    <!-- Paste Data Tab -->
+                    <div class="tab-pane fade show active" id="paste-content" role="tabpanel">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">{{ __('messages.paste_excel_data') }}</label>
+                            <textarea class="form-control" id="excelPasteData" rows="10"
+                                placeholder="{{ __('messages.paste_excel_instructions') }}"></textarea>
+                            <small class="text-muted">{{ __('messages.excel_format_help') }}</small>
+                        </div>
+                    </div>
+
+                    <!-- Upload File Tab -->
+                    <div class="tab-pane fade" id="upload-content" role="tabpanel">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">{{ __('messages.upload_excel_file') }}</label>
+                            <input type="file" class="form-control" id="excelFileUpload" accept=".csv,.xlsx,.xls">
+                            <small class="text-muted">{{ __('messages.excel_format_help') }}</small>
+                        </div>
+                        <div class="mb-3">
+                            <a href="{{ route('web.anneescolaires.download-student-template') }}" class="btn btn-outline-primary btn-sm">
+                                <i class="mdi mdi-download"></i> {{ __('messages.download_template') }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview Section -->
+                <div id="importPreviewSection" style="display: none;">
+                    <hr>
+                    <h6 class="mb-3"><i class="mdi mdi-eye text-primary"></i> {{ __('messages.preview_data') }}</h6>
+                    <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                        <table class="table table-sm table-striped" id="importPreviewTable">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>#</th>
+                                    <th>{{ __('messages.column_nni') }}</th>
+                                    <th>{{ __('messages.column_fullname') }}</th>
+                                    <th>{{ __('messages.column_parent_name') }}</th>
+                                    <th>{{ __('messages.column_phone') }}</th>
+                                    <th>{{ __('messages.column_gender') }}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="importPreviewBody">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-2">
+                        <small class="text-muted"><span id="previewRowCount">0</span> {{ __('messages.rows_imported', ['count' => '']) }}</small>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+                <button type="button" class="btn btn-primary" id="btnPreviewImport">
+                    <i class="mdi mdi-eye"></i> {{ __('messages.preview_data') }}
+                </button>
+                <button type="button" class="btn btn-success" id="btnConfirmImport" style="display: none;">
+                    <i class="mdi mdi-check"></i> {{ __('messages.import_now') }}
                 </button>
             </div>
         </div>
@@ -1555,6 +1660,272 @@ $(document).ready(function() {
     // Reset assign modal on close
     $('#assignStudentsModal').on('hidden.bs.modal', function() {
         resetAssignModal();
+    });
+
+    // ============================================
+    // IMPORT STUDENTS FROM EXCEL FUNCTIONALITY
+    // ============================================
+
+    let importTargetClasse = null;
+    let importStudentsData = [];
+
+    // Open Import Modal - using event delegation with stopPropagation
+    $(document).on('click', '.btn-import-excel', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        let $btn = $(this);
+        importTargetClasse = {
+            id: $btn.data('id'),
+            name: $btn.data('name')
+        };
+
+        if (!importTargetClasse.id) {
+            console.error('Import button missing data-id attribute');
+            return;
+        }
+
+        resetImportModal();
+        $('#importTargetClassName').text(importTargetClasse.name);
+        $('#importTargetClassInfo').text(importTargetClasse.name);
+
+        var importModal = new bootstrap.Modal(document.getElementById('importStudentsModal'));
+        importModal.show();
+    });
+
+    function resetImportModal() {
+        importStudentsData = [];
+        $('#excelPasteData').val('');
+        $('#excelFileUpload').val('');
+        $('#importPreviewSection').hide();
+        $('#importPreviewBody').html('');
+        $('#btnConfirmImport').hide();
+        $('#btnPreviewImport').show().prop('disabled', false).html('<i class="mdi mdi-eye"></i> {{ __("messages.preview_data") }}');
+        $('#previewRowCount').text('0');
+    }
+
+    // Preview Import Data
+    $('#btnPreviewImport').on('click', function() {
+        let activeTab = $('#importMethodTabs .nav-link.active').attr('id');
+
+        if (activeTab === 'paste-tab') {
+            parseExcelPasteData();
+        } else {
+            parseExcelFile();
+        }
+    });
+
+    function parseExcelPasteData() {
+        let pastedData = $('#excelPasteData').val().trim();
+
+        if (!pastedData) {
+            Swal.fire('{{ __("messages.error") }}', '{{ __("messages.no_data_to_import") }}', 'warning');
+            return;
+        }
+
+        importStudentsData = [];
+        let lines = pastedData.split('\n');
+
+        lines.forEach(function(line, index) {
+            line = line.trim();
+            if (!line) return;
+
+            // Try different delimiters: tab, semicolon, comma
+            let columns = line.split('\t');
+            if (columns.length < 4) {
+                columns = line.split(';');
+            }
+            if (columns.length < 4) {
+                columns = line.split(',');
+            }
+
+            if (columns.length >= 4) {
+                // Skip header row if detected
+                let firstCol = columns[0].trim().toLowerCase();
+                if (firstCol === 'nni' || firstCol === 'رقم التعريف الوطني' || firstCol === '{{ __("messages.column_nni") }}') {
+                    return;
+                }
+
+                // Parse gender from column 5 if available
+                let gender = columns[4] ? columns[4].trim().toLowerCase() : '';
+                if (gender === 'ذكر' || gender === 'm' || gender === 'male' || gender === 'homme') {
+                    gender = 'male';
+                } else if (gender === 'أنثى' || gender === 'f' || gender === 'female' || gender === 'femme') {
+                    gender = 'female';
+                } else {
+                    gender = '';
+                }
+
+                importStudentsData.push({
+                    nni: columns[0].trim(),
+                    fullname: columns[1].trim(),
+                    parent_name: columns[2].trim(),
+                    phone: columns[3].trim(),
+                    gender: gender
+                });
+            }
+        });
+
+        renderImportPreview();
+    }
+
+    function parseExcelFile() {
+        let fileInput = document.getElementById('excelFileUpload');
+        if (!fileInput.files || !fileInput.files[0]) {
+            Swal.fire('{{ __("messages.error") }}', '{{ __("messages.no_data_to_import") }}', 'warning');
+            return;
+        }
+
+        let file = fileInput.files[0];
+        let reader = new FileReader();
+
+        reader.onload = function(e) {
+            let content = e.target.result;
+            importStudentsData = [];
+
+            let lines = content.split('\n');
+            lines.forEach(function(line, index) {
+                line = line.trim();
+                if (!line) return;
+
+                let columns = line.split(';');
+                if (columns.length < 4) {
+                    columns = line.split(',');
+                }
+                if (columns.length < 4) {
+                    columns = line.split('\t');
+                }
+
+                if (columns.length >= 4) {
+                    let firstCol = columns[0].trim().toLowerCase();
+                    if (firstCol === 'nni' || firstCol === 'رقم التعريف الوطني' || index === 0) {
+                        return;
+                    }
+
+                    // Parse gender from column 5 if available
+                    let gender = columns[4] ? columns[4].trim().toLowerCase().replace(/"/g, '') : '';
+                    if (gender === 'ذكر' || gender === 'm' || gender === 'male' || gender === 'homme') {
+                        gender = 'male';
+                    } else if (gender === 'أنثى' || gender === 'f' || gender === 'female' || gender === 'femme') {
+                        gender = 'female';
+                    } else {
+                        gender = '';
+                    }
+
+                    importStudentsData.push({
+                        nni: columns[0].trim().replace(/"/g, ''),
+                        fullname: columns[1].trim().replace(/"/g, ''),
+                        parent_name: columns[2].trim().replace(/"/g, ''),
+                        phone: columns[3].trim().replace(/"/g, ''),
+                        gender: gender
+                    });
+                }
+            });
+
+            renderImportPreview();
+        };
+
+        reader.readAsText(file, 'UTF-8');
+    }
+
+    function renderImportPreview() {
+        if (importStudentsData.length === 0) {
+            Swal.fire('{{ __("messages.error") }}', '{{ __("messages.no_data_to_import") }}', 'warning');
+            return;
+        }
+
+        let html = '';
+        importStudentsData.forEach(function(student, index) {
+            let genderDisplay = '';
+            if (student.gender === 'male') {
+                genderDisplay = '<span class="badge bg-primary"><i class="mdi mdi-gender-male"></i> {{ __("messages.male") }}</span>';
+            } else if (student.gender === 'female') {
+                genderDisplay = '<span class="badge bg-pink"><i class="mdi mdi-gender-female"></i> {{ __("messages.female") }}</span>';
+            }
+
+            html += `
+                <tr data-index="${index}">
+                    <td>${index + 1}</td>
+                    <td>${student.nni}</td>
+                    <td>${student.fullname}</td>
+                    <td>${student.parent_name}</td>
+                    <td>${student.phone}</td>
+                    <td>${genderDisplay}</td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-import-row" data-index="${index}">
+                            <i class="mdi mdi-close"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        $('#importPreviewBody').html(html);
+        $('#previewRowCount').text(importStudentsData.length);
+        $('#importPreviewSection').show();
+        $('#btnConfirmImport').show();
+        $('#btnPreviewImport').hide();
+    }
+
+    // Remove row from import preview
+    $(document).on('click', '.remove-import-row', function() {
+        let index = $(this).data('index');
+        importStudentsData.splice(index, 1);
+        renderImportPreview();
+
+        if (importStudentsData.length === 0) {
+            $('#importPreviewSection').hide();
+            $('#btnConfirmImport').hide();
+            $('#btnPreviewImport').show();
+        }
+    });
+
+    // Confirm Import
+    $('#btnConfirmImport').on('click', function() {
+        if (importStudentsData.length === 0) {
+            Swal.fire('{{ __("messages.error") }}', '{{ __("messages.no_data_to_import") }}', 'warning');
+            return;
+        }
+
+        $(this).prop('disabled', true).html('<i class="mdi mdi-loading mdi-spin"></i> {{ __("messages.importing") }}');
+
+        $.ajax({
+            url: SITEURL + '/admin/anneescolaires/{{ $anneescolaire->id }}/import-students',
+            type: 'POST',
+            data: {
+                classe_id: importTargetClasse.id,
+                students_data: importStudentsData
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#importStudentsModal').modal('hide');
+                    Swal.fire({
+                        icon: 'success',
+                        title: '{{ __("messages.import_success") }}',
+                        text: response.message,
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('{{ __("messages.error") }}', response.message, 'error');
+                    $('#btnConfirmImport').prop('disabled', false).html('<i class="mdi mdi-check"></i> {{ __("messages.import_now") }}');
+                }
+            },
+            error: function(xhr) {
+                let message = '{{ __("messages.import_error") }}';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+                Swal.fire('{{ __("messages.error") }}', message, 'error');
+                $('#btnConfirmImport').prop('disabled', false).html('<i class="mdi mdi-check"></i> {{ __("messages.import_now") }}');
+            }
+        });
+    });
+
+    // Reset import modal on close
+    $('#importStudentsModal').on('hidden.bs.modal', function() {
+        resetImportModal();
     });
 });
 </script>

@@ -69,7 +69,11 @@
                                             <td>{{ $student->parent_name }}</td>
                                             <td>{{ $student->phone }}</td>
                                             <td>
-                                                <span class="badge badge-info">{{ $student->classe->nom }}</span>
+                                                @if($student->classe)
+                                                    <span class="badge badge-info">{{ $student->classe->nom }}</span>
+                                                @else
+                                                    <span class="badge badge-warning">{{ __('messages.not_assigned') }}</span>
+                                                @endif
                                             </td>
                                             <td>
                                                 <div class="btn-group" role="group">

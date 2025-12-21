@@ -11,7 +11,8 @@ class Classe extends Model
         'niveau_pedagogique_id',
         'specialite_id',
         'annee_id',
-        'is_active'
+        'is_active',
+        'capacity'
     ];
 
     public function niveau()

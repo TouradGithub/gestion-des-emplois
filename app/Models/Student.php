@@ -14,6 +14,7 @@ class Student extends Model
         'fullname',
         'parent_name',
         'phone',
+        'gender',
         'image',
         'class_id',
         'user_id',

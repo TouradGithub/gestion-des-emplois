@@ -56,6 +56,8 @@ Route::prefix('admin')->name('web.')->middleware(['auth', 'user.type:admin'])->g
     Route::get('/anneescolaires/get-classes-by-niveau', [\App\Http\Controllers\AnneescolaireController::class, 'getClassesByNiveau'])->name('anneescolaires.get-classes-by-niveau');
     Route::get('/anneescolaires/get-available-students', [\App\Http\Controllers\AnneescolaireController::class, 'getAvailableStudents'])->name('anneescolaires.get-available-students');
     Route::post('/anneescolaires/{anneescolaire}/assign-students', [\App\Http\Controllers\AnneescolaireController::class, 'assignStudents'])->name('anneescolaires.assign-students');
+    Route::post('/anneescolaires/{anneescolaire}/import-students', [\App\Http\Controllers\AnneescolaireController::class, 'importStudents'])->name('anneescolaires.import-students');
+    Route::get('/anneescolaires/download-student-template', [\App\Http\Controllers\AnneescolaireController::class, 'downloadStudentTemplate'])->name('anneescolaires.download-student-template');
 
 
     Route::resource('salle-de-classes', SalleDeClasseController::class);
@@ -106,6 +108,8 @@ Route::prefix('admin')->name('web.')->middleware(['auth', 'user.type:admin'])->g
     Route::get('/classes/delete/{id}', [ClasseController::class,'destroy'])->name('classes.delete');
     Route::post('/classes/{class}/clone-emplois', [ClasseController::class, 'cloneEmplois'])->name('classes.clone-emplois');
     Route::post('/classes/{class}/clone-students', [ClasseController::class, 'cloneStudents'])->name('classes.clone-students');
+    Route::post('/classes/{class}/import-students', [ClasseController::class, 'importStudents'])->name('classes.import-students');
+    Route::get('/classes/{class}/download-template', [ClasseController::class, 'downloadStudentTemplate'])->name('classes.download-template');
     Route::resource('classes', ClasseController::class);
     // Routes personnalisées avant resource routes
     Route::get('/emplois/get-teachers', [EmploiTempsController::class, 'getTeachers'])->name('emplois.getTeachers');

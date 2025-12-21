@@ -264,4 +264,56 @@ return [
     'user_email' => 'Email du compte',
     'last_login' => 'Dernière connexion',
     'update_student' => 'Mettre à jour l\'étudiant',
+
+    // Optional class
+    'optional' => 'Optionnel',
+    'no_class_assigned' => 'Sans classe',
+    'class_can_be_assigned_later' => 'La classe peut être assignée plus tard',
+    'not_assigned' => 'Non assigné',
+
+    // Excel Import
+    'import_students' => 'Importer les étudiants',
+    'import_from_excel' => 'Importer depuis Excel',
+    'paste_excel_data' => 'Coller les données Excel',
+    'upload_excel_file' => 'Télécharger fichier Excel',
+    'import_method' => 'Méthode d\'importation',
+    'paste_data' => 'Coller les données',
+    'upload_file' => 'Télécharger fichier',
+    'paste_excel_instructions' => 'Copiez les données depuis Excel et collez-les ici. Doit contenir: NNI, Nom complet, Nom du parent, Téléphone',
+    'excel_format_help' => 'Format requis: NNI | Nom complet | Nom du parent | Téléphone',
+    'select_excel_file' => 'Sélectionner fichier Excel',
+    'download_template' => 'Télécharger le modèle Excel',
+    'preview_data' => 'Aperçu des données',
+    'import_now' => 'Importer maintenant',
+    'importing' => 'Importation en cours...',
+    'import_success' => 'Étudiants importés avec succès',
+    'import_error' => 'Erreur d\'importation',
+    'rows_imported' => ':count lignes importées',
+    'rows_skipped' => ':count lignes ignorées à cause d\'erreurs',
+    'no_data_to_import' => 'Aucune donnée à importer',
+    'invalid_file_format' => 'Format de fichier invalide',
+    'column_nni' => 'NNI',
+    'column_fullname' => 'Nom complet',
+    'column_parent_name' => 'Nom du parent',
+    'column_phone' => 'Téléphone',
+    'column_gender' => 'Genre',
+
+    // Gender
+    'gender' => 'Genre',
+    'select_gender' => 'Sélectionner le genre',
+    'male' => 'Masculin',
+    'female' => 'Féminin',
+
+    // Capacity
+    'capacity' => 'Capacité',
+    'class_capacity' => 'Capacité de la classe',
+    'room_capacity_error' => 'La capacité de la salle est inférieure à celle de la classe',
+    'default' => 'Par défaut',
+
+    // Import students
+    'students_imported' => 'étudiant(s) importé(s)',
+    'students_updated' => 'étudiant(s) mis à jour',
+    'no_active_year' => 'Aucune année scolaire active',
+    'class_not_in_active_year' => 'Cette classe n\'appartient pas à l\'année scolaire active',
+    'students' => 'Étudiants',
 ];

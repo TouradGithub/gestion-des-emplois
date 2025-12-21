@@ -102,16 +102,33 @@
                                     @enderror
                                 </div>
 
+                                <!-- Gender Field -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="gender" class="form-label">
+                                        <i class="mdi mdi-gender-male-female"></i> {{ __('messages.gender') }}
+                                    </label>
+                                    <select class="form-select @error('gender') is-invalid @enderror"
+                                            id="gender"
+                                            name="gender">
+                                        <option value="">{{ __('messages.select_gender') }}</option>
+                                        <option value="male" {{ old('gender', $student->gender) == 'male' ? 'selected' : '' }}>{{ __('messages.male') }}</option>
+                                        <option value="female" {{ old('gender', $student->gender) == 'female' ? 'selected' : '' }}>{{ __('messages.female') }}</option>
+                                    </select>
+                                    @error('gender')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
                                 <!-- Class Field -->
                                 <div class="col-md-6 mb-3">
                                     <label for="class_id" class="form-label">
-                                        <i class="mdi mdi-school"></i> {{ __('messages.class') }} *
+                                        <i class="mdi mdi-school"></i> {{ __('messages.class') }}
+                                        <small class="text-muted">({{ __('messages.optional') }})</small>
                                     </label>
                                     <select class="form-select @error('class_id') is-invalid @enderror"
                                             id="class_id"
-                                            name="class_id"
-                                            required>
-                                        <option value="">{{ __('messages.select_class') }}</option>
+                                            name="class_id">
+                                        <option value="">{{ __('messages.no_class_assigned') }}</option>
                                         @foreach($classes as $class)
                                             <option value="{{ $class->id }}" {{ old('class_id', $student->class_id) == $class->id ? 'selected' : '' }}>
                                                 {{ $class->nom }}
@@ -127,6 +144,7 @@
                                     @error('class_id')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
+                                    <small class="text-muted">{{ __('messages.class_can_be_assigned_later') }}</small>
                                 </div>
 
                                 <!-- Current Image Display -->

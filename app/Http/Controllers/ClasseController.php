@@ -64,6 +64,7 @@ class ClasseController extends Controller
             'specialite_id' => 'required|exists:specialities,id',
             'annee_id' => 'required|exists:anneescolaires,id',
             'nom' => 'unique:classes,nom',
+            'capacity' => 'nullable|integer|min:1|max:500',
         ]);
 
         if ($validator->fails()) {
@@ -75,6 +76,7 @@ class ClasseController extends Controller
             'niveau_pedagogique_id' => $request->niveau_pedagogique_id,
             'specialite_id' => $request->specialite_id,
             'annee_id' => $request->annee_id,
+            'capacity' => $request->capacity ?? 20,
         ]);
 
         return redirect()->route('web.classes.index')->with('success', 'Classe créée avec succès.');
@@ -398,6 +400,7 @@ class ClasseController extends Controller
             'specialite_id' => 'required|exists:specialities,id',
             'annee_id' => 'required|exists:anneescolaires,id',
             'nom' => 'unique:classes,nom,' . $class->id,
+            'capacity' => 'nullable|integer|min:1|max:500',
         ]);
 
         if ($validator->fails()) {
@@ -409,6 +412,7 @@ class ClasseController extends Controller
             'niveau_pedagogique_id' => $request->niveau_pedagogique_id,
             'specialite_id' => $request->specialite_id,
             'annee_id' => $request->annee_id,
+            'capacity' => $request->capacity ?? 20,
         ]);
 
         return redirect()->route('web.classes.index')->with('success', 'Classe modifiée avec succès.');
@@ -655,5 +659,160 @@ class ClasseController extends Controller
                 'message' => 'Erreur lors de l\'ajout: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Import students from Excel/CSV data
+     */
+    public function importStudents(Request $request, Classe $class)
+    {
+        $request->validate([
+            'students_data' => 'required|array|min:1',
+            'students_data.*.nni' => 'required|string|max:20',
+            'students_data.*.fullname' => 'required|string|max:255',
+            'students_data.*.parent_name' => 'required|string|max:255',
+            'students_data.*.phone' => 'required|string|max:20',
+            'students_data.*.gender' => 'nullable|in:male,female,',
+        ], [
+            'students_data.required' => __('messages.no_data_to_import'),
+            'students_data.min' => __('messages.no_data_to_import'),
+        ]);
+
+        $anneeActive = Anneescolaire::where('is_active', true)->first();
+        if (!$anneeActive) {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.no_active_year')
+            ], 400);
+        }
+
+        // Verify the class belongs to active year
+        if ($class->annee_id != $anneeActive->id) {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.class_not_in_active_year')
+            ], 400);
+        }
+
+        $importedCount = 0;
+        $updatedCount = 0;
+        $errors = [];
+
+        DB::beginTransaction();
+
+        try {
+            foreach ($request->students_data as $index => $studentData) {
+                // Check if student with this NNI already exists
+                $existingStudent = \App\Models\Student::where('nni', $studentData['nni'])->first();
+
+                if ($existingStudent) {
+                    // Update existing student's class
+                    $existingStudent->update([
+                        'class_id' => $class->id
+                    ]);
+
+                    // Check if already in classe_student for this year
+                    $existsInHistory = ClasseStudent::where('student_id', $existingStudent->id)
+                        ->where('annee_id', $anneeActive->id)
+                        ->exists();
+
+                    if (!$existsInHistory) {
+                        ClasseStudent::create([
+                            'student_id' => $existingStudent->id,
+                            'classe_id' => $class->id,
+                            'annee_id' => $anneeActive->id,
+                        ]);
+                    }
+
+                    $updatedCount++;
+                } else {
+                    // Create new user account for student
+                    $user = \App\Models\User::create([
+                        'name' => $studentData['fullname'],
+                        'email' => $studentData['nni'],
+                        'password' => \Illuminate\Support\Facades\Hash::make($studentData['nni']),
+                        'role_id' => 3 // Student role
+                    ]);
+
+                    // Create new student
+                    $newStudent = \App\Models\Student::create([
+                        'nni' => $studentData['nni'],
+                        'fullname' => $studentData['fullname'],
+                        'parent_name' => $studentData['parent_name'],
+                        'phone' => $studentData['phone'],
+                        'gender' => !empty($studentData['gender']) ? $studentData['gender'] : null,
+                        'class_id' => $class->id,
+                        'user_id' => $user->id,
+                    ]);
+
+                    // Add to classe_student history
+                    ClasseStudent::create([
+                        'student_id' => $newStudent->id,
+                        'classe_id' => $class->id,
+                        'annee_id' => $anneeActive->id,
+                    ]);
+
+                    $importedCount++;
+                }
+            }
+
+            DB::commit();
+
+            $message = '';
+            if ($importedCount > 0) {
+                $message .= $importedCount . ' ' . __('messages.students_imported');
+            }
+            if ($updatedCount > 0) {
+                if ($message) $message .= '. ';
+                $message .= $updatedCount . ' ' . __('messages.students_updated');
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'imported_count' => $importedCount,
+                'updated_count' => $updatedCount
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.import_error') . ': ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Download student import template
+     */
+    public function downloadStudentTemplate(Classe $class)
+    {
+        $headers = [
+            __('messages.column_nni'),
+            __('messages.column_fullname'),
+            __('messages.column_parent_name'),
+            __('messages.column_phone'),
+            __('messages.column_gender')
+        ];
+
+        $exampleData = [
+            ['1234567890', 'محمد أحمد', 'أحمد محمد', '22334455', 'ذكر'],
+            ['0987654321', 'فاطمة علي', 'علي محمد', '33445566', 'أنثى'],
+        ];
+
+        $content = implode(';', $headers) . "\n";
+        foreach ($exampleData as $row) {
+            $content .= implode(';', $row) . "\n";
+        }
+
+        $filename = 'template_students_' . $class->nom . '.csv';
+
+        return response($content)
+            ->header('Content-Type', 'text/csv; charset=UTF-8')
+            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"')
+            ->header('Content-Transfer-Encoding', 'binary')
+            ->header('Cache-Control', 'must-revalidate, post-check=0, pre-check=0')
+            ->header('Expires', '0');
     }
 }

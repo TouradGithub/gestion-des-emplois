@@ -200,6 +200,20 @@ class EmploiTempsController extends Controller
             return response()->json(['success' => false, 'message' => 'Aucune année scolaire active trouvée.'], 400);
         }
 
+        // Vérification de la capacité de la salle
+        if ($request->salle_de_classe_id) {
+            $classe = Classe::find($request->class_id);
+            $salle = \App\Models\SalleDeClasse::find($request->salle_de_classe_id);
+            $classCapacity = $classe->capacity ?? 20;
+
+            if ($salle && $salle->capacity < $classCapacity) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "La capacité de la salle ({$salle->capacity} places) est inférieure à celle de la classe ({$classCapacity} étudiants)."
+                ], 422);
+            }
+        }
+
         // Vérification des conflits
         $errors = $this->checkConflicts($request, $anneeId, null);
         if (!empty($errors)) {
@@ -573,6 +587,24 @@ class EmploiTempsController extends Controller
             }
         }
 
+        // Vérifier la capacité de la salle par rapport à la classe
+        if ($salleId && $request->class_id) {
+            $salle = \App\Models\SalleDeClasse::find($salleId);
+            $classe = Classe::find($request->class_id);
+            $classCapacity = $classe->capacity ?? 20;
+
+            if ($salle && $salle->capacity < $classCapacity) {
+                $conflicts[] = [
+                    'type' => 'capacity',
+                    'icon' => 'fas fa-users',
+                    'title' => 'Capacité insuffisante',
+                    'message' => "<strong>{$salle->name}</strong> a une capacité insuffisante",
+                    'details' => "Salle: {$salle->capacity} places | Classe: {$classCapacity} étudiants",
+                    'time' => ''
+                ];
+            }
+        }
+
         return response()->json([
             'available' => empty($conflicts),
             'conflicts' => $conflicts
@@ -654,6 +686,22 @@ class EmploiTempsController extends Controller
 
         if (!$anneeId) {
             return redirect()->back()->withErrors(['error' => 'Aucune année scolaire active trouvée.']);
+        }
+
+        // Vérification de la capacité de la salle par rapport à la classe
+        $classe = Classe::find($request->class_id);
+        $classCapacity = $classe->capacity ?? 20;
+
+        for ($i = 0; $i < count($request->teacher_id); $i++) {
+            $salleId = $request->salle_de_classe_id[$i] ?? null;
+            if ($salleId) {
+                $salle = \App\Models\SalleDeClasse::find($salleId);
+                if ($salle && $salle->capacity < $classCapacity) {
+                    return redirect()->back()->withErrors([
+                        "La capacité de la salle {$salle->name} ({$salle->capacity} places) est inférieure à celle de la classe ({$classCapacity} étudiants)."
+                    ])->withInput();
+                }
+            }
         }
 
         // فاليديشن متقدم للتحقق من التضارب

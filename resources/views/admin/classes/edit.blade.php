@@ -48,8 +48,8 @@
                                 <select id="specialite_id" class="form-control @error('specialite_id') is-invalid @enderror" name="specialite_id" required>
                                     <option value=""> Specialite</option>
                                     @foreach($specialites as $specialite)
-                                        <option value="{{ $specialite->id }}" {{ (old('specialite_id', $class->specialite_id) == $specialite->id) ? 'selected' : '' }}>
-                                            {{ $specialite->name }}
+                                        <option value="{{ $specialite?->id }}" {{ (old('specialite_id', $class?->specialite_id) == $specialite?->id) ? 'selected' : '' }}>
+                                            {{ $specialite?->name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -76,6 +76,25 @@
                                 </select>
 
                                 @error('annee_id')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="capacity" class="col-md-4 col-form-label text-md-right">
+                                <i class="mdi mdi-account-group"></i> {{ __('messages.capacity') }}
+                            </label>
+
+                            <div class="col-md-6">
+                                <input type="number" id="capacity" name="capacity"
+                                       class="form-control @error('capacity') is-invalid @enderror"
+                                       value="{{ old('capacity', $class->capacity ?? 20) }}" min="1" max="500">
+                                <small class="text-muted">{{ __('messages.class_capacity') }}</small>
+
+                                @error('capacity')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>

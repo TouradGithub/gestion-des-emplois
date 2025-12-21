@@ -56,6 +56,18 @@
                 </select>
             </div>
 
+            <div class="form-group">
+                <label><i class="mdi mdi-account-group"></i> {{ __('messages.capacity') }}</label>
+                <input type="number" name="capacity" class="form-control @error('capacity') is-invalid @enderror"
+                       value="{{ old('capacity', 20) }}" min="1" max="500">
+                <small class="text-muted">{{ __('messages.class_capacity') }}</small>
+                @error('capacity')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+            </div>
+
             <button type="submit" class="btn btn-success">Enregistrer</button>
         </form>
     </div>

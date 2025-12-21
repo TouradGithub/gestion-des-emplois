@@ -11,8 +11,10 @@ use App\Models\Speciality;
 use App\Models\Student;
 use App\Models\SubjectTeacher;
 use App\Models\Teacher;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class AnneescolaireController extends Controller
 {
@@ -537,6 +539,141 @@ class AnneescolaireController extends Controller
                 'message' => 'Erreur lors de l\'affectation: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Import students from Excel data (pasted or uploaded).
+     */
+    public function importStudents(Request $request, Anneescolaire $anneescolaire)
+    {
+        $request->validate([
+            'classe_id' => 'required|exists:classes,id',
+            'students_data' => 'required|array|min:1',
+            'students_data.*.nni' => 'required|string|max:20',
+            'students_data.*.fullname' => 'required|string|max:255',
+            'students_data.*.parent_name' => 'required|string|max:255',
+            'students_data.*.phone' => 'required|string|max:20',
+            'students_data.*.gender' => 'nullable|in:male,female',
+        ]);
+
+        $classe = Classe::findOrFail($request->classe_id);
+
+        // Verify the class belongs to this year
+        if ($classe->annee_id != $anneescolaire->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cette classe n\'appartient pas a cette annee scolaire'
+            ], 400);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $importedCount = 0;
+            $skippedCount = 0;
+            $errors = [];
+
+            foreach ($request->students_data as $index => $studentData) {
+                // Check if student with this NNI already exists
+                $existingStudent = Student::where('nni', $studentData['nni'])->first();
+
+                if ($existingStudent) {
+                    // Update student's class and add to history
+                    $existingStudent->update(['class_id' => $classe->id]);
+
+                    ClasseStudent::updateOrCreate(
+                        [
+                            'student_id' => $existingStudent->id,
+                            'classe_id' => $classe->id,
+                            'annee_id' => $anneescolaire->id,
+                        ],
+                        []
+                    );
+
+                    $importedCount++;
+                } else {
+                    // Create new user account
+                    $user = User::create([
+                        'name' => $studentData['fullname'],
+                        'email' => $studentData['nni'],
+                        'password' => Hash::make($studentData['nni']),
+                        'role_id' => 3 // Student role
+                    ]);
+
+                    // Create new student
+                    $student = Student::create([
+                        'nni' => $studentData['nni'],
+                        'fullname' => $studentData['fullname'],
+                        'parent_name' => $studentData['parent_name'],
+                        'phone' => $studentData['phone'],
+                        'gender' => $studentData['gender'] ?? null,
+                        'class_id' => $classe->id,
+                        'user_id' => $user->id,
+                    ]);
+
+                    // Add to history table
+                    ClasseStudent::create([
+                        'student_id' => $student->id,
+                        'classe_id' => $classe->id,
+                        'annee_id' => $anneescolaire->id,
+                    ]);
+
+                    $importedCount++;
+                }
+            }
+
+            DB::commit();
+
+            $message = __('messages.rows_imported', ['count' => $importedCount]);
+            if ($skippedCount > 0) {
+                $message .= '. ' . __('messages.rows_skipped', ['count' => $skippedCount]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'imported_count' => $importedCount,
+                'skipped_count' => $skippedCount,
+                'errors' => $errors,
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.import_error') . ': ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Download Excel template for student import.
+     */
+    public function downloadStudentTemplate()
+    {
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="students_import_template.csv"',
+        ];
+
+        $columns = [
+            __('messages.column_nni'),
+            __('messages.column_fullname'),
+            __('messages.column_parent_name'),
+            __('messages.column_phone'),
+            __('messages.column_gender'),
+        ];
+
+        $callback = function() use ($columns) {
+            $file = fopen('php://output', 'w');
+            // Add BOM for UTF-8
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            fputcsv($file, $columns, ';');
+            // Add sample row
+            fputcsv($file, ['1234567890', 'محمد أحمد', 'أحمد محمد', '12345678', 'male'], ';');
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
 }

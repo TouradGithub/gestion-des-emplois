@@ -49,6 +49,18 @@ class StudentApiController extends Controller
             // Create token for API authentication
             $token = $user->createToken('student-api-token')->plainTextToken;
 
+            // Prepare class data (nullable)
+            $classData = null;
+            if ($student->classe) {
+                $classData = [
+                    'id' => $student->classe->id,
+                    'nom' => $student->classe->nom,
+                    'niveau' => $student->classe->niveau?->nom,
+                    'specialite' => $student->classe->specialite?->nom,
+                    'annee' => $student->classe->annee?->annee
+                ];
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => 'تم تسجيل الدخول بنجاح',
@@ -60,13 +72,8 @@ class StudentApiController extends Controller
                         'parent_name' => $student->parent_name,
                         'phone' => $student->phone,
                         'image' => $student->image ? asset('storage/' . $student->image) : null,
-                        'class' => [
-                            'id' => $student->classe->id,
-                            'nom' => $student->classe->nom,
-                            'niveau' => $student->classe->niveau?->nom,
-                            'specialite' => $student->classe->specialite?->nom,
-                            'annee' => $student->classe->annee?->annee
-                        ]
+                        'class' => $classData,
+                        'has_class' => $student->classe !== null
                     ],
                     'token' => $token
                 ]
@@ -96,6 +103,18 @@ class StudentApiController extends Controller
                 ], 404);
             }
 
+            // Prepare class data (nullable)
+            $classData = null;
+            if ($student->classe) {
+                $classData = [
+                    'id' => $student->classe->id,
+                    'nom' => $student->classe->nom,
+                    'niveau' => $student->classe->niveau?->nom,
+                    'specialite' => $student->classe->specialite?->nom,
+                    'annee' => $student->classe->annee?->annee
+                ];
+            }
+
             return response()->json([
                 'success' => true,
                 'data' => [
@@ -105,13 +124,8 @@ class StudentApiController extends Controller
                     'parent_name' => $student->parent_name,
                     'phone' => $student->phone,
                     'image' => $student->image ? asset('storage/' . $student->image) : null,
-                    'class' => [
-                        'id' => $student->classe->id,
-                        'nom' => $student->classe->nom,
-                        'niveau' => $student->classe->niveau?->nom,
-                        'specialite' => $student->classe->specialite?->nom,
-                        'annee' => $student->classe->annee?->annee
-                    ]
+                    'class' => $classData,
+                    'has_class' => $student->classe !== null
                 ]
             ]);
 
@@ -137,6 +151,15 @@ class StudentApiController extends Controller
                     'success' => false,
                     'message' => 'الطالب غير موجود'
                 ], 404);
+            }
+
+            // Check if student has a class assigned
+            if (!$student->class_id || !$student->classe) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'لم يتم تعيين قسم لهذا الطالب بعد',
+                    'has_class' => false
+                ], 400);
             }
 
             // Get schedule for student's class
@@ -245,6 +268,15 @@ class StudentApiController extends Controller
                 ], 404);
             }
 
+            // Check if student has a class assigned
+            if (!$student->class_id || !$student->classe) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'لم يتم تعيين قسم لهذا الطالب بعد',
+                    'has_class' => false
+                ], 400);
+            }
+
             $classe = $student->classe;
 
             // Get all schedule entries for this class
@@ -350,6 +382,15 @@ class StudentApiController extends Controller
                     'success' => false,
                     'message' => 'الطالب غير موجود'
                 ], 404);
+            }
+
+            // Check if student has a class assigned
+            if (!$student->class_id || !$student->classe) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'لم يتم تعيين قسم لهذا الطالب بعد',
+                    'has_class' => false
+                ], 400);
             }
 
             // Get schedule data using similar logic to EmploiTempsController

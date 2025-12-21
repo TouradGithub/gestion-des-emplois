@@ -23,8 +23,13 @@ class StudentController extends Controller
         $query = Student::with(['classe.annee', 'user']);
 
         if ($anneeActive) {
-            $query->whereHas('classe', function($q) use ($anneeActive) {
-                $q->where('annee_id', $anneeActive->id);
+            // Show students that either:
+            // 1. Have a class in the active year
+            // 2. Have no class assigned (unassigned students)
+            $query->where(function($q) use ($anneeActive) {
+                $q->whereHas('classe', function($subQ) use ($anneeActive) {
+                    $subQ->where('annee_id', $anneeActive->id);
+                })->orWhereNull('class_id');
             });
         }
 
@@ -59,7 +64,8 @@ class StudentController extends Controller
             'fullname' => 'required|string|max:255',
             'parent_name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
-            'class_id' => 'required|exists:classes,id',
+            'gender' => 'nullable|in:male,female',
+            'class_id' => 'nullable|exists:classes,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
@@ -84,7 +90,8 @@ class StudentController extends Controller
                 'fullname' => $request->fullname,
                 'parent_name' => $request->parent_name,
                 'phone' => $request->phone,
-                'class_id' => $request->class_id,
+                'gender' => $request->gender,
+                'class_id' => $request->class_id ?: null,
                 'user_id' => $user->id,
                 'image' => $imagePath
             ]);
@@ -148,7 +155,8 @@ class StudentController extends Controller
             'fullname' => 'required|string|max:255',
             'parent_name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
-            'class_id' => 'required|exists:classes,id',
+            'gender' => 'nullable|in:male,female',
+            'class_id' => 'nullable|exists:classes,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
@@ -176,7 +184,8 @@ class StudentController extends Controller
                 'fullname' => $request->fullname,
                 'parent_name' => $request->parent_name,
                 'phone' => $request->phone,
-                'class_id' => $request->class_id,
+                'gender' => $request->gender,
+                'class_id' => $request->class_id ?: null,
                 'image' => $imagePath
             ]);
 
