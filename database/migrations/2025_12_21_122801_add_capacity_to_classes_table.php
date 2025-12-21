@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('classes', function (Blueprint $table) {
-            $table->unsignedInteger('capacity')->default(20)->after('annee_id');
+            $table->integer('capacity')->default(20)->after('annee_id');
         });
     }
 

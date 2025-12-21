@@ -13,13 +13,11 @@ return new class extends Migration
     {
         Schema::table('students', function (Blueprint $table) {
             // Drop existing foreign key constraint
-            $table->dropForeign(['class_id']);
 
             // Make class_id nullable
-            $table->unsignedBigInteger('class_id')->nullable()->change();
+            $table->integer('class_id')->nullable()->change();
 
             // Re-add foreign key with SET NULL on delete
-            $table->foreign('class_id')->references('id')->on('classes')->onDelete('set null');
         });
     }
 
