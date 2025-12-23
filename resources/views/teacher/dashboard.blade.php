@@ -29,216 +29,76 @@
     </div>
 </div>
 
-<!-- Statistics Cards -->
-@if(isset($stats))
-<div class="row mb-4">
-    <div class="col-md-3 mb-3">
-        <div class="card stats-card">
-            <div class="card-body text-center">
-                <i class="mdi mdi-book-open-variant display-4 mb-2"></i>
-                <h3>{{ $stats['total_subjects'] }}</h3>
-                <p class="mb-0">{{ __('teacher.total_subjects') }}</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3 mb-3">
-        <div class="card stats-card">
-            <div class="card-body text-center">
-                <i class="mdi mdi-clock-outline display-4 mb-2"></i>
-                <h3>{{ $stats['total_hours_effectuees'] ?? 0 }}h / {{ $stats['total_hours_trimestre'] ?? 0 }}h</h3>
-                <p class="mb-0">Heures (Effectuées / Trimestre)</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3 mb-3">
-        <div class="card stats-card">
-            <div class="card-body text-center">
-                <i class="mdi mdi-calendar-check display-4 mb-2"></i>
-                <h3>{{ $stats['this_month_pointages'] }}</h3>
-                <p class="mb-0">{{ __('teacher.this_month_pointages') }}</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3 mb-3">
-        <div class="card stats-card">
-            <div class="card-body text-center">
-                <i class="mdi mdi-chart-line display-4 mb-2"></i>
-                <h3>{{ $stats['attendance_rate'] }}%</h3>
-                <p class="mb-0">{{ __('teacher.attendance_rate') }}</p>
-            </div>
-        </div>
-    </div>
-</div>
-@endif
-
-<!-- Hours Progress Section -->
+<!-- Sessions Summary Table -->
 @if(isset($hoursSummary) && count($hoursSummary) > 0)
 <div class="row mb-4">
     <div class="col-12">
-        <div class="card hours-progress-card">
-            <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="card sessions-card">
+            <div class="card-header">
                 <h5 class="mb-0">
-                    <i class="mdi mdi-clock-check me-2"></i>
-                    Suivi des heures par classe
+                    <i class="mdi mdi-calendar-clock me-2"></i>
+                    Récapitulatif des séances
                 </h5>
-                <div class="global-taux">
-                    @php
-                        $tauxGlobal = $stats['taux_global'] ?? 0;
-                        $tauxClass = '';
-                        $tauxIcon = '';
-                        if ($tauxGlobal < 50) {
-                            $tauxClass = 'taux-low';
-                            $tauxIcon = 'mdi-alert-circle';
-                        } elseif ($tauxGlobal < 100) {
-                            $tauxClass = 'taux-medium';
-                            $tauxIcon = 'mdi-progress-clock';
-                        } elseif ($tauxGlobal == 100) {
-                            $tauxClass = 'taux-complete';
-                            $tauxIcon = 'mdi-check-circle';
-                        } else {
-                            $tauxClass = 'taux-exceeded';
-                            $tauxIcon = 'mdi-alert';
-                        }
-                    @endphp
-                    <span class="badge {{ $tauxClass }}">
-                        <i class="mdi {{ $tauxIcon }} me-1"></i>
-                        Taux global: {{ $tauxGlobal }}%
-                    </span>
-                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table table-hover table-bordered">
                         <thead>
                             <tr>
-                                <th>Classe</th>
-                                <th>Matière</th>
-                                <th>Trimestre</th>
-                                <th>Heures/Trimestre</th>
-                                <th>Restantes</th>
-                                <th>Progression</th>
-                                <th>Statut</th>
+                                <th><i class="mdi mdi-book-open-variant me-1"></i> Matière</th>
+                                <th><i class="mdi mdi-account-group me-1"></i> Classe</th>
+                                <th><i class="mdi mdi-calendar-text me-1"></i> Trimestre</th>
+                                <th class="text-center"><i class="mdi mdi-clock-outline me-1"></i> Séances programmées</th>
+                                <th class="text-center"><i class="mdi mdi-check-circle me-1"></i> Réalisées</th>
+                                <th class="text-center"><i class="mdi mdi-clock-alert me-1"></i> Restantes</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($hoursSummary as $item)
                             <tr>
-                                <td><strong>{{ $item['classe'] }}</strong></td>
-                                <td>{{ $item['subject'] }}</td>
+                                <td><strong>{{ $item['subject'] }}</strong></td>
+                                <td>
+                                    <span class="badge bg-primary">{{ $item['classe'] }}</span>
+                                </td>
                                 <td>{{ $item['trimester'] }}</td>
-                                <td>
-                                    <span class="badge-hours">{{ $item['heures_trimestre'] }}h</span>
+                                <td class="text-center">
+                                    <span class="badge bg-secondary">{{ $item['heures_trimestre'] }}h</span>
                                 </td>
-                                <td>
-                                    @if($item['heures_restantes'] > 0)
-                                        <span class="text-muted">{{ $item['heures_restantes'] }}h</span>
+                                <td class="text-center">
+                                    <span class="badge bg-success">{{ $item['heures_effectuees'] ?? 0 }}h</span>
+                                </td>
+                                <td class="text-center">
+                                    @if(($item['heures_restantes'] ?? 0) > 0)
+                                        <span class="badge bg-warning text-dark">{{ $item['heures_restantes'] }}h</span>
                                     @else
-                                        <span class="text-success"><i class="mdi mdi-check"></i></span>
+                                        <span class="badge bg-success"><i class="mdi mdi-check"></i> Terminé</span>
                                     @endif
-                                </td>
-                                <td style="width: 200px;">
-                                    @php
-                                        $taux = $item['taux'];
-                                        $progressClass = '';
-                                        if ($taux < 50) {
-                                            $progressClass = 'progress-low';
-                                        } elseif ($taux < 100) {
-                                            $progressClass = 'progress-medium';
-                                        } elseif ($taux == 100) {
-                                            $progressClass = 'progress-complete';
-                                        } else {
-                                            $progressClass = 'progress-exceeded';
-                                        }
-                                    @endphp
-                                    <div class="progress-wrapper">
-                                        <div class="progress">
-                                            <div class="progress-bar {{ $progressClass }}"
-                                                 role="progressbar"
-                                                 style="width: {{ min($taux, 100) }}%"
-                                                 aria-valuenow="{{ $taux }}"
-                                                 aria-valuemin="0"
-                                                 aria-valuemax="100">
-                                            </div>
-                                        </div>
-                                        <span class="progress-text">{{ $taux }}%</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    @php
-                                        $statut = $item['statut'];
-                                        $statutBadge = '';
-                                        $statutText = '';
-                                        switch($statut) {
-                                            case 'non_defini':
-                                                $statutBadge = 'statut-undefined';
-                                                $statutText = 'Non défini';
-                                                break;
-                                            case 'en_retard':
-                                                $statutBadge = 'statut-late';
-                                                $statutText = 'En retard';
-                                                break;
-                                            case 'en_cours':
-                                                $statutBadge = 'statut-progress';
-                                                $statutText = 'En cours';
-                                                break;
-                                            case 'complet':
-                                                $statutBadge = 'statut-complete';
-                                                $statutText = 'Complet';
-                                                break;
-                                            case 'depasse':
-                                                $statutBadge = 'statut-exceeded';
-                                                $statutText = 'Dépassé';
-                                                break;
-                                        }
-                                    @endphp
-                                    <span class="badge {{ $statutBadge }}">{{ $statutText }}</span>
                                 </td>
                             </tr>
                             @endforeach
                         </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <th colspan="3" class="text-end">Total:</th>
+                                <th class="text-center">
+                                    <span class="badge bg-dark">{{ $stats['total_hours_trimestre'] ?? 0 }}h</span>
+                                </th>
+                                <th class="text-center">
+                                    <span class="badge bg-success">{{ $stats['total_hours_effectuees'] ?? 0 }}h</span>
+                                </th>
+                                <th class="text-center">
+                                    <span class="badge bg-warning text-dark">{{ ($stats['total_hours_trimestre'] ?? 0) - ($stats['total_hours_effectuees'] ?? 0) }}h</span>
+                                </th>
+                            </tr>
+                        </tfoot>
                     </table>
-                </div>
-
-                <!-- Summary -->
-                <div class="hours-summary mt-4">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="summary-item">
-                                <i class="mdi mdi-clock-outline"></i>
-                                <div class="summary-content">
-                                    <span class="summary-value">{{ $stats['total_hours_trimestre'] ?? 0 }}h</span>
-                                    <span class="summary-label">Total heures du trimestre</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="summary-item">
-                                <i class="mdi mdi-clock-check"></i>
-                                <div class="summary-content">
-                                    <span class="summary-value">{{ $stats['total_hours_effectuees'] ?? 0 }}h</span>
-                                    <span class="summary-label">Total heures effectuées</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="summary-item {{ $stats['taux_global'] >= 100 ? 'complete' : '' }}">
-                                <i class="mdi mdi-percent"></i>
-                                <div class="summary-content">
-                                    <span class="summary-value">{{ $stats['taux_global'] ?? 0 }}%</span>
-                                    <span class="summary-label">Taux de réalisation</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 @endif
+
 
 <!-- Departments Section -->
 <div class="row">
@@ -333,10 +193,6 @@
         opacity: 0.75;
     }
 
-    .stats-card .display-4 {
-        opacity: 0.8;
-    }
-
     .department-card {
         height: 100%;
     }
@@ -345,185 +201,40 @@
         background-color: #f8f9fa;
     }
 
-    /* Hours Progress Card Styles */
-    .hours-progress-card {
+    /* Sessions Card Styles */
+    .sessions-card {
         border: 1px solid #e0e0e0;
         border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
-    .hours-progress-card .card-header {
-        background: #1a1a1a;
+    .sessions-card .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: #fff;
         border-radius: 15px 15px 0 0;
+        padding: 15px 20px;
     }
 
-    .hours-progress-card .table thead th {
-        background: #f5f5f5;
-        border-bottom: 2px solid #e0e0e0;
+    .sessions-card .table {
+        margin-bottom: 0;
+    }
+
+    .sessions-card .table thead th {
+        background: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
         font-weight: 600;
-        color: #1a1a1a;
+        color: #495057;
+        padding: 12px;
     }
 
-    .badge-hours {
-        background: #1a1a1a;
-        color: #fff;
-        padding: 4px 10px;
-        border-radius: 15px;
-        font-weight: 600;
+    .sessions-card .table tbody td {
+        vertical-align: middle;
+        padding: 12px;
     }
 
-    .badge-hours-actual {
-        background: #fff;
-        color: #1a1a1a;
-        padding: 4px 10px;
-        border-radius: 15px;
-        font-weight: 600;
-        border: 1px solid #1a1a1a;
-    }
-
-    .badge-hours-secondary {
-        background: #666;
-        color: #fff;
-        padding: 4px 10px;
-        border-radius: 15px;
-        font-weight: 600;
-    }
-
-    /* Progress Bar */
-    .progress-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .progress {
-        height: 10px;
-        border-radius: 5px;
-        background: #e0e0e0;
-        flex: 1;
-    }
-
-    .progress-bar {
-        border-radius: 5px;
-    }
-
-    .progress-low {
-        background: #ccc;
-    }
-
-    .progress-medium {
-        background: #666;
-    }
-
-    .progress-complete {
-        background: #1a1a1a;
-    }
-
-    .progress-exceeded {
-        background: #333;
-    }
-
-    .progress-text {
-        font-weight: 600;
-        min-width: 45px;
-        color: #1a1a1a;
-    }
-
-    /* Status Badges */
-    .statut-undefined {
-        background: #f5f5f5;
-        color: #666;
-        border: 1px solid #ccc;
-    }
-
-    .statut-late {
-        background: #fff;
-        color: #1a1a1a;
-        border: 1px solid #1a1a1a;
-    }
-
-    .statut-progress {
-        background: #666;
-        color: #fff;
-    }
-
-    .statut-complete {
-        background: #1a1a1a;
-        color: #fff;
-    }
-
-    .statut-exceeded {
-        background: #333;
-        color: #fff;
-    }
-
-    /* Taux Badges */
-    .taux-low {
-        background: #fff;
-        color: #1a1a1a;
-        border: 1px solid #1a1a1a;
-    }
-
-    .taux-medium {
-        background: #666;
-        color: #fff;
-    }
-
-    .taux-complete {
-        background: #1a1a1a;
-        color: #fff;
-    }
-
-    .taux-exceeded {
-        background: #333;
-        color: #fff;
-    }
-
-    /* Hours Summary */
-    .hours-summary {
-        background: #f5f5f5;
-        border-radius: 12px;
-        padding: 20px;
-    }
-
-    .summary-item {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        padding: 15px;
-        background: #fff;
-        border-radius: 10px;
-        border: 1px solid #e0e0e0;
-    }
-
-    .summary-item i {
-        font-size: 2rem;
-        color: #1a1a1a;
-    }
-
-    .summary-item.complete i {
-        color: #1a1a1a;
-    }
-
-    .summary-content {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .summary-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #1a1a1a;
-    }
-
-    .summary-label {
-        font-size: 0.85rem;
-        color: #666;
-    }
-
-    .global-taux .badge {
-        font-size: 0.9rem;
-        padding: 8px 15px;
+    .sessions-card .table tfoot th {
+        background: #f8f9fa;
+        padding: 12px;
     }
 </style>
 @endsection
