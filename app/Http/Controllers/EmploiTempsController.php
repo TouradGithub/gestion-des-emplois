@@ -7,6 +7,7 @@ use App\Models\EmploiHoraire;
 use App\Models\EmploiTemps;
 use App\Models\Horaire;
 use App\Models\Jour;
+use App\Models\Pointage;
 use App\Models\Subject;
 use App\Models\SubjectTeacher;
 use App\Models\Teacher;
@@ -110,12 +111,15 @@ class EmploiTempsController extends Controller
                 $startDate->addDay();
             }
 
-            $eventStart = $startDate->format('Y-m-d') . 'T' . $startTime;
-            $eventEnd = $startDate->format('Y-m-d') . 'T' . $endTime;
+            $eventDate = $startDate->format('Y-m-d');
+            $eventStart = $eventDate . 'T' . $startTime;
+            $eventEnd = $eventDate . 'T' . $endTime;
 
             $title = $emploi->subject->name ?? 'Matière';
             $prof = $emploi->teacher->name ?? 'Enseignant';
             $salle = $emploi->salle->name ?? '';
+            $classe = $emploi->classe->nom ?? '';
+            $horairesText = $horairesList->pluck('libelle_fr')->join(', ');
 
             // Récupérer le type de la matière
             $subjectType = null;
@@ -128,6 +132,12 @@ class EmploiTempsController extends Controller
                 ];
             }
 
+            // Vérifier le statut de pointage pour cette date
+            $pointage = Pointage::where('emploi_temps_id', $emploi->id)
+                ->where('date_pointage', $eventDate)
+                ->first();
+            $pointageStatut = $pointage ? $pointage->statut : null;
+
             $events[] = [
                 'id' => $emploi->id,
                 'title' => $title,
@@ -138,7 +148,11 @@ class EmploiTempsController extends Controller
                     'matiere' => $title,
                     'prof' => $prof,
                     'salle' => $salle,
-                    'subject_type' => $subjectType
+                    'classe' => $classe,
+                    'horaire' => $horairesText,
+                    'teacher_id' => $emploi->teacher_id,
+                    'subject_type' => $subjectType,
+                    'pointage_statut' => $pointageStatut
                 ]
             ];
         }

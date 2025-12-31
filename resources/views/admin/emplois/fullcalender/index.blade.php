@@ -357,6 +357,100 @@
     .event-type-td { background-color: #28a745; }
     .event-type-tp { background-color: #007bff; }
     .event-type-project { background-color: #fd7e14; }
+
+    /* Pointage Status Colors */
+    .fc-event.pointage-present {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+        border-color: #28a745 !important;
+    }
+    .fc-event.pointage-present .event-content,
+    .fc-event.pointage-present .event-matiere,
+    .fc-event.pointage-present .event-prof,
+    .fc-event.pointage-present .event-salle,
+    .fc-event.pointage-present * {
+        color: #fff !important;
+    }
+    .fc-event.pointage-absent {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+        border-color: #dc3545 !important;
+    }
+    .fc-event.pointage-absent .event-content,
+    .fc-event.pointage-absent .event-matiere,
+    .fc-event.pointage-absent .event-prof,
+    .fc-event.pointage-absent .event-salle,
+    .fc-event.pointage-absent * {
+        color: #fff !important;
+    }
+    .fc-event.pointage-pending {
+        background: rgba(220, 220, 220, 0.4) !important;
+        border-left: 4px solid #ffc107 !important;
+    }
+    .pointage-indicator {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        font-size: 10px;
+    }
+    .pointage-indicator.present { color: #28a745; }
+    .pointage-indicator.absent { color: #dc3545; }
+
+    /* Pointage buttons in modal */
+    .btn-pointage-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+    .btn-pointage {
+        flex: 1;
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: 2px solid transparent;
+    }
+    .btn-pointage-present {
+        background: #e8f5e9;
+        color: #2e7d32;
+        border-color: #c8e6c9;
+    }
+    .btn-pointage-present:hover, .btn-pointage-present.active {
+        background: #2e7d32;
+        color: #fff;
+        border-color: #2e7d32;
+    }
+    .btn-pointage-absent {
+        background: #ffebee;
+        color: #c62828;
+        border-color: #ffcdd2;
+    }
+    .btn-pointage-absent:hover, .btn-pointage-absent.active {
+        background: #c62828;
+        color: #fff;
+        border-color: #c62828;
+    }
+    .pointage-status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    .pointage-status-badge.present {
+        background: #d4edda;
+        color: #155724;
+    }
+    .pointage-status-badge.absent {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    .pointage-status-badge.pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
     .page-title {
         font-size: 1.5rem;
         font-weight: 700;
@@ -434,6 +528,63 @@
     <!-- Calendar Container -->
     <div id="calendar_container" style="display: none;">
         <div id="calendar"></div>
+    </div>
+</div>
+
+<!-- Modal Pointage Rapide -->
+<div class="modal fade" id="pointageModal" tabindex="-1" role="dialog" aria-labelledby="pointageModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                <h5 class="modal-title" id="pointageModalLabel">
+                    <i class="fas fa-user-check"></i> Enregistrer le pointage
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="pointage_emploi_id">
+                <input type="hidden" id="pointage_date">
+                <input type="hidden" id="pointage_teacher_id">
+
+                <div class="text-center mb-4">
+                    <div id="pointage_info">
+                        <h5 id="pointage_matiere" class="mb-2"></h5>
+                        <p class="text-muted mb-1">
+                            <i class="fas fa-chalkboard-teacher"></i> <span id="pointage_prof"></span>
+                        </p>
+                        <p class="text-muted mb-1">
+                            <i class="fas fa-users"></i> <span id="pointage_classe"></span>
+                        </p>
+                        <p class="text-muted">
+                            <i class="fas fa-clock"></i> <span id="pointage_horaire"></span>
+                        </p>
+                    </div>
+
+                    <div id="pointage_current_status" class="mt-3">
+                        <!-- Current status will be shown here -->
+                    </div>
+                </div>
+
+                <div class="btn-pointage-group">
+                    <button type="button" class="btn-pointage btn-pointage-present" id="btn_mark_present">
+                        <i class="fas fa-check-circle"></i> Présent
+                    </button>
+                    <button type="button" class="btn-pointage btn-pointage-absent" id="btn_mark_absent">
+                        <i class="fas fa-times-circle"></i> Absent
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fas fa-times"></i> Fermer
+                </button>
+                <button type="button" class="btn btn-info" id="btn_edit_seance_from_pointage">
+                    <i class="fas fa-edit"></i> Modifier la séance
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -793,8 +944,16 @@ $(document).ready(function() {
                 let prof = event.extendedProps.prof || event.extendedProps.teacher || '';
                 let salle = event.extendedProps.salle || '';
                 let subjectType = event.extendedProps.subject_type || null;
+                let pointageStatut = event.extendedProps.pointage_statut || null;
 
                 let html = '<div class="event-content">';
+
+                // Afficher indicateur de pointage
+                if (pointageStatut === 'present') {
+                    html += '<span class="pointage-indicator present"><i class="fas fa-check-circle"></i></span>';
+                } else if (pointageStatut === 'absent') {
+                    html += '<span class="pointage-indicator absent"><i class="fas fa-times-circle"></i></span>';
+                }
 
                 // Afficher la matière avec le type entre parenthèses
                 let matiereWithType = matiere;
@@ -812,6 +971,17 @@ $(document).ready(function() {
                 html += '</div>';
 
                 return { html: html };
+            },
+
+            // Appliquer les classes CSS selon le statut de pointage
+            eventClassNames: function(arg) {
+                let pointageStatut = arg.event.extendedProps.pointage_statut;
+                if (pointageStatut === 'present') {
+                    return ['pointage-present'];
+                } else if (pointageStatut === 'absent') {
+                    return ['pointage-absent'];
+                }
+                return ['pointage-pending'];
             },
 
             // Charger les événements
@@ -837,9 +1007,9 @@ $(document).ready(function() {
                 });
             },
 
-            // Clic sur un événement existant (modifier)
+            // Clic sur un événement existant (ouvrir modal pointage)
             eventClick: function(info) {
-                openEditModal(info.event);
+                openPointageModal(info.event);
             },
 
             // Sélection d'une plage horaire (créer)
@@ -1267,6 +1437,134 @@ $(document).ready(function() {
             toastr[type](message, title);
         }
     }
+
+    // ================== POINTAGE FUNCTIONS ==================
+
+    // Ouvrir le modal de pointage
+    function openPointageModal(event) {
+        let emploiId = event.id;
+        let eventDate = event.start;
+        let dateStr = eventDate.toISOString().split('T')[0];
+
+        // Remplir les informations
+        $('#pointage_emploi_id').val(emploiId);
+        $('#pointage_date').val(dateStr);
+        $('#pointage_teacher_id').val(event.extendedProps.teacher_id);
+        $('#pointage_matiere').text(event.extendedProps.matiere || event.title);
+        $('#pointage_prof').text(event.extendedProps.prof || event.extendedProps.teacher || '-');
+        $('#pointage_classe').text(event.extendedProps.classe || '-');
+        $('#pointage_horaire').text(event.extendedProps.horaire || '-');
+
+        // Afficher le statut actuel
+        let currentStatut = event.extendedProps.pointage_statut;
+        updatePointageStatusDisplay(currentStatut);
+
+        // Réinitialiser les boutons
+        $('.btn-pointage').removeClass('active');
+        if (currentStatut === 'present') {
+            $('#btn_mark_present').addClass('active');
+        } else if (currentStatut === 'absent') {
+            $('#btn_mark_absent').addClass('active');
+        }
+
+        $('#pointageModal').modal('show');
+    }
+
+    function updatePointageStatusDisplay(statut) {
+        let html = '';
+        if (statut === 'present') {
+            html = '<span class="pointage-status-badge present"><i class="fas fa-check-circle"></i> Présent</span>';
+        } else if (statut === 'absent') {
+            html = '<span class="pointage-status-badge absent"><i class="fas fa-times-circle"></i> Absent</span>';
+        } else {
+            html = '<span class="pointage-status-badge pending"><i class="fas fa-clock"></i> Non enregistré</span>';
+        }
+        $('#pointage_current_status').html(html);
+    }
+
+    // Enregistrer le pointage
+    function savePointage(statut) {
+        let emploiId = $('#pointage_emploi_id').val();
+        let datePointage = $('#pointage_date').val();
+
+        // Ajouter le loading au bouton
+        let btn = statut === 'present' ? $('#btn_mark_present') : $('#btn_mark_absent');
+        let originalHtml = btn.html();
+        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
+
+        $.ajax({
+            url: SITEURL + '/admin/pointages/calendar/store',
+            type: 'POST',
+            data: {
+                emploi_temps_id: emploiId,
+                date_pointage: datePointage,
+                statut: statut
+            },
+            success: function(response) {
+                btn.prop('disabled', false).html(originalHtml);
+
+                if (response.success) {
+                    // Mettre à jour les boutons
+                    $('.btn-pointage').removeClass('active');
+                    btn.addClass('active');
+
+                    // Mettre à jour l'affichage du statut
+                    updatePointageStatusDisplay(statut);
+
+                    // Rafraîchir le calendrier pour voir les couleurs changées
+                    calendar.refetchEvents();
+
+                    // Afficher un toast de succès
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Pointage enregistré',
+                            text: statut === 'present' ? 'Marqué comme présent' : 'Marqué comme absent',
+                            timer: 1500,
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end'
+                        });
+                    }
+                } else {
+                    showErrorAlert(response.message || 'Erreur lors de l\'enregistrement');
+                }
+            },
+            error: function(xhr) {
+                btn.prop('disabled', false).html(originalHtml);
+                showErrorAlert('Erreur lors de l\'enregistrement du pointage');
+            }
+        });
+    }
+
+    // Événements des boutons de pointage
+    $('#btn_mark_present').on('click', function() {
+        savePointage('present');
+    });
+
+    $('#btn_mark_absent').on('click', function() {
+        savePointage('absent');
+    });
+
+    // Variable pour stocker l'événement courant
+    let currentPointageEvent = null;
+
+    // Stocker l'événement lors de l'ouverture du modal pointage
+    let originalOpenPointageModal = openPointageModal;
+    openPointageModal = function(event) {
+        currentPointageEvent = event;
+        originalOpenPointageModal(event);
+    };
+
+    // Bouton pour modifier la séance depuis le modal pointage
+    $('#btn_edit_seance_from_pointage').on('click', function() {
+        if (currentPointageEvent) {
+            $('#pointageModal').modal('hide');
+            setTimeout(function() {
+                openEditModal(currentPointageEvent);
+            }, 300);
+        }
+    });
 });
 </script>
 @endsection

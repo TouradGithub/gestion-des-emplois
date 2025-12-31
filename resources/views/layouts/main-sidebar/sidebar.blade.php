@@ -131,6 +131,20 @@
             </a>
         </li>
 
+        {{-- Attestations --}}
+        <li class="nav-item">
+            <a href="{{ route('web.attestations.index') }}" class="nav-link">
+                <span class="menu-title">Attestations</span>
+                @php
+                    $pendingAttestationsCount = \App\Models\TeacherAttestation::where('status', 'pending')->count();
+                @endphp
+                @if($pendingAttestationsCount > 0)
+                    <span class="badge bg-warning text-dark">{{ $pendingAttestationsCount }}</span>
+                @endif
+                <i class="mdi mdi-certificate menu-icon"></i>
+            </a>
+        </li>
+
         {{-- الأقسام --}}
 {{--        <li class="nav-item">--}}
 {{--            <a href="" class="nav-link">--}}

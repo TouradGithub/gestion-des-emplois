@@ -307,9 +307,13 @@
                 <a href="{{ route('web.pointages.calendar') }}" class="btn btn-calendar">
                     <i class="mdi mdi-calendar-clock me-1"></i> Calendrier
                 </a>
-                <a href="#" id="btn_export_pdf" class="btn btn-danger ms-2" onclick="exportPdf()" >
-                    <i class="mdi mdi-file-pdf-box"></i> Fiche de pointage
-                </a>
+                <div class="d-flex align-items-center gap-2">
+                    <input type="date" id="date_export_pdf" class="form-control form-control-sm"
+                           value="{{ date('Y-m-d') }}" style="width: 150px;">
+                    <a href="#" id="btn_export_pdf" class="btn btn-danger" onclick="exportPdf()">
+                        <i class="mdi mdi-file-pdf-box"></i> Fiche de pointage
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -559,17 +563,16 @@
 @section('script')
 <script>
     $(document).ready(function() {
-          const SITEURL = "{{ url('/') }}";
+        const SITEURL = "{{ url('/') }}";
 
-      window.exportPdf = function() {
-        // let datePointage = $('#date_pointage').val();
-         let datePointage = new Date().toISOString().split('T')[0]
-        if (!datePointage) {
-            alert('{{ __("Veuillez sélectionner une date") }}');
-            return;
-        }
-        window.open(SITEURL + '/admin/pointages/rapide/export-pdf?date=' + datePointage, '_blank');
-    };
-        });
+        window.exportPdf = function() {
+            let datePointage = $('#date_export_pdf').val();
+            if (!datePointage) {
+                alert('{{ __("Veuillez sélectionner une date") }}');
+                return;
+            }
+            window.open(SITEURL + '/admin/pointages/rapide/export-pdf?date=' + datePointage, '_blank');
+        };
+    });
 </script>
 @endsection

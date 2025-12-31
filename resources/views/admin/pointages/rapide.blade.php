@@ -127,18 +127,18 @@
     <!-- Filter Section -->
     <div class="filter-card">
         <div class="row align-items-end">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label class="form-label fw-bold">
                     <i class="mdi mdi-calendar"></i> {{ __('pointages.date') }}
                 </label>
                 <input type="date" id="date_pointage" class="form-control" value="{{ date('Y-m-d') }}">
             </div>
-            <div class="col-md-4">
+            <div class="col-md-2">
                 <button type="button" id="btn_charger" class="btn btn-success">
                     <i class="mdi mdi-magnify"></i> {{ __('pointages.charger') }}
                 </button>
             </div>
-            <div class="col-md-4 text-end">
+            <div class="col-md-4 text-center">
                 <div class="btn-group">
                     <button type="button" class="btn btn-outline-success btn-sm" onclick="marquerTousPresents()">
                         <i class="mdi mdi-check-all"></i> {{ __('pointages.tous_presents') }}
@@ -147,7 +147,11 @@
                         <i class="mdi mdi-close-circle-multiple"></i> {{ __('pointages.tous_absents') }}
                     </button>
                 </div>
-
+            </div>
+            <div class="col-md-3 text-end">
+                <a href="#" id="btn_export_pdf" class="btn btn-danger" style="display: none;" onclick="exportPdf()">
+                    <i class="mdi mdi-file-pdf-box"></i> Fiche de pointage
+                </a>
             </div>
         </div>
     </div>
@@ -327,16 +331,17 @@ $(document).ready(function() {
         $('.btn-statut').off('click').on('click', function() {
             let emploiId = $(this).data('emploi');
             let statut = $(this).data('statut');
+            let btn = $(this);
 
             // Update buttons
             $(`.btn-statut[data-emploi="${emploiId}"]`).removeClass('active');
-            $(this).addClass('active');
+            btn.addClass('active');
 
             // Update hidden input
             $(`.statut-input[data-emploi="${emploiId}"]`).val(statut);
 
             // Update row style
-            let row = $(this).closest('tr');
+            let row = btn.closest('tr');
             row.removeClass('table-success table-danger');
             if (statut === 'present') {
                 row.addClass('table-success');
@@ -345,6 +350,49 @@ $(document).ready(function() {
             }
 
             updateCounts();
+
+            // Auto-save this single pointage
+            savePointage(emploiId, statut, btn);
+        });
+    }
+
+    // Save single pointage immediately
+    function savePointage(emploiId, statut, btn) {
+        let datePointage = $('#date_pointage').val();
+
+        // Add loading indicator to button
+        btn.prop('disabled', true);
+        let originalHtml = btn.html();
+        btn.html('<i class="mdi mdi-loading mdi-spin"></i>');
+
+        $.ajax({
+            url: SITEURL + '/admin/pointages/rapide/store',
+            type: 'POST',
+            data: {
+                date_pointage: datePointage,
+                pointages: [{
+                    emploi_temps_id: emploiId,
+                    statut: statut
+                }]
+            },
+            success: function(response) {
+                btn.prop('disabled', false);
+                btn.html(originalHtml);
+
+                if (response.success) {
+                    // Show brief success indication
+                    let row = btn.closest('tr');
+                    row.find('td:first').append('<i class="mdi mdi-check-circle text-success ms-1 save-indicator"></i>');
+                    setTimeout(function() {
+                        row.find('.save-indicator').fadeOut(300, function() { $(this).remove(); });
+                    }, 1500);
+                }
+            },
+            error: function() {
+                btn.prop('disabled', false);
+                btn.html(originalHtml);
+                alert('{{ __("Erreur lors de l\'enregistrement") }}');
+            }
         });
     }
 
@@ -412,7 +460,10 @@ $(document).ready(function() {
     loadData();
 
     // Export PDF function
-  
+    window.exportPdf = function() {
+        let datePointage = $('#date_pointage').val();
+        window.open(SITEURL + '/admin/pointages/rapide/export-pdf?date=' + datePointage, '_blank');
+    };
 });
 </script>
 @endsection

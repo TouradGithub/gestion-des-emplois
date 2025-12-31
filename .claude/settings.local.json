@@ -10,7 +10,8 @@
       "Bash(del \"c:\\laragon\\www\\gestion-des-emplois\\database\\migrations\\2025_12_12_214824_create_student_confirmations_table.php\")",
       "Bash(del \"c:\\laragon\\www\\gestion-des-emplois\\app\\Models\\StudentConfirmation.php\")",
       "Bash(del \"c:\\laragon\\www\\gestion-des-emplois\\app\\Http\\Controllers\\Admin\\StudentConfirmationController.php\")",
-      "Bash(dir /b c:laragonwwwgestion-des-emploisappHttpControllers)"
+      "Bash(dir /b c:laragonwwwgestion-des-emploisappHttpControllers)",
+      "Bash(dir /s /b \"c:\\\\laragon\\\\www\\\\gestion-des-emplois\\\\resources\\\\views\\\\admin\")"
     ]
   }
 }

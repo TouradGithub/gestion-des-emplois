@@ -34,6 +34,13 @@ Route::prefix('teacher')->name('teacher.')->middleware(['auth', 'user.type:teach
     Route::get('/requests/get-trimesters', [App\Http\Controllers\TeacherRequestController::class, 'getTrimestersByClass'])->name('requests.get-trimesters');
     Route::get('/requests/get-horaires', [App\Http\Controllers\TeacherRequestController::class, 'getAvailableHoraires'])->name('requests.get-horaires');
     Route::get('/requests/get-salles', [App\Http\Controllers\TeacherRequestController::class, 'getAvailableSalles'])->name('requests.get-salles');
+
+    // Attestations (Demandes de certificats)
+    Route::get('/attestations', [App\Http\Controllers\TeacherAttestationController::class, 'index'])->name('attestations.index');
+    Route::get('/attestations/create', [App\Http\Controllers\TeacherAttestationController::class, 'create'])->name('attestations.create');
+    Route::post('/attestations', [App\Http\Controllers\TeacherAttestationController::class, 'store'])->name('attestations.store');
+    Route::get('/attestations/{attestation}/download', [App\Http\Controllers\TeacherAttestationController::class, 'download'])->name('attestations.download');
+    Route::delete('/attestations/{attestation}', [App\Http\Controllers\TeacherAttestationController::class, 'destroy'])->name('attestations.destroy');
 });
 
 
@@ -147,6 +154,15 @@ Route::prefix('admin')->name('web.')->middleware(['auth', 'user.type:admin'])->g
     Route::get('/teacher-requests/{teacherRequest}', [App\Http\Controllers\Admin\TeacherRequestController::class, 'show'])->name('teacher-requests.show');
     Route::post('/teacher-requests/{teacherRequest}/approve', [App\Http\Controllers\Admin\TeacherRequestController::class, 'approve'])->name('teacher-requests.approve');
     Route::post('/teacher-requests/{teacherRequest}/reject', [App\Http\Controllers\Admin\TeacherRequestController::class, 'reject'])->name('teacher-requests.reject');
+
+    // Attestations (Admin)
+    Route::prefix('attestations')->name('attestations.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\AttestationController::class, 'index'])->name('index');
+        Route::get('/{attestation}', [App\Http\Controllers\Admin\AttestationController::class, 'show'])->name('show');
+        Route::post('/{attestation}/approve', [App\Http\Controllers\Admin\AttestationController::class, 'approve'])->name('approve');
+        Route::post('/{attestation}/reject', [App\Http\Controllers\Admin\AttestationController::class, 'reject'])->name('reject');
+        Route::get('/{attestation}/download', [App\Http\Controllers\Admin\AttestationController::class, 'downloadPdf'])->name('download');
+    });
 
     // Routes de gestion des pointages
     Route::prefix('pointages')->name('pointages.')->group(function () {

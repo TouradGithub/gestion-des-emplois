@@ -216,6 +216,19 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{ route('teacher.attestations.index') }}" class="{{ request()->routeIs('teacher.attestations*') ? 'active' : '' }}">
+                            <i class="mdi mdi-certificate me-2"></i>
+                            Mes Attestations
+                            @php
+                                $approvedAttestations = \App\Models\TeacherAttestation::where('teacher_id', auth()->user()->teacher->id ?? 0)
+                                    ->where('status', 'approved')->count();
+                            @endphp
+                            @if($approvedAttestations > 0)
+                                <span class="badge bg-success ms-1">{{ $approvedAttestations }}</span>
+                            @endif
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ route('teacher.profile') }}" class="{{ request()->routeIs('teacher.profile') ? 'active' : '' }}">
                             <i class="mdi mdi-account-edit me-2"></i>
                             {{ __('teacher.profile') }}
