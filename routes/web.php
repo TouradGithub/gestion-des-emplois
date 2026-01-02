@@ -188,6 +188,7 @@ Route::prefix('admin')->name('web.')->middleware(['auth', 'user.type:admin'])->g
         Route::get('/{pointage}', [PointageController::class, 'show'])->name('show');
         Route::get('/{pointage}/edit', [PointageController::class, 'edit'])->name('edit');
         Route::put('/{pointage}', [PointageController::class, 'update'])->name('update');
+        Route::post('/{pointage}/update-status', [PointageController::class, 'updateStatus'])->name('update-status');
         Route::delete('/{pointage}', [PointageController::class, 'destroy'])->name('destroy');
     });
 

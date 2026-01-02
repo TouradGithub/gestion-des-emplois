@@ -222,6 +222,32 @@ class PointageController extends Controller
     }
 
     /**
+     * Update pointage status via AJAX
+     */
+    public function updateStatus(Request $request, string $id)
+    {
+        try {
+            $request->validate([
+                'statut' => 'required|in:present,absent'
+            ]);
+
+            $pointage = Pointage::findOrFail($id);
+            $pointage->statut = $request->statut;
+            $pointage->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Statut mis à jour avec succès'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la mise à jour: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Obtenir les emplois du temps pour un professeur et une date donnés
      */
     public function getEmploisForTeacher(Request $request)

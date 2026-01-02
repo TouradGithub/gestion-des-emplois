@@ -291,6 +291,74 @@
     .event-type-td { background-color: #28a745; }
     .event-type-tp { background-color: #007bff; }
     .event-type-project { background-color: #fd7e14; }
+
+    /* Pointage Buttons on Events */
+    .event-pointage-btns {
+        display: flex;
+        justify-content: center;
+        gap: 4px;
+        margin-top: 5px;
+    }
+    .btn-evt-pointage {
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        border: 2px solid;
+        transition: all 0.2s;
+    }
+    .btn-evt-present {
+        background: #fff;
+        color: #28a745;
+        border-color: #28a745;
+    }
+    .btn-evt-present:hover, .btn-evt-present.active {
+        background: #28a745;
+        color: #fff;
+    }
+    .btn-evt-absent {
+        background: #fff;
+        color: #dc3545;
+        border-color: #dc3545;
+    }
+    .btn-evt-absent:hover, .btn-evt-absent.active {
+        background: #dc3545;
+        color: #fff;
+    }
+    .fc-event.pointage-present {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+        border-color: #28a745 !important;
+    }
+    .fc-event.pointage-present * {
+        color: #fff !important;
+    }
+    .fc-event.pointage-present .btn-evt-present {
+        background: #fff !important;
+        color: #28a745 !important;
+    }
+    .fc-event.pointage-present .btn-evt-absent {
+        background: transparent !important;
+        color: #fff !important;
+        border-color: #fff !important;
+    }
+    .fc-event.pointage-absent {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+        border-color: #dc3545 !important;
+    }
+    .fc-event.pointage-absent * {
+        color: #fff !important;
+    }
+    .fc-event.pointage-absent .btn-evt-absent {
+        background: #fff !important;
+        color: #dc3545 !important;
+    }
+    .fc-event.pointage-absent .btn-evt-present {
+        background: transparent !important;
+        color: #fff !important;
+        border-color: #fff !important;
+    }
+
     .info-type-badge {
         display: inline-block;
         padding: 4px 12px;
@@ -378,109 +446,6 @@
             </div>
         </div>
         <div id="calendar"></div>
-    </div>
-</div>
-
-<!-- Modal Pointage -->
-<div class="modal fade" id="pointageModal" tabindex="-1" role="dialog" aria-labelledby="pointageModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="pointageModalLabel">
-                    <i class="mdi mdi-clipboard-check"></i> Enregistrer le pointage
-                </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="pointage_emploi_id">
-                <input type="hidden" id="pointage_date">
-                <input type="hidden" id="pointage_id">
-
-                <!-- Informations de la séance -->
-                <div class="pointage-card">
-                    <div class="pointage-info">
-                        <i class="mdi mdi-book-open-variant"></i>
-                        <div class="pointage-info-text">
-                            <h5 id="info_matiere">-</h5>
-                            <p>Matière</p>
-                        </div>
-                    </div>
-                    <div class="pointage-info">
-                        <i class="mdi mdi-account-tie"></i>
-                        <div class="pointage-info-text">
-                            <h5 id="info_enseignant">-</h5>
-                            <p>Enseignant</p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="pointage-info">
-                                <i class="mdi mdi-account-group"></i>
-                                <div class="pointage-info-text">
-                                    <h5 id="info_classe">-</h5>
-                                    <p>Classe</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="pointage-info">
-                                <i class="mdi mdi-calendar"></i>
-                                <div class="pointage-info-text">
-                                    <h5 id="info_date">-</h5>
-                                    <p>Date</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="pointage-info">
-                                <i class="mdi mdi-clock-outline"></i>
-                                <div class="pointage-info-text">
-                                    <h5 id="info_horaire">-</h5>
-                                    <p>Horaire</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Statut actuel -->
-                <div class="text-center mb-4" id="statut_actuel_container" style="display: none;">
-                    <p class="text-muted mb-2">Statut actuel :</p>
-                    <span class="statut-badge present" id="statut_actuel_present" style="display: none;">
-                        <i class="mdi mdi-check-circle me-1"></i> Présent
-                    </span>
-                    <span class="statut-badge absent" id="statut_actuel_absent" style="display: none;">
-                        <i class="mdi mdi-close-circle me-1"></i> Absent
-                    </span>
-                </div>
-
-                <!-- Boutons de choix -->
-                <div class="text-center">
-                    <p class="text-muted mb-3">Choisir le statut de l'enseignant :</p>
-                    <div class="d-flex justify-content-center gap-4">
-                        <button type="button" class="btn btn-statut btn-present" id="btn_present">
-                            <i class="mdi mdi-check-circle me-2"></i> Présent
-                        </button>
-                        <button type="button" class="btn btn-statut btn-absent" id="btn_absent">
-                            <i class="mdi mdi-close-circle me-2"></i> Absent
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Remarques (optionnel) -->
-                <div class="mt-4">
-                    <label for="remarques" class="form-label">Remarques (optionnel)</label>
-                    <textarea id="remarques" class="form-control" rows="2" placeholder="Ajouter une remarque..."></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                    <i class="mdi mdi-close"></i> Fermer
-                </button>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -611,6 +576,8 @@ $(document).ready(function() {
                 let prof = event.extendedProps.prof || event.extendedProps.teacher || '';
                 let salle = event.extendedProps.salle || '';
                 let subjectType = event.extendedProps.subject_type || null;
+                let statut = event.extendedProps.statut || null;
+                let eventDate = event.start ? event.start.toISOString().split('T')[0] : '';
 
                 let html = '<div class="event-content">';
 
@@ -627,9 +594,29 @@ $(document).ready(function() {
                 if (prof) {
                     html += '<div class="event-prof">' + prof + '</div>';
                 }
+
+                // Boutons de pointage
+                let presentActive = statut === 'present' ? 'active' : '';
+                let absentActive = statut === 'absent' ? 'active' : '';
+                html += '<div class="event-pointage-btns">';
+                html += '<button class="btn-evt-pointage btn-evt-present ' + presentActive + '" data-emploi-id="' + event.id + '" data-date="' + eventDate + '" data-statut="present" onclick="savePointage(this, event)">P</button>';
+                html += '<button class="btn-evt-pointage btn-evt-absent ' + absentActive + '" data-emploi-id="' + event.id + '" data-date="' + eventDate + '" data-statut="absent" onclick="savePointage(this, event)">A</button>';
+                html += '</div>';
+
                 html += '</div>';
 
                 return { html: html };
+            },
+
+            // Appliquer les classes CSS selon le statut
+            eventClassNames: function(arg) {
+                let statut = arg.event.extendedProps.statut;
+                if (statut === 'present') {
+                    return ['pointage-present'];
+                } else if (statut === 'absent') {
+                    return ['pointage-absent'];
+                }
+                return [];
             },
 
             // Charger les événements
@@ -655,103 +642,32 @@ $(document).ready(function() {
                 });
             },
 
-            // Clic sur un événement
+            // Désactiver le clic sur événement (on utilise les boutons)
             eventClick: function(info) {
-                openPointageModal(info.event);
+                // Ne rien faire, on utilise les boutons P et A
             }
         });
 
         calendar.render();
     }
 
-    // Ouvrir le modal de pointage
-    function openPointageModal(event) {
-        selectedStatut = null;
-        $('.btn-statut').removeClass('active');
-        $('#remarques').val('');
+    // Fonction globale pour sauvegarder le pointage
+    window.savePointage = function(btn, e) {
+        e.stopPropagation();
+        e.preventDefault();
 
-        let emploiId = event.id;
-        let eventDate = event.startStr.split('T')[0];
+        let $btn = $(btn);
+        let emploiId = $btn.data('emploi-id');
+        let datePointage = $btn.data('date');
+        let statut = $btn.data('statut');
+        let $container = $btn.closest('.event-pointage-btns');
 
-        $('#pointage_emploi_id').val(emploiId);
-        $('#pointage_date').val(eventDate);
+        // Disable buttons
+        $container.find('.btn-evt-pointage').prop('disabled', true);
 
-        // Afficher les infos
-        let matiereText = event.extendedProps.subject || '-';
-        let subjectType = event.extendedProps.subject_type;
-        if (subjectType && subjectType.name) {
-            matiereText += ' (' + subjectType.name + ')';
-        }
-        $('#info_matiere').text(matiereText);
-        $('#info_enseignant').text(event.extendedProps.teacher || '-');
-        $('#info_classe').text(event.extendedProps.classe || '-');
-        $('#info_date').text(formatDateFr(eventDate));
-        $('#info_horaire').text(event.extendedProps.horaire || '-');
-
-        // Vérifier si un pointage existe déjà
-        let statut = event.extendedProps.statut;
-        let pointageId = event.extendedProps.pointage_id;
-
-        if (pointageId) {
-            $('#pointage_id').val(pointageId);
-            $('#statut_actuel_container').show();
-
-            if (statut === 'present') {
-                $('#statut_actuel_present').show();
-                $('#statut_actuel_absent').hide();
-                $('#btn_present').addClass('active');
-                selectedStatut = 'present';
-            } else {
-                $('#statut_actuel_present').hide();
-                $('#statut_actuel_absent').show();
-                $('#btn_absent').addClass('active');
-                selectedStatut = 'absent';
-            }
-        } else {
-            // Par défaut: absent (l'enseignant est considéré absent jusqu'à preuve du contraire)
-            $('#pointage_id').val('');
-            $('#statut_actuel_container').hide();
-            $('#btn_absent').addClass('active');
-            selectedStatut = 'absent';
-        }
-
-        $('#pointageModal').modal('show');
-    }
-
-    function formatDateFr(dateStr) {
-        let date = new Date(dateStr);
-        let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        return date.toLocaleDateString('fr-FR', options);
-    }
-
-    // Clic sur Présent
-    $('#btn_present').on('click', function() {
-        selectedStatut = 'present';
-        $('.btn-statut').removeClass('active');
-        $(this).addClass('active');
-        savePointage();
-    });
-
-    // Clic sur Absent
-    $('#btn_absent').on('click', function() {
-        selectedStatut = 'absent';
-        $('.btn-statut').removeClass('active');
-        $(this).addClass('active');
-        savePointage();
-    });
-
-    // Sauvegarder le pointage
-    function savePointage() {
-        if (!selectedStatut) {
-            return;
-        }
-
-        let emploiId = $('#pointage_emploi_id').val();
-        let datePointage = $('#pointage_date').val();
-        let pointageId = $('#pointage_id').val();
-        let remarques = $('#remarques').val();
-
-        $('#loadingOverlay').show();
+        // Add loading
+        let originalText = $btn.text();
+        $btn.text('...');
 
         $.ajax({
             url: SITEURL + '/admin/pointages/calendar/store',
@@ -759,30 +675,28 @@ $(document).ready(function() {
             data: {
                 emploi_temps_id: emploiId,
                 date_pointage: datePointage,
-                statut: selectedStatut,
-                remarques: remarques,
-                pointage_id: pointageId || null
+                statut: statut
             },
             success: function(response) {
-                $('#loadingOverlay').hide();
+                $container.find('.btn-evt-pointage').prop('disabled', false);
+                $btn.text(originalText);
+
                 if (response.success) {
-                    $('#pointageModal').modal('hide');
-                    calendar.refetchEvents();
-                    showToast('Succès', response.message, 'success');
+                    // Refresh calendar to update colors
+                    if (calendar) {
+                        calendar.refetchEvents();
+                    }
                 } else {
-                    alert(response.message || 'Une erreur est survenue.');
+                    alert(response.message || 'Erreur');
                 }
             },
-            error: function(xhr) {
-                $('#loadingOverlay').hide();
-                let message = 'Une erreur est survenue.';
-                if (xhr.responseJSON && xhr.responseJSON.message) {
-                    message = xhr.responseJSON.message;
-                }
-                alert(message);
+            error: function() {
+                $container.find('.btn-evt-pointage').prop('disabled', false);
+                $btn.text(originalText);
+                alert('Erreur lors de l\'enregistrement');
             }
         });
-    }
+    };
 
     function showToast(title, message, type) {
         if (typeof toastr !== 'undefined') {

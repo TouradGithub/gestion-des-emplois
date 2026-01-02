@@ -285,6 +285,39 @@
         border-color: #1a1a1a;
         color: #fff;
     }
+    /* Pointage Buttons */
+    .btn-pointage-status {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: 2px solid;
+        margin: 0 3px;
+    }
+    .btn-pointage-present {
+        background: #fff;
+        color: #28a745;
+        border-color: #28a745;
+    }
+    .btn-pointage-present:hover, .btn-pointage-present.active {
+        background: #28a745;
+        color: #fff;
+    }
+    .btn-pointage-absent {
+        background: #fff;
+        color: #dc3545;
+        border-color: #dc3545;
+    }
+    .btn-pointage-absent:hover, .btn-pointage-absent.active {
+        background: #dc3545;
+        color: #fff;
+    }
+    .btn-pointage-status:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
 </style>
 @endsection
 
@@ -501,15 +534,20 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if($pointage->statut == 'present')
-                                        <span class="badge-present">
-                                            <i class="mdi mdi-check me-1"></i> Présent
-                                        </span>
-                                    @else
-                                        <span class="badge-absent">
-                                            <i class="mdi mdi-close me-1"></i> Absent
-                                        </span>
-                                    @endif
+                                    <button type="button"
+                                            class="btn-pointage-status btn-pointage-present {{ $pointage->statut == 'present' ? 'active' : '' }}"
+                                            data-pointage-id="{{ $pointage->id }}"
+                                            data-statut="present"
+                                            onclick="updatePointage(this)">
+                                        <i class="mdi mdi-check"></i> P
+                                    </button>
+                                    <button type="button"
+                                            class="btn-pointage-status btn-pointage-absent {{ $pointage->statut == 'absent' ? 'active' : '' }}"
+                                            data-pointage-id="{{ $pointage->id }}"
+                                            data-statut="absent"
+                                            onclick="updatePointage(this)">
+                                        <i class="mdi mdi-close"></i> A
+                                    </button>
                                 </td>
                                 <td>
                                     <a href="{{ route('web.pointages.show', $pointage->id) }}"
@@ -565,6 +603,12 @@
     $(document).ready(function() {
         const SITEURL = "{{ url('/') }}";
 
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
         window.exportPdf = function() {
             let datePointage = $('#date_export_pdf').val();
             if (!datePointage) {
@@ -572,6 +616,43 @@
                 return;
             }
             window.open(SITEURL + '/admin/pointages/rapide/export-pdf?date=' + datePointage, '_blank');
+        };
+
+        window.updatePointage = function(btn) {
+            let $btn = $(btn);
+            let pointageId = $btn.data('pointage-id');
+            let statut = $btn.data('statut');
+            let $row = $btn.closest('td');
+
+            // Disable buttons
+            $row.find('.btn-pointage-status').prop('disabled', true);
+
+            // Add loading
+            let originalHtml = $btn.html();
+            $btn.html('<i class="mdi mdi-loading mdi-spin"></i>');
+
+            $.ajax({
+                url: SITEURL + '/admin/pointages/' + pointageId + '/update-status',
+                type: 'POST',
+                data: { statut: statut },
+                success: function(response) {
+                    $row.find('.btn-pointage-status').prop('disabled', false);
+                    $btn.html(originalHtml);
+
+                    if (response.success) {
+                        // Update active state
+                        $row.find('.btn-pointage-status').removeClass('active');
+                        $btn.addClass('active');
+                    } else {
+                        alert(response.message || 'Erreur lors de la mise à jour');
+                    }
+                },
+                error: function() {
+                    $row.find('.btn-pointage-status').prop('disabled', false);
+                    $btn.html(originalHtml);
+                    alert('Erreur lors de la mise à jour du pointage');
+                }
+            });
         };
     });
 </script>
