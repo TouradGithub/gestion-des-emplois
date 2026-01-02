@@ -358,55 +358,6 @@
     .event-type-tp { background-color: #007bff; }
     .event-type-project { background-color: #fd7e14; }
 
-    /* Pointage Buttons on Events */
-    .event-pointage-btns {
-        display: flex;
-        justify-content: center;
-        gap: 4px;
-        margin-top: 5px;
-    }
-    .btn-evt-pointage {
-        padding: 2px 8px;
-        border-radius: 10px;
-        font-size: 10px;
-        font-weight: 600;
-        cursor: pointer;
-        border: 1px solid;
-        transition: all 0.2s;
-    }
-    .btn-evt-present {
-        background: #fff;
-        color: #28a745;
-        border-color: #28a745;
-    }
-    .btn-evt-present:hover, .btn-evt-present.active {
-        background: #28a745;
-        color: #fff;
-    }
-    .btn-evt-absent {
-        background: #fff;
-        color: #dc3545;
-        border-color: #dc3545;
-    }
-    .btn-evt-absent:hover, .btn-evt-absent.active {
-        background: #dc3545;
-        color: #fff;
-    }
-    .fc-event.pointage-present {
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
-        border-color: #28a745 !important;
-    }
-    .fc-event.pointage-present * {
-        color: #fff !important;
-    }
-    .fc-event.pointage-absent {
-        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
-        border-color: #dc3545 !important;
-    }
-    .fc-event.pointage-absent * {
-        color: #fff !important;
-    }
-
     .page-title {
         font-size: 1.5rem;
         font-weight: 700;
@@ -843,8 +794,6 @@ $(document).ready(function() {
                 let prof = event.extendedProps.prof || event.extendedProps.teacher || '';
                 let salle = event.extendedProps.salle || '';
                 let subjectType = event.extendedProps.subject_type || null;
-                let pointageStatut = event.extendedProps.pointage_statut || null;
-                let eventDate = event.start ? event.start.toISOString().split('T')[0] : '';
 
                 let html = '<div class="event-content">';
 
@@ -862,28 +811,9 @@ $(document).ready(function() {
                     html += '<div class="event-prof">' + prof + '</div>';
                 }
 
-                // Boutons de pointage
-                let presentActive = pointageStatut === 'present' ? 'active' : '';
-                let absentActive = pointageStatut === 'absent' ? 'active' : '';
-                html += '<div class="event-pointage-btns">';
-                html += '<button class="btn-evt-pointage btn-evt-present ' + presentActive + '" data-emploi-id="' + event.id + '" data-date="' + eventDate + '" data-statut="present" onclick="saveEventPointage(this, event)">P</button>';
-                html += '<button class="btn-evt-pointage btn-evt-absent ' + absentActive + '" data-emploi-id="' + event.id + '" data-date="' + eventDate + '" data-statut="absent" onclick="saveEventPointage(this, event)">A</button>';
-                html += '</div>';
-
                 html += '</div>';
 
                 return { html: html };
-            },
-
-            // Appliquer les classes CSS selon le statut de pointage
-            eventClassNames: function(arg) {
-                let pointageStatut = arg.event.extendedProps.pointage_statut;
-                if (pointageStatut === 'present') {
-                    return ['pointage-present'];
-                } else if (pointageStatut === 'absent') {
-                    return ['pointage-absent'];
-                }
-                return [];
             },
 
             // Charger les événements
@@ -911,10 +841,6 @@ $(document).ready(function() {
 
             // Clic sur un événement existant (ouvrir modal modification)
             eventClick: function(info) {
-                // Ne pas ouvrir le modal si on clique sur un bouton de pointage
-                if (info.jsEvent.target.classList.contains('btn-evt-pointage')) {
-                    return;
-                }
                 openEditModal(info.event);
             },
 
@@ -1343,57 +1269,6 @@ $(document).ready(function() {
             toastr[type](message, title);
         }
     }
-
-    // Fonction globale pour sauvegarder le pointage depuis les boutons sur les événements
-    window.saveEventPointage = function(btn, e) {
-        e.stopPropagation();
-        e.preventDefault();
-
-        let $btn = $(btn);
-        let emploiId = $btn.data('emploi-id');
-        let datePointage = $btn.data('date');
-        let statut = $btn.data('statut');
-        let $container = $btn.closest('.event-pointage-btns');
-
-        // Disable buttons
-        $container.find('.btn-evt-pointage').prop('disabled', true);
-
-        // Add loading
-        let originalText = $btn.text();
-        $btn.text('...');
-
-        $.ajax({
-            url: SITEURL + '/admin/pointages/calendar/store',
-            type: 'POST',
-            data: {
-                emploi_temps_id: emploiId,
-                date_pointage: datePointage,
-                statut: statut
-            },
-            success: function(response) {
-                $container.find('.btn-evt-pointage').prop('disabled', false);
-                $btn.text(originalText);
-
-                if (response.success) {
-                    // Update active state
-                    $container.find('.btn-evt-pointage').removeClass('active');
-                    $btn.addClass('active');
-
-                    // Refresh calendar to update colors
-                    if (calendar) {
-                        calendar.refetchEvents();
-                    }
-                } else {
-                    alert(response.message || 'Erreur');
-                }
-            },
-            error: function() {
-                $container.find('.btn-evt-pointage').prop('disabled', false);
-                $btn.text(originalText);
-                alert('Erreur lors de l\'enregistrement');
-            }
-        });
-    };
 
 });
 </script>
