@@ -37,6 +37,8 @@
         padding: 10px;
         text-align: center;
         vertical-align: middle;
+        height: 80px;
+        min-width: 120px;
     }
 
     .schedule-table tbody tr:nth-child(even) {
@@ -99,6 +101,13 @@
 
     .empty-cell {
         background: #fafafa;
+        height: 80px;
+        min-width: 120px;
+    }
+
+    .session-cell {
+        height: 80px;
+        min-width: 120px;
     }
 
     .card-schedule {
