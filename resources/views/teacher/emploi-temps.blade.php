@@ -37,7 +37,7 @@
         padding: 10px;
         text-align: center;
         vertical-align: middle;
-        height: 80px;
+        height: 90px;
         min-width: 120px;
     }
 
