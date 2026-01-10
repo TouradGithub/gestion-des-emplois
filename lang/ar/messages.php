@@ -281,4 +281,5 @@ return [
     'no_active_year' => 'لا توجد سنة دراسية نشطة',
     'class_not_in_active_year' => 'هذا القسم لا ينتمي إلى السنة الدراسية النشطة',
     'students' => 'الطلاب',
+    'all_classes' => 'جميع الأقسام',
 ];

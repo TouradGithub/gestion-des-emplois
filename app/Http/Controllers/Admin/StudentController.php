@@ -15,7 +15,7 @@ class StudentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         // Get only students from active school year
         $anneeActive = \App\Models\Anneescolaire::where('is_active', true)->first();
@@ -33,9 +33,19 @@ class StudentController extends Controller
             });
         }
 
-        $students = $query->latest()->paginate(15);
+        // Filter by class if selected
+        if ($request->filled('class_id')) {
+            $query->where('class_id', $request->class_id);
+        }
 
-        return view('admin.students.index', compact('students', 'anneeActive'));
+        $students = $query->latest()->paginate(15)->withQueryString();
+
+        // Get classes for filter dropdown (only from active year)
+        $classes = $anneeActive
+            ? Classe::where('annee_id', $anneeActive->id)->orderBy('nom')->get()
+            : collect();
+
+        return view('admin.students.index', compact('students', 'anneeActive', 'classes'));
     }
 
     /**

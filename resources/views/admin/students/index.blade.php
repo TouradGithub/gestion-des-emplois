@@ -39,6 +39,29 @@
                             </div>
                         @endif
 
+                        <!-- Filter by Class -->
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <form method="GET" action="{{ route('web.students.index') }}" id="filterForm">
+                                    <div class="input-group">
+                                        <select name="class_id" class="form-control" onchange="document.getElementById('filterForm').submit()">
+                                            <option value="">{{ __('messages.all_classes') }}</option>
+                                            @foreach($classes as $classe)
+                                                <option value="{{ $classe->id }}" {{ request('class_id') == $classe->id ? 'selected' : '' }}>
+                                                    {{ $classe->nom }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @if(request('class_id'))
+                                            <a href="{{ route('web.students.index') }}" class="btn btn-outline-secondary">
+                                                <i class="mdi mdi-close"></i>
+                                            </a>
+                                        @endif
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead class="table-primary">

@@ -316,4 +316,5 @@ return [
     'no_active_year' => 'Aucune année scolaire active',
     'class_not_in_active_year' => 'Cette classe n\'appartient pas à l\'année scolaire active',
     'students' => 'Étudiants',
+    'all_classes' => 'Toutes les classes',
 ];
